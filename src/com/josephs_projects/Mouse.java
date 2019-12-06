@@ -1,4 +1,4 @@
-package com.josephs_projects.io;
+package com.josephs_projects;
 
 import com.josephs_projects.Registrar;
 import com.josephs_projects.Tuple;

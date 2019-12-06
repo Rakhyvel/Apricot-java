@@ -1,11 +1,8 @@
-package com.josephs_projects.io;
+package com.josephs_projects;
 
-import com.josephs_projects.Registrar;
-
-import java.awt.*;
+import java.awt.Canvas;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,10 +13,8 @@ public class Keyboard extends KeyAdapter {
     private Set<Integer> keysDown = new HashSet<>();
     private boolean controlDown = false;
     private boolean shiftDown = false;
-    private final Registrar registrar;
 
-    public Keyboard(Canvas canvas, Registrar registrar) {
-        this.registrar = registrar;
+    public Keyboard(Canvas canvas) {
         canvas.addKeyListener(this);
     }
 

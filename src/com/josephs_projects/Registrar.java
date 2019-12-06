@@ -1,21 +1,22 @@
 package com.josephs_projects;
 
-import com.josephs_projects.io.Keyboard;
-import com.josephs_projects.io.Mouse;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JFrame;
 
 public class Registrar {
     public ArrayList<Element> registry = new ArrayList<>();
+    public static Random rand = new Random();
     private static JFrame frame;
     private static Canvas canvas;
     public static Mouse mouse;
     public static Keyboard keyboard;
     private boolean running = false;
-    private int dt = 1000;
+    private int dt = 16;
 
     public Registrar(String title, int width, int height){
         frame = new JFrame(title);
@@ -27,7 +28,7 @@ public class Registrar {
         frame.setLocationRelativeTo(null);
 
         mouse = new Mouse(canvas, this);
-        keyboard = new Keyboard(canvas, this);
+        keyboard = new Keyboard(canvas);
 
         running = true;
     }
@@ -41,17 +42,14 @@ public class Registrar {
     }
 
     public void run() {
-        long previous = System.currentTimeMillis();
-        int lag = 0;
+        long current = System.currentTimeMillis();
         while(running){
-            long current = System.currentTimeMillis();
-            long elapsed = current - previous;
-            lag += elapsed;
-            while (lag >= dt){
+            while ((System.currentTimeMillis() - current) > dt){
                 tick();
-                lag -= dt;
+                current = System.currentTimeMillis();
             }
             render();
+            
         }
     }
 
