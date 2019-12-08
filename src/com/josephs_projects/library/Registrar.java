@@ -1,4 +1,4 @@
-package com.josephs_projects;
+package com.josephs_projects.library;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -8,6 +8,10 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.josephs_projects.library.graphics.Render;
+import com.josephs_projects.library.input.Keyboard;
+import com.josephs_projects.library.input.Mouse;
+
 public class Registrar {
     public ArrayList<Element> registry = new ArrayList<>();
     public static Random rand = new Random();
@@ -15,20 +19,26 @@ public class Registrar {
     private static Canvas canvas;
     public static Mouse mouse;
     public static Keyboard keyboard;
+    private static Render render;
+    
     private boolean running = false;
-    private int dt = 16;
+    private double dt = 1000 / 60.0;
+    public static int ticks = 0;
 
     public Registrar(String title, int width, int height){
         frame = new JFrame(title);
         canvas = new Canvas();
-        frame.setSize(800, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(canvas);
+        canvas.setSize(width,height);
+        frame.pack();
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
 
         mouse = new Mouse(canvas, this);
         keyboard = new Keyboard(canvas);
+        
+        render = new Render(width, height);
 
         running = true;
     }
@@ -47,9 +57,9 @@ public class Registrar {
             while ((System.currentTimeMillis() - current) > dt){
                 tick();
                 current = System.currentTimeMillis();
+                ticks++;
             }
             render();
-            
         }
     }
 
@@ -68,8 +78,10 @@ public class Registrar {
 
         Graphics g = bs.getDrawGraphics();
         for(Element e : registry){
-            e.render(g);
+            e.render(render);
         }
+        
+        render.render(g);
 
         g.dispose();
         bs.show();

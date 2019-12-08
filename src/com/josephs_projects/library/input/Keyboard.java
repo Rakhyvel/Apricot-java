@@ -1,4 +1,4 @@
-package com.josephs_projects;
+package com.josephs_projects.library.input;
 
 import java.awt.Canvas;
 import java.awt.event.KeyAdapter;

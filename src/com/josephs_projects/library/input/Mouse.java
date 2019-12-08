@@ -1,12 +1,12 @@
-package com.josephs_projects;
-
-import com.josephs_projects.Registrar;
-import com.josephs_projects.Tuple;
+package com.josephs_projects.library.input;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
+import com.josephs_projects.library.Registrar;
+import com.josephs_projects.library.Tuple;
 
 public class Mouse extends MouseAdapter {
     private boolean mouseLeftDown = false;

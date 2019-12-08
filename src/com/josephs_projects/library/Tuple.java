@@ -1,4 +1,4 @@
-package com.josephs_projects;
+package com.josephs_projects.library;
 
 public class Tuple {
     private double x;
@@ -48,5 +48,23 @@ public class Tuple {
 
     public Tuple scalar(double scalar){
         return new Tuple(this.x * scalar, this.y * scalar);
+    }
+    
+    @Override
+    public String toString() {
+    	return "(" + x + ", " + y +")";
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(o == null)
+    		return false;
+    	
+    	if (o instanceof Tuple) {
+    		Tuple t = (Tuple)o;
+    		return (x == t.x) && (y == t.y);
+    	}
+    	
+    	return false;
     }
 }
