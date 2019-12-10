@@ -6,34 +6,22 @@ import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
-import test.animals.Being;
-import test.objects.Holdable;
+import test.beings.Being;
+import test.holdables.Holdable;
 
 public class Player extends Being {
 	boolean pickupDown = false;
 	boolean usedDown = false;
-	
-	public static enum Hunger {
-		FRUIT, VEGETABLE, MEAT, DAIRY, WATER;
-	}
-	
-	double[] hungers = {1, // Fruit
-						1, // Vegetable
-						1, // Meat
-						1, // Dairy
-						1, // Water
-						};
-	int awakeTicks = 0;
-	int temperature = 72; // TODO: Implement temperature
 	Holdable hand = null;
 
 	public Player() {
+		super(new Tuple(0, 0));
+		target = new Tuple(position);
 	}
 
 	@Override
 	public void tick() {
 		move();
-		keyMove();
 		decayHunger();
 		awakeTicks++;
 		
@@ -48,9 +36,15 @@ public class Player extends Being {
 			usedDown = true;
 		} else if (usedDown) {
 			usedDown = false;
-			if(hand != null)
+			if(hand != null) {
 				hand.use();
+				if (hand.isConsumed()) {
+					hand = null;
+				}
+			}
 		}
+		
+		keyMove();
 	}
 
 	@Override
@@ -60,8 +54,6 @@ public class Player extends Being {
 
 	@Override
 	public void input() {
-		// TODO Auto-generated method stub
-
 	}
 	
 	void keyMove() {
@@ -80,41 +72,43 @@ public class Player extends Being {
 		}
 	}
 	
+	
+	public void remove() {
+		// Sorry can't do that :)
+	}
+	
 	public Tuple getPosition() {
 		return position;
 	}
 	
 	public int getX() {
-		return (int) (position.getX() * 64);
+		return (int) ((position.getX() - 6) * 64);
 	}
 	
 	public int getY() {
-		return (int) (position.getY() * 64);
+		return (int) ((position.getY() - 3) * 64);
 	}
 	
 	void pickup() {
-		Holdable closest = null;
-		double closestDist = 1;
-		for (int i = 0; i < Main.holdables.size(); i++) {
-			double tempDist = Main.holdables.get(i).getPosition().getDist(position.addTuple(new Tuple(6,3)));
-			if (tempDist < closestDist) {
-				closestDist = tempDist;
-				closest = Main.holdables.get(i);
-			}
-		}
-		if (hand != null && closest != null)
+		Holdable closest = Main.findNearestHoldable(position);
+		
+		// Hand is not full, there is nothing on the ground (to pickup)
+		if(closest == null)
 			return;
 		
+		// Hand is full, there is nothing on the ground
 		if (hand != null) {
 			drop();
 			return;
 		}
-		
-		if(closest == null)
+
+		// There is a nearby object, but it's too far away
+		if (closest.getPosition().getDist(position) >= 1)
 			return;
-		
-		hand = closest;
-		closest.pickup();
+
+		// Hand is not full, there is something on the ground
+		if (closest.pickup())
+			hand = closest;
 	}
 	
 	void drop() {
@@ -125,7 +119,7 @@ public class Player extends Being {
 	}
 	
 	public void eat(double amount, Hunger hunger) {
-		System.out.println("Nom nom " + hungers[hunger.ordinal()]);
+		System.out.println("Nom nom " + hungers[hunger.ordinal()] + " hunger after " + amount);
 		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
 	}
 }

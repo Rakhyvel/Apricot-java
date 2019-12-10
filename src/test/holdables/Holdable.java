@@ -1,10 +1,12 @@
-package test.objects;
+package test.holdables;
 
 import com.josephs_projects.library.Tuple;
 
 public abstract interface Holdable{
-	void pickup();
+	boolean pickup();
 	void drop();
 	void use();
+	boolean isConsumed();
 	Tuple getPosition();
+	void remove();
 }

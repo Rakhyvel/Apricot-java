@@ -2,16 +2,23 @@ package com.josephs_projects.library;
 
 import java.util.Random;
 
+import com.josephs_projects.library.graphics.Image;
+
 public class Map {
 	Random rand = new Random();
 	private float[][] mountain;
+	private int[] temperature;
+	private double[] precipitation;
 	private int width;
 	private int height;
+	Image img = new Image();
+	private int[] biomes = img.loadImage("/res/biomes.png", 86, 10);
 
 	public Map(int width, int height, int depth) {
 		this.width = width;
 		this.height = height;
 		
+		rand.setSeed(3);
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth+1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -22,6 +29,9 @@ public class Map {
 				mountain[x][y] = mountain[x][y] + tempMountain[x][y];
 			}
 		}
+		
+		temperature = generateTempMap();
+		precipitation = generatePrecipitation();
 	}
 
 	public float[][] perlinNoise(int frequency, float amplitude) {
@@ -34,7 +44,7 @@ public class Map {
 				int x = (i % width) * wavelength;
 				int y = (i / width) * wavelength;
 				if (frequency <= 2) {
-					noise[x][y] = rand.nextFloat() + 0.1f;
+					noise[x][y] = rand.nextFloat()-0.05f;
 				} else {
 					noise[x][y] = ((2 * rand.nextFloat() - 1f) * amplitude);
 				}
@@ -122,12 +132,71 @@ public class Map {
 		return -1;
 	}
 	
+	public float getPlot(Tuple point) {
+		int x = (int)point.getX();
+		int y = (int)point.getY();
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			return mountain[x][y];
+		return -1;
+	}
+
+	public int[] generateTempMap() {
+		int[] retval = new int[width * width * 2];
+		retval = createLattitudeGradient(retval);
+		retval = findAltitudinalGradient(retval);
+		return retval;
+	}
+
+	public int[] createLattitudeGradient(int[] tempMap) {
+		// 30 degrees farenheit at poles, 100 degrees farenheit at equator
+		for (int i = 0; i < tempMap.length; i++) {
+			int y = (i / width);
+			tempMap[i] = (int) (-(140.0 / (double) height) * Math.abs(y - height / 2.0) + 100);
+		}
+		return tempMap;
+	}
+
+	public int[] findAltitudinalGradient(int[] tempMap) {
+		for (int i = 0; i < tempMap.length; i++) {
+			int x = (i % width);
+			int y = (i / width);
+			float z = getPlot(x, y);
+			if (z <= 0.5)
+				continue;
+			tempMap[i] = (int) (tempMap[i] - 30 * (z  - 0.5) * (z  - 0.5));
+		}
+		return tempMap;
+	}
+
+	public double getTemp(Tuple point) {
+		int x = (int) point.getX();
+		int y = (int) point.getY();
+		return temperature[y * width + x];
+	}
+	
+	public double[] generatePrecipitation() {
+		double[] retval = new double[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int distanceToWater = 1;
+			int x = (i % width);
+			int y = (i / width);
+			for (int i2 = x; (i2 % width) < width - 1; i2++) {
+				if (mountain[i2][y] < 0.5) {
+					break;
+				}
+				distanceToWater++;
+			}
+			retval[i] = Math.min(9, Math.log((double)distanceToWater)*1.2);
+		}
+		return retval;
+	}
+	
 	public int[] getImage() {
 		int[] image = new int[width * height];
 		for(int i = 0; i < width*height; i++) {
 			int x = (i % width);
 			int y = (i / width);
-			image[i] = getColor(mountain[x][y]);
+			image[i] = getColor(mountain[x][y], temperature[i], precipitation[i]);
 		}
 		return image;
 	}
@@ -137,45 +206,11 @@ public class Map {
 	 * @return A color based on the depth, 0 being a deep blue, 0.5f being coast,
 	 *         and 1 being green plains.
 	 */
-	int getColor(float value) {
-		int blue = 0;
-		int green = 0;
-		int red = 0;
-
-		if (value < .495f) {
-			blue = (int) (510 * value);
-			red = (int) (760 * value * value - 6);
-			green = (int) (1040 * value * value - 6);
-		} else if (value < .5) {
-			blue = (int) (173);
-			green = (int) (225);
-			red = (int) (238);
-		} else if (value < 1) {
-			blue = (int) (730 * (value - 1) * (value - 1) - 9);
-			green = (int) (-290 * (value - 1) + 80);
-			red = (int) (1000 * (value - 1) * (value - 1) - 12);
-		} else {
-			blue = (int) (value * value * value * 85);
-			green = (int) (value * value * value * 85);
-			red = (int) (value * value * value * 85);
-		}
-
-//		 blue = (int) (value * 255);
-//		 green = (int) (value * 255);
-//		 red = (int) (value * 255);
-
-		if (blue < 0)
-			blue = 0;
-		if (green < 0)
-			green = 0;
-		if (red < 0)
-			red = 0;
-		if (blue > 255)
-			blue = 255;
-		if (green > 255)
-			green = 255;
-		if (red > 255)
-			red = 255;
-		return 255 << 24 | red << 16 | green << 8 | blue;
+	int getColor(float value, int temperature, double precip) {
+		if (value < 0.5)
+			return 255 << 24 | 105 << 8 | 148;
+		int x = (int)Math.max(0, (temperature - 30) * (86/70.0));
+		int y = (int)precip;
+		return biomes[x + y * 86];
 	}
 }

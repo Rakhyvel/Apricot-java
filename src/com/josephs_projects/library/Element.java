@@ -6,6 +6,7 @@ public interface Element {
     void tick();
     void render(Render r);
     void input();
+    void remove();
     
     Tuple getPosition();
 }

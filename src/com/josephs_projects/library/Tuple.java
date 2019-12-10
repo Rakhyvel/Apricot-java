@@ -45,6 +45,10 @@ public class Tuple {
     public Double getDist(Tuple t){
         return Math.sqrt((this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y));
     }
+    
+    public Double magnitude() {
+    	return Math.sqrt((x * x) + (y * y));
+    }
 
     public Tuple scalar(double scalar){
         return new Tuple(this.x * scalar, this.y * scalar);
@@ -67,4 +71,8 @@ public class Tuple {
     	
     	return false;
     }
+
+	public Tuple normalize() {
+		return new Tuple(x/magnitude(), y/magnitude());
+	}
 }

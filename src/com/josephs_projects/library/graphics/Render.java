@@ -38,20 +38,47 @@ public class Render extends Canvas {
 	 * @param alpha The opacity of the rectangle
 	 */
 	public void drawRect(int x, int y, int w, int h, int color) {
+		// Rejecting rectangles that could not have pixels on screen
+		if (x + w < 0)
+			return;
+		if (x > width)
+			return;
+		if (y + h < 0)
+			return;
+		if (y > height)
+			return;
+
 		float alpha = ((color >> 24) & 255) / 255.0f;
 		for (int i = 0; i < w * h; i++) {
 			int x1 = i % w + x;
 			int y1 = i / w;
 			int id = (y1 + y) * (width + 1) + x1;
-			if (x >= 0 && x < width && id > 0 && id < width * height) {
-				int r = ((color >> 16) & 255), g = ((color >> 8) & 255), b = (color & 255);
-				int newColor = (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
-				r = (pixels[id] >> 16) & 255;
-				g = (pixels[id] >> 8) & 255;
-				b = pixels[id] & 255;
-				int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
-				pixels[id] = newColor + newColor2;
+
+			// Left bounds
+			// Continue if x coord of rect is less than 0 and the x of this pixel isn't
+			// enough to make it up
+			if (x < 0 && (i % w) < -x)
+				continue;
+
+			// Right bounds
+			// Continue if x coord is off screen, wrap to next pixel.
+			if (x1 >= width) {
+				i += w - (x1 - x) - 1;
+				continue;
 			}
+
+			// Reject pixel if it's out of screen's bounds
+			if (id < 0 || id >= width * height)
+				continue;
+
+			int r = ((color >> 16) & 255), g = ((color >> 8) & 255), b = (color & 255);
+			int newColor = (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
+
+			r = (pixels[id] >> 16) & 255;
+			g = (pixels[id] >> 8) & 255;
+			b = pixels[id] & 255;
+			int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
+			pixels[id] = newColor + newColor2;
 		}
 	}
 
@@ -91,17 +118,27 @@ public class Render extends Canvas {
 		// Initializing some variables
 		int h = 1, r, g, b;
 		double cos = 0, sin = 0;
-		
+
 		// Finding the height of the image
 		if (w > 0) {
 			h = image.length / w;
 		}
-		
+
+		// Rejecting images that could not have pixels on the screen
+		if (x + w < 0)
+			return;
+		if (x > width)
+			return;
+		if (y + h < 0)
+			return;
+		if (y > height)
+			return;
+
 		// Doing division once since division is slow
 		float halfW = w / 2;
 		float halfH = h / 2;
 		float deltaI = 1;
-		
+
 		// Doing cos/sin only if there is rotation since those ops are slow
 		if (rotate != 0) {
 			deltaI = 0.49f;
@@ -116,12 +153,13 @@ public class Render extends Canvas {
 			// Pixel is transparent, skip to next pixel
 			if (alpha <= 0)
 				continue;
-			
+
 			// Calculate position of pixels
-			double x1 = (i % w) - halfW;
-			double y1 = i / w - halfH;
-			double x2 = (int) (x1 + x);
-			double y2 = (int) (y1 + y);
+			double x1 = (i % w) - halfW; // X coord of pixel on screen, centered around origin
+			double y1 = i / w - halfH;   // Y coord of pixel on screen, centered around origin
+			double x2 = (int) (x1 + x);  // X coord of pixel on screen, centered around image center
+			double y2 = (int) (y1 + y);  // Y coord of pixel on screen, centered around image center
+			
 			// Rotate pixels if rotation, since rotation is slow
 			if (rotate != 0) {
 				x2 = (int) (x1 * cos - y1 * sin + x);
@@ -129,11 +167,24 @@ public class Render extends Canvas {
 			}
 			// Find the position relative to screen
 			int id = (int) (x2 + y2 * (width + 1) + 0.5);
-			
+
+			// Left bounds
+			// Continue if x coord of rect is less than 0 and the x of this pixel isn't
+			// enough to make it up
+			if (x - halfW < 0 && (i % w) < -(x - halfW))
+				continue;
+
+			// Right bounds
+			// Continue if x coord is off screen, wrap to next pixel.
+			if (x2 >= width) {
+				i += w - (i % w) - 1;
+				continue;
+			}
+
 			// Invalid pixel position, skip to next pixel
 			if (id <= 0 || id >= width * height)
 				continue;
-			
+
 			// Finding alpha
 			r = ((image[(int) i] >> 16) & 255);
 			g = ((image[(int) i] >> 8) & 255);

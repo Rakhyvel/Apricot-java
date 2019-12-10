@@ -36,7 +36,7 @@ public class Registrar {
         frame.setLocationRelativeTo(null);
 
         mouse = new Mouse(canvas, this);
-        keyboard = new Keyboard(canvas);
+        keyboard = new Keyboard(canvas, this);
         
         render = new Render(width, height);
 
@@ -49,6 +49,14 @@ public class Registrar {
 
     public void removeElement(Element element){
         registry.remove(element);
+    }
+    
+    public Element getElement(int index) {
+    	return registry.get(index);
+    }
+    
+    public int registrySize() {
+    	return registry.size();
     }
 
     public void run() {
@@ -64,8 +72,8 @@ public class Registrar {
     }
 
     private void tick() {
-        for (Element e : registry){
-            e.tick();
+        for (int i = 0; i < registry.size(); i++){
+            registry.get(i).tick();
         }
     }
 
@@ -77,8 +85,8 @@ public class Registrar {
         }
 
         Graphics g = bs.getDrawGraphics();
-        for(Element e : registry){
-            e.render(render);
+        for (int i = 0; i < registry.size(); i++){
+            registry.get(i).render(render);
         }
         
         render.render(g);
@@ -88,8 +96,8 @@ public class Registrar {
     }
 
     public void input(){
-        for(Element e : registry){
-            e.input();
+    	for (int i = 0; i < registry.size(); i++){
+            registry.get(i).input();
         }
     }
 
