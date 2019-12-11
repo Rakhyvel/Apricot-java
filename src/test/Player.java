@@ -36,6 +36,7 @@ public class Player extends Being {
 			usedDown = true;
 		} else if (usedDown) {
 			usedDown = false;
+			interact();
 			if(hand != null) {
 				hand.use();
 				if (hand.isConsumed()) {
@@ -53,8 +54,7 @@ public class Player extends Being {
 	}
 
 	@Override
-	public void input() {
-	}
+	public void input() {}
 	
 	void keyMove() {
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_W) && position.getY() == target.getY()) {
@@ -123,5 +123,21 @@ public class Player extends Being {
 	public void eat(double amount, Hunger hunger) {
 		System.out.println("Nom nom " + hungers[hunger.ordinal()] + " hunger after " + amount);
 		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
+	}
+	
+	void interact() {
+		Interactable interactable = Main.interactables.get(0);
+		double closestDistance = interactable.getPostition().getDist(position);
+		for(int i = 0; i < Main.interactables.size(); i++) {
+			double tempDist = Main.interactables.get(i).getPostition().getDist(position);
+			if(tempDist < closestDistance) {
+				closestDistance = tempDist;
+				interactable = Main.interactables.get(i);
+			}
+		}
+		if(closestDistance >= 1)
+			return;
+		
+		interactable.interact(hand);
 	}
 }

@@ -4,16 +4,16 @@ import com.josephs_projects.library.graphics.Image;
 
 public enum Vegetable {
 	// Dry-hot
-	CORN("peach", 3, 80), PUMPKIN("cactus", 10000, 120),
+	BARLEY("barley", 3, 80), TOMATOES("cactus", 10000, 120),
 
 	// Dry-cool
 	RYE("blueberry", 3, 40), POTATOES("cherry", 3, 60),
 
 	// Wet-hot
-	BARLEY("orange", 2, 80), SQUASH("melon", 1.5, 80),
+	CORN("orange", 2, 80), PEPPER("melon", 1.5, 80),
 
 	// Wet-cool
-	WHEAT("apple", 2, 60), TOMATOES("strawberry", 1.5, 60);
+	WHEAT("apple", 2, 60), CARROTS("strawberry", 1.5, 30);
 
 	public double waterHardiness;
 	public int preferedTemp;
@@ -21,7 +21,6 @@ public enum Vegetable {
 	public int[] childImage;
 	public int[] subAdultImage;
 	public int[] adultImage;
-	public int[] pregnantImage;
 
 	Vegetable(String imagePath, double waterHardiness, int preferedTemp) {
 		this.waterHardiness = waterHardiness;
@@ -30,6 +29,5 @@ public enum Vegetable {
 		childImage = Image.loadImage("/res/plants/" + imagePath + "/child.png");
 		subAdultImage = Image.loadImage("/res/plants/" + imagePath + "/subadult.png");
 		adultImage = Image.loadImage("/res/plants/" + imagePath + "/adult.png");
-		pregnantImage = Image.loadImage("/res/plants/" + imagePath + "/pregnant.png");
 	}
 }

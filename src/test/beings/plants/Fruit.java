@@ -5,7 +5,7 @@ import com.josephs_projects.library.graphics.Image;
 public enum Fruit {
 	// Dry-hot
 	PEACH_TREE("peach", 3, 80), 
-	CACTUS("cactus", 10000, 120),
+	CACTUS("cactus", 10000, 110),
 
 	// Dry-cool
 	BLUEBERRY_BUSH("blueberry", 3, 40),

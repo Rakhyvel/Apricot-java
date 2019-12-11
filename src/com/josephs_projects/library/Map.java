@@ -7,7 +7,7 @@ import com.josephs_projects.library.graphics.Image;
 public class Map {
 	Random rand = new Random();
 	private float[][] mountain;
-	private int[] temperature;
+	private double[] temperature;
 	private double[] precipitation;
 	private int width;
 	private int height;
@@ -18,7 +18,7 @@ public class Map {
 		this.width = width;
 		this.height = height;
 
-//		rand.setSeed(3);
+//		rand.setSeed(0);
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -140,30 +140,30 @@ public class Map {
 		return -1;
 	}
 
-	public int[] generateTempMap() {
-		int[] retval = new int[width * width * 2];
+	public double[] generateTempMap() {
+		double[] retval = new double[width * width * 2];
 		retval = createLattitudeGradient(retval);
 		retval = findAltitudinalGradient(retval);
 		return retval;
 	}
 
-	public int[] createLattitudeGradient(int[] tempMap) {
+	public double[] createLattitudeGradient(double[] tempMap) {
 		// 25 degrees farenheit at poles, 110 degrees farenheit at equator
 		for (int i = 0; i < tempMap.length; i++) {
 			int y = (i / width);
-			tempMap[i] = (int) (-(170.0 / (double) height) * Math.abs(y - height / 2.0) + 110);
+			tempMap[i] = -(170.0 / (double) height) * Math.abs(y - height / 2.0) + 110;
 		}
 		return tempMap;
 	}
 
-	public int[] findAltitudinalGradient(int[] tempMap) {
+	public double[] findAltitudinalGradient(double[] tempMap) {
 		for (int i = 0; i < tempMap.length; i++) {
 			int x = (i % width);
 			int y = (i / width);
 			float z = getPlot(x, y);
 			if (z <= 0.5)
 				continue;
-			tempMap[i] = (int) (tempMap[i] - 2 * Math.pow(Math.max(0, z - 0.5), 10));
+			tempMap[i] = tempMap[i] - (z - 0.5);
 		}
 		return tempMap;
 	}
@@ -183,13 +183,22 @@ public class Map {
 	public double[] generatePrecipitation() {
 		double[] retval = new double[width * height];
 		for (int y = 0; y < height; y++) {
-			double precipitation = 99;
-			for(int x = width - 1; x > 0; x--) {
+			double precipitation = 50;
+			for(int x = width - 1; x >= 0; x--) {
 				if(mountain[x][y] < 0.5) {
-					precipitation = Math.min(99, precipitation + 1);
+					precipitation++;
 				} else if (precipitation > 0){
-					retval[x + y * width] = Math.min(99, precipitation);
-					precipitation *= 0.995;
+					if(x == 0)
+						continue;
+					if(mountain[x][y] < mountain[x-1][y]) {
+						float diff = 0.1f * (mountain[x-1][y] - mountain[x][y]);
+						diff = (float)Math.sqrt(diff);
+						precipitation *= -diff/(diff + 1.0) + 1;
+					}
+					
+					retval[x + y * width] = (99 - precipitation);
+					retval[x + y * width] *= mountain[x][y];
+					retval[x + y * width] = Math.max(0, Math.min(99, (retval[x + y * width])));
 				}
 			}
 		}
@@ -211,11 +220,11 @@ public class Map {
 	 * @return A color based on the depth, 0 being a deep blue, 0.5f being coast,
 	 *         and 1 being green plains.
 	 */
-	int getColor(float value, int temperature, double precip) {
+	int getColor(float value, double temperature, double precip) {
 		if (value < 0.5)
 			return 255 << 24 | 105 << 8 | 148;
 		int x = (int) Math.max(0, (temperature - 25) * (860 / 85.0));
-		int y = (int) (99 - precip) * 860;
+		int y = (int) (precip) * 860;
 		return biomes[x + y];
 	}
 }

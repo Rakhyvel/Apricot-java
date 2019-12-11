@@ -3,10 +3,14 @@ package test.beings.plants;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
+import test.Interactable;
 import test.Main;
 import test.beings.Being;
+import test.holdables.Holdable;
+import test.holdables.VegetableObject;
 
-public class VegetablePlant extends Plant {
+public class VegetablePlant extends Plant implements Interactable{
+	// 1841 2008
 	Vegetable type;
 	
 	public VegetablePlant(Tuple position, Vegetable type) {
@@ -14,6 +18,8 @@ public class VegetablePlant extends Plant {
 		growthStage = Being.GrowthStage.ADULT;
 		setWaterHardiness(type.waterHardiness);
 		preferedTemp = type.preferedTemp;
+		Main.interactables.add(this);
+		this.type = type;
 	}
 
 	@Override
@@ -53,6 +59,20 @@ public class VegetablePlant extends Plant {
 
 	public void remove() {
 		Main.r.removeElement(this);
+		Main.interactables.remove(this);
+	}
+
+	@Override
+	public void interact(Holdable hand) {
+		if(hand == null) {
+			Main.r.addElement(new VegetableObject(new Tuple(position), type));
+			remove();
+		}
+	}
+
+	@Override
+	public Tuple getPostition() {
+		return position;
 	}
 
 }

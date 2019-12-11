@@ -118,6 +118,7 @@ public class Render extends Canvas {
 		// Initializing some variables
 		int h = 1, r, g, b;
 		double cos = 0, sin = 0;
+		float invTwoFiftyFive = 1/255.0f;
 
 		// Finding the height of the image
 		if (w > 0) {
@@ -149,7 +150,7 @@ public class Render extends Canvas {
 		// For every pixel...
 		for (float i = 0; i < image.length; i += deltaI) {
 			// Find alpha of pixel
-			float alpha = ((image[(int) i] >> 24 & 255) / 255.0f) * opacity;
+			float alpha = ((image[(int) i] >> 24 & 255) * invTwoFiftyFive) * opacity;
 			// Pixel is transparent, skip to next pixel
 			if (alpha <= 0)
 				continue;
