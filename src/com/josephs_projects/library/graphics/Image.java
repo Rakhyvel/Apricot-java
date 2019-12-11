@@ -8,6 +8,11 @@ import javax.imageio.ImageIO;
 
 public class Image {
 
+	public static int[] loadImage(String path) {
+		Image image = new Image();
+		return image.loadImageInterface(path);
+	}
+	
 	/**
 	 * Takes a path to an image, its width and height, and returns the image as
 	 * an integer array using 32 bit color
@@ -20,7 +25,7 @@ public class Image {
 	 *            The height of the image
 	 * @return The loaded image
 	 */
-	public int[] loadImage(String path, int width, int height) {
+	private int[] loadImageInterface(String path) {
 		BufferedImage image = null;
 		try {
 			InputStream iw = getClass().getResourceAsStream(path);
@@ -30,6 +35,6 @@ public class Image {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		return image.getRGB(0, 0, width, height, null, 0, width);
+		return image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
 	}
 }

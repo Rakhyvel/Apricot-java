@@ -4,6 +4,7 @@ import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
+import test.Main;
 import test.beings.Being;
 
 public abstract class Plant extends Being{
@@ -23,10 +24,10 @@ public abstract class Plant extends Being{
 			return;
 		
 		// Reject if not the right time
-		if((birthTick - Registrar.ticks) % 2000 != 0) 
+		if((Registrar.ticks - birthTick) % 200 != 199)
 			return;
 		
-		// Making sure plant has enough water
+//		Making sure plant has enough water
 		if (hungers[Hunger.WATER.ordinal()] < 0.5)
 			return;
 		
@@ -42,6 +43,20 @@ public abstract class Plant extends Being{
 			break;
 		default:
 			break;
+		}
+	}
+	
+	public boolean checkUnderWater() {
+		return Main.terrain.getPlot(position) <= 0.5;
+	}
+	
+	public void drinkWater() {
+		eat((100 - Main.terrain.getPrecipitation(position))/100.0, Hunger.WATER);
+	}
+	
+	public void dieIfBadTemp() {
+		if(Math.abs(Main.terrain.getTemp(position) - preferedTemp) > 20) {
+			remove();
 		}
 	}
 }

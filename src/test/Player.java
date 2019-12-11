@@ -109,6 +109,8 @@ public class Player extends Being {
 		// Hand is not full, there is something on the ground
 		if (closest.pickup())
 			hand = closest;
+
+		System.out.println(hand);
 	}
 	
 	void drop() {

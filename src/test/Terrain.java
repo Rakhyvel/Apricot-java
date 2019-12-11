@@ -2,6 +2,7 @@ package test;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Map;
+import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -26,11 +27,22 @@ public class Terrain implements Element {
 
 	@Override
 	public void render(Render r) {
-		int size = 1;
+		// Could be optimized to only iterate over tiles known to be visible, but
+		// probably wouldn't help much
+		int size = Main.zoom;
 		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
 		for (int i = 0; i < mapImage.length; i++) {
-			int x = (i % width) * size - Main.player.getX();
-			int y = (i / width) * size - Main.player.getY();
+			int x = (i % width) * size - Main.player.getX() - 32;
+			int y = (i / width) * size - Main.player.getY() - 32;
+			if (x < -size)
+				continue;
+			if (y < -size)
+				continue;
+			if (x - size > Registrar.canvas.getWidth())
+				continue;
+			if (y - size > Registrar.canvas.getHeight())
+				continue;
+//			r.drawImage(x, y, size, Render.getScreenBlend(mapImage[i], tile), 1, 0);
 			r.drawRect(x, y, size, size, mapImage[i]);
 		}
 	}
@@ -46,5 +58,17 @@ public class Terrain implements Element {
 
 	public void remove() {
 		// Can't do that :)
+	}
+
+	public float getPlot(Tuple point) {
+		return map.getPlot(point);
+	}
+
+	public double getPrecipitation(Tuple point) {
+		return map.getPrecipitation(point);
+	}
+
+	public int getTemp(Tuple point) {
+		return (int) map.getTemp(point);
 	}
 }

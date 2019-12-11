@@ -49,7 +49,7 @@ public class Hole implements Element {
 		if (closestElement == null)
 			return;
 
-		((Berry) closestElement).sprout();
+		((FruitObject) closestElement).sprout();
 	}
 
 	Element findElement() {

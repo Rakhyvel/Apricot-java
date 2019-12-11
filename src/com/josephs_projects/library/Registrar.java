@@ -16,7 +16,7 @@ public class Registrar {
     public ArrayList<Element> registry = new ArrayList<>();
     public static Random rand = new Random();
     private static JFrame frame;
-    private static Canvas canvas;
+    public static Canvas canvas;
     public static Mouse mouse;
     public static Keyboard keyboard;
     private static Render render;

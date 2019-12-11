@@ -7,19 +7,22 @@ import com.josephs_projects.library.graphics.Render;
 import test.Main;
 import test.Player;
 import test.beings.Being;
-import test.beings.plants.BerryBush;
+import test.beings.plants.Fruit;
+import test.beings.plants.FruitPlant;
 import test.beings.plants.Plantable;
 
-public class Berry implements Element, Holdable, Plantable {
+public class FruitObject implements Element, Holdable, Plantable {
 	Tuple position;
 	boolean held = false;
 	int[] image = Main.spritesheet.getSubset(1, 0, 64);
 	boolean onBush = true;
 	double decay = 1;
+	Fruit type;
 
-	public Berry(Tuple position) {
+	public FruitObject(Tuple position, Fruit type) {
 		this.position = position;
 		Main.holdables.add(this);
+		this.type = type;
 	}
 
 	@Override
@@ -71,7 +74,7 @@ public class Berry implements Element, Holdable, Plantable {
 
 	@Override
 	public void use() {
-		Main.player.eat(1 + decay, Player.Hunger.FRUIT);
+		Main.player.eat(decay, Player.Hunger.FRUIT);
 	}
 
 	@Override
@@ -81,8 +84,9 @@ public class Berry implements Element, Holdable, Plantable {
 
 	public void sprout() {
 		remove();
-		BerryBush bush = (BerryBush) new BerryBush(new Tuple(position)).setGrowthStage(Being.GrowthStage.BABY);
-		Main.r.addElement(bush);
+		FruitPlant plant = new FruitPlant(new Tuple(position), type);
+		plant = (FruitPlant) plant.setGrowthStage(Being.GrowthStage.BABY);
+		Main.r.addElement(plant);
 	}
 
 	public void remove() {

@@ -12,15 +12,15 @@ public class Map {
 	private int width;
 	private int height;
 	Image img = new Image();
-	private int[] biomes = img.loadImage("/res/biomes.png", 86, 10);
+	private int[] biomes = Image.loadImage("/res/biomes.png");
 
 	public Map(int width, int height, int depth) {
 		this.width = width;
 		this.height = height;
-		
-		rand.setSeed(3);
+
+//		rand.setSeed(3);
 		mountain = perlinNoise(depth, 1f);
-		for (int i2 = depth+1; i2 < 9; i2++) {
+		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
 			float[][] tempMountain = perlinNoise(i2, 2f / denominator);
 			for (int i = 0; i < width * height; i++) {
@@ -29,7 +29,7 @@ public class Map {
 				mountain[x][y] = mountain[x][y] + tempMountain[x][y];
 			}
 		}
-		
+
 		temperature = generateTempMap();
 		precipitation = generatePrecipitation();
 	}
@@ -44,7 +44,7 @@ public class Map {
 				int x = (i % width) * wavelength;
 				int y = (i / width) * wavelength;
 				if (frequency <= 2) {
-					noise[x][y] = rand.nextFloat()-0.05f;
+					noise[x][y] = rand.nextFloat();
 				} else {
 					noise[x][y] = ((2 * rand.nextFloat() - 1f) * amplitude);
 				}
@@ -111,11 +111,11 @@ public class Map {
 	float linearInterpolation(int x1, float y1, int x2, float y2, int m) {
 		return (y2 - y1) / (x2 - x1) * (m - x1) + y1;
 	}
-	
+
 	public float[][] getArray() {
 		return mountain;
 	}
-	
+
 	public void setArray(float[][] mountain) {
 		this.mountain = mountain;
 	}
@@ -131,10 +131,10 @@ public class Map {
 			return mountain[x][y];
 		return -1;
 	}
-	
+
 	public float getPlot(Tuple point) {
-		int x = (int)point.getX();
-		int y = (int)point.getY();
+		int x = (int) point.getX();
+		int y = (int) point.getY();
 		if (x >= 0 && x < width && y >= 0 && y < height)
 			return mountain[x][y];
 		return -1;
@@ -148,10 +148,10 @@ public class Map {
 	}
 
 	public int[] createLattitudeGradient(int[] tempMap) {
-		// 30 degrees farenheit at poles, 100 degrees farenheit at equator
+		// 25 degrees farenheit at poles, 110 degrees farenheit at equator
 		for (int i = 0; i < tempMap.length; i++) {
 			int y = (i / width);
-			tempMap[i] = (int) (-(140.0 / (double) height) * Math.abs(y - height / 2.0) + 100);
+			tempMap[i] = (int) (-(170.0 / (double) height) * Math.abs(y - height / 2.0) + 110);
 		}
 		return tempMap;
 	}
@@ -163,7 +163,7 @@ public class Map {
 			float z = getPlot(x, y);
 			if (z <= 0.5)
 				continue;
-			tempMap[i] = (int) (tempMap[i] - 30 * (z  - 0.5) * (z  - 0.5));
+			tempMap[i] = (int) (tempMap[i] - 2 * Math.pow(Math.max(0, z - 0.5), 10));
 		}
 		return tempMap;
 	}
@@ -173,27 +173,32 @@ public class Map {
 		int y = (int) point.getY();
 		return temperature[y * width + x];
 	}
-	
+
+	public double getPrecipitation(Tuple point) {
+		int x = (int) point.getX();
+		int y = (int) point.getY();
+		return precipitation[y * width + x];
+	}
+
 	public double[] generatePrecipitation() {
 		double[] retval = new double[width * height];
-		for (int i = 0; i < width * height; i++) {
-			int distanceToWater = 1;
-			int x = (i % width);
-			int y = (i / width);
-			for (int i2 = x; (i2 % width) < width - 1; i2++) {
-				if (mountain[i2][y] < 0.5) {
-					break;
+		for (int y = 0; y < height; y++) {
+			double precipitation = 99;
+			for(int x = width - 1; x > 0; x--) {
+				if(mountain[x][y] < 0.5) {
+					precipitation = Math.min(99, precipitation + 1);
+				} else if (precipitation > 0){
+					retval[x + y * width] = Math.min(99, precipitation);
+					precipitation *= 0.995;
 				}
-				distanceToWater++;
 			}
-			retval[i] = Math.min(9, Math.log((double)distanceToWater)*1.2);
 		}
 		return retval;
 	}
-	
+
 	public int[] getImage() {
 		int[] image = new int[width * height];
-		for(int i = 0; i < width*height; i++) {
+		for (int i = 0; i < width * height; i++) {
 			int x = (i % width);
 			int y = (i / width);
 			image[i] = getColor(mountain[x][y], temperature[i], precipitation[i]);
@@ -209,8 +214,8 @@ public class Map {
 	int getColor(float value, int temperature, double precip) {
 		if (value < 0.5)
 			return 255 << 24 | 105 << 8 | 148;
-		int x = (int)Math.max(0, (temperature - 30) * (86/70.0));
-		int y = (int)precip;
-		return biomes[x + y * 86];
+		int x = (int) Math.max(0, (temperature - 25) * (860 / 85.0));
+		int y = (int) (99 - precip) * 860;
+		return biomes[x + y];
 	}
 }

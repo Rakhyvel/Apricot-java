@@ -71,15 +71,30 @@ public abstract class Being implements Element {
 	}
 
 	public void eat(double amount, Hunger hunger) {
-		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
+		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * (amount + 1));
 	}
 
 	public Being setGrowthStage(Being.GrowthStage growthStage) {
 		this.growthStage = growthStage;
 		return this;
 	}
-	
+
 	protected void setWaterHardiness(double waterHardiness) {
 		this.waterHardiness = waterHardiness / (waterHardiness + 1);
+	}
+
+	public void dieIfStarving() {
+		for (int i = 0; i < hungers.length - 1; i++) {
+			if (hungers[i] < 0.1) {
+				remove();
+				return;
+			}
+		}
+	}
+
+	public void dieIfDehydrated() {
+		if (hungers[Hunger.WATER.ordinal()] < 0.1) {
+			remove();
+		}
 	}
 }

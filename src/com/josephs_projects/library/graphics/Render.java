@@ -127,11 +127,11 @@ public class Render extends Canvas {
 		// Rejecting images that could not have pixels on the screen
 		if (x + w < 0)
 			return;
-		if (x > width)
+		if (x - w > width)
 			return;
 		if (y + h < 0)
 			return;
-		if (y > height)
+		if (y - h > height)
 			return;
 
 		// Doing division once since division is slow
