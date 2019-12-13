@@ -1,11 +1,9 @@
 package test.beings;
 
-import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
-import com.josephs_projects.library.graphics.Render;
 
-public abstract class Being implements Element {
+public abstract class Being {
 	protected Tuple position = new Tuple();
 	protected Tuple target = new Tuple();
 
@@ -37,17 +35,13 @@ public abstract class Being implements Element {
 			1, // Water
 	};
 	protected int awakeTicks = 0;
-	protected int temperature = 72; // TODO: Implement temperature
-
-	public abstract void tick();
-
-	public abstract void render(Render r);
-
-	public abstract void input();
+	protected int temperature = 72;
 
 	public Tuple getPosition() {
 		return position;
 	}
+	
+	public abstract void remove();
 
 	protected void move() {
 		if (position.getX() < target.getX())

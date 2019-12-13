@@ -2,7 +2,6 @@ package test.beings.plants;
 
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
-import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.beings.Being;
@@ -12,11 +11,6 @@ public abstract class Plant extends Being{
 	public Plant(Tuple position) {
 		super(position);
 	}
-	
-	public abstract void tick();
-	public abstract void render(Render r);
-	public abstract void input();
-	public abstract void remove();
 	
 	public void grow() {
 		// Reject if adult, already grown

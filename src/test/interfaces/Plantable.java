@@ -1,4 +1,4 @@
-package test.beings.plants;
+package test.interfaces;
 
 /**
  * Objects that interface with Plantable are able to sprout into plants. They

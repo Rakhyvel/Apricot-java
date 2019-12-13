@@ -4,20 +4,20 @@ import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
-import test.Interactable;
 import test.Main;
 import test.Player;
 import test.beings.Being;
 import test.holdables.FruitObject;
-import test.holdables.Holdable;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
 /**
- * Berry Bushes grow berries. They are plants that grow from berries.
+ * Fruit plant grow fruit. They are plants that grow from fruit.
  * 
  * @author Joseph Shimel
  *
  */
-public class FruitPlant extends Plant implements Interactable {	
+public class FruitPlant extends Plant implements Element, Interactable {	
 	public Fruit type;
 
 	public FruitPlant(Tuple position, Fruit type) {
@@ -94,10 +94,5 @@ public class FruitPlant extends Plant implements Interactable {
 		if(hand == null) {
 			produceBerry();
 		}
-	}
-
-	@Override
-	public Tuple getPostition() {
-		return position;
 	}
 }

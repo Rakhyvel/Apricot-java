@@ -9,7 +9,8 @@ import test.Player;
 import test.beings.Being;
 import test.beings.plants.Fruit;
 import test.beings.plants.FruitPlant;
-import test.beings.plants.Plantable;
+import test.interfaces.Holdable;
+import test.interfaces.Plantable;
 
 public class FruitObject implements Element, Holdable, Plantable {
 	Tuple position;

@@ -11,8 +11,9 @@ import test.beings.plants.Fruit;
 import test.beings.plants.FruitPlant;
 import test.beings.plants.Vegetable;
 import test.beings.plants.VegetablePlant;
-import test.holdables.Holdable;
 import test.holdables.Shovel;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
 /*
  * TODO:
@@ -49,7 +50,7 @@ public class Main {
 		player = new Player();
 		r.addElement(terrain);
 		// Blue berries
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 500; i++) {
 			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
 			r.addElement(new FruitPlant(position, Fruit.BLUEBERRY_BUSH));
 		}

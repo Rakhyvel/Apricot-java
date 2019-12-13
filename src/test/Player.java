@@ -2,20 +2,22 @@ package test;
 
 import java.awt.event.KeyEvent;
 
+import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.beings.Being;
-import test.holdables.Holdable;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-public class Player extends Being {
+public class Player extends Being implements Element {
 	boolean pickupDown = false;
 	boolean usedDown = false;
 	Holdable hand = null;
 
 	public Player() {
-		super(new Tuple(0, 0));
+		super(getRandomTuple());
 		target = new Tuple(position);
 	}
 
@@ -24,27 +26,27 @@ public class Player extends Being {
 		move();
 		decayHunger();
 		awakeTicks++;
-		
-		if(Registrar.keyboard.keyDown(KeyEvent.VK_SPACE)) {
+
+		if (Registrar.keyboard.keyDown(KeyEvent.VK_SPACE)) {
 			pickupDown = true;
-		} else if(pickupDown) {
+		} else if (pickupDown) {
 			pickupDown = false;
 			pickup();
 		}
-		
-		if(Registrar.mouse.getMouseLeftDown()) {
+
+		if (Registrar.mouse.getMouseLeftDown()) {
 			usedDown = true;
 		} else if (usedDown) {
 			usedDown = false;
 			interact();
-			if(hand != null) {
+			if (hand != null) {
 				hand.use();
 				if (hand.isConsumed()) {
 					hand = null;
 				}
 			}
 		}
-		
+
 		keyMove();
 	}
 
@@ -54,48 +56,48 @@ public class Player extends Being {
 	}
 
 	@Override
-	public void input() {}
-	
+	public void input() {
+	}
+
 	void keyMove() {
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_W) && position.getY() == target.getY()) {
 			target.setY(target.getY() - 1);
-		} 
+		}
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_S) && position.getY() == target.getY()) {
 			target.setY(target.getY() + 1);
 		}
 
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_A) && position.getX() == target.getX()) {
 			target.setX(target.getX() - 1);
-		} 
+		}
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_D) && position.getX() == target.getX()) {
 			target.setX(target.getX() + 1);
 		}
 	}
-	
-	
+
 	public void remove() {
 		// Sorry can't do that :)
 	}
-	
+
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	public int getX() {
 		return (int) ((position.getX() - 6) * 64);
 	}
-	
+
 	public int getY() {
 		return (int) ((position.getY() - 3) * 64);
 	}
-	
+
 	void pickup() {
 		Holdable closest = Main.findNearestHoldable(position);
-		
+
 		// Hand is not full, there is nothing on the ground (to pickup)
-		if(closest == null)
+		if (closest == null)
 			return;
-		
+
 		// Hand is full, there is nothing on the ground
 		if (hand != null) {
 			drop();
@@ -112,32 +114,43 @@ public class Player extends Being {
 
 		System.out.println(hand);
 	}
-	
+
 	void drop() {
-		if(hand != null) {
+		if (hand != null) {
 			hand.drop();
 		}
 		hand = null;
 	}
-	
+
 	public void eat(double amount, Hunger hunger) {
+		amount += 1;
 		System.out.println("Nom nom " + hungers[hunger.ordinal()] + " hunger after " + amount);
 		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
 	}
-	
+
 	void interact() {
 		Interactable interactable = Main.interactables.get(0);
-		double closestDistance = interactable.getPostition().getDist(position);
-		for(int i = 0; i < Main.interactables.size(); i++) {
-			double tempDist = Main.interactables.get(i).getPostition().getDist(position);
-			if(tempDist < closestDistance) {
+		double closestDistance = interactable.getPosition().getDist(position);
+		for (int i = 0; i < Main.interactables.size(); i++) {
+			double tempDist = Main.interactables.get(i).getPosition().getDist(position);
+			if (tempDist < closestDistance) {
 				closestDistance = tempDist;
 				interactable = Main.interactables.get(i);
 			}
 		}
-		if(closestDistance >= 1)
+		if (closestDistance >= 1)
 			return;
-		
+
 		interactable.interact(hand);
+	}
+
+	static Tuple getRandomTuple() {
+		Tuple randPoint = new Tuple(513, 205);
+		do {
+			int x = Registrar.rand.nextInt(685)+170;
+			int y = Registrar.rand.nextInt(685)+170;
+			randPoint = new Tuple(x, y);
+		} while (Main.terrain.getPlot(randPoint) < 0.5);
+		return randPoint;
 	}
 }

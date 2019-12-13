@@ -1,12 +1,13 @@
 package test.beings.plants;
 
+import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.beings.Being;
 
-public class TreePlant extends Plant {
+public class TreePlant extends Plant implements Element {
 	Tree type;
 
 	public TreePlant(Tuple position, Tree type) {

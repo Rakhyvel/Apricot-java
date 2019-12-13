@@ -5,7 +5,9 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
-import test.beings.plants.Plantable;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
+import test.interfaces.Plantable;
 
 /**
  * Hole acts as the shepherd for seeds. It watches and listens each time it is
@@ -15,11 +17,12 @@ import test.beings.plants.Plantable;
  * @author Joseph Shimel
  *
  */
-public class Hole implements Element {
+public class Hole implements Element, Interactable {
 	Tuple position;
 
 	public Hole(Tuple position) {
 		this.position = position;
+		Main.interactables.add(this);
 	}
 
 	@Override
@@ -34,7 +37,12 @@ public class Hole implements Element {
 	}
 
 	@Override
-	public void input() {
+	public void input() {}
+
+	@Override
+	public void remove() {
+		Main.r.removeElement(this);
+		Main.interactables.remove(this);
 	}
 
 	@Override
@@ -43,13 +51,14 @@ public class Hole implements Element {
 	}
 
 	@Override
-	public void remove() {
-		Main.r.removeElement(this);
-		Element closestElement = findElement();
-		if (closestElement == null)
-			return;
+	public void interact(Holdable hand) {
+		if (hand instanceof Shovel) {
+			Element closestElement = findElement();
+			if (closestElement == null)
+				return;
 
-		((FruitObject) closestElement).sprout();
+			((Plantable) closestElement).sprout();
+		}
 	}
 
 	Element findElement() {

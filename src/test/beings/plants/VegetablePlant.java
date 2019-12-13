@@ -1,15 +1,16 @@
 package test.beings.plants;
 
+import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
-import test.Interactable;
 import test.Main;
 import test.beings.Being;
-import test.holdables.Holdable;
 import test.holdables.VegetableObject;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-public class VegetablePlant extends Plant implements Interactable{
+public class VegetablePlant extends Plant implements Element, Interactable{
 	// 1841 2008
 	Vegetable type;
 	
@@ -69,10 +70,4 @@ public class VegetablePlant extends Plant implements Interactable{
 			remove();
 		}
 	}
-
-	@Override
-	public Tuple getPostition() {
-		return position;
-	}
-
 }

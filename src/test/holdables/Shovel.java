@@ -5,6 +5,7 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.interfaces.Holdable;
 
 public class Shovel implements Holdable, Element {
 	Tuple position;

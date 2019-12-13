@@ -7,6 +7,7 @@ import com.josephs_projects.library.graphics.Render;
 import test.Main;
 import test.Player;
 import test.beings.plants.Vegetable;
+import test.interfaces.Holdable;
 
 /**
  * Represents the actual object players can eat

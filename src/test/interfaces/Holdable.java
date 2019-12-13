@@ -1,4 +1,4 @@
-package test.holdables;
+package test.interfaces;
 
 import com.josephs_projects.library.Tuple;
 
