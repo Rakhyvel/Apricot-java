@@ -10,7 +10,7 @@ import test.interfaces.Holdable;
 public class Shovel implements Holdable, Element {
 	Tuple position;
 	boolean held = false;
-	boolean fullOfDirt = false;
+	public boolean fullOfDirt = false;
 
 	public Shovel() {
 		Main.holdables.add(this);
@@ -18,8 +18,7 @@ public class Shovel implements Holdable, Element {
 	}
 
 	@Override
-	public void tick() {
-	}
+	public void tick() {}
 
 	@Override
 	public void render(Render r) {
@@ -40,6 +39,27 @@ public class Shovel implements Holdable, Element {
 	}
 
 	@Override
+	public void remove() {
+		Main.holdables.remove(this);
+		Main.r.removeElement(this);
+	}
+	
+	@Override
+	public Tuple getPosition() {
+		return position;
+	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
+	}
+	
+	public Element clone() {
+		return new Shovel();
+	}
+
+	@Override
 	public boolean pickup() {
 		held = true;
 		position.setX(-100);
@@ -53,7 +73,7 @@ public class Shovel implements Holdable, Element {
 		position.setX(Main.player.getPosition().getX());
 		position.setY(Main.player.getPosition().getY());
 	}
-
+	
 	@Override
 	public void use() {
 		Element closest = findElement();
@@ -94,17 +114,6 @@ public class Shovel implements Holdable, Element {
 		return false;
 	}
 
-	@Override
-	public Tuple getPosition() {
-		return position;
-	}
-
-	@Override
-	public void remove() {
-		Main.holdables.remove(this);
-		Main.r.removeElement(this);
-	}
-
 	Element findElement() {
 		Element closest = null;
 		double closestDistance = 1;
@@ -119,5 +128,4 @@ public class Shovel implements Holdable, Element {
 		}
 		return closest;
 	}
-
 }

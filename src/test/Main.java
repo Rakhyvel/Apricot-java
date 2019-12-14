@@ -9,9 +9,12 @@ import com.josephs_projects.library.graphics.SpriteSheet;
 
 import test.beings.plants.Fruit;
 import test.beings.plants.FruitPlant;
+import test.beings.plants.Tree;
+import test.beings.plants.TreePlant;
 import test.beings.plants.Vegetable;
 import test.beings.plants.VegetablePlant;
 import test.holdables.Shovel;
+import test.holdables.Stone;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -29,10 +32,10 @@ import test.interfaces.Interactable;
  * X Generalize BerryBush to all plants and seeds
  * X Generalize Berry to all foods and seeds
  * 
- * - Add vegetables
- * - Add trees
+ * X Add vegetables
+ * X Add trees
  * 
- * - Add sorted rendering
+ * X Add sorted rendering
  */
 
 public class Main {
@@ -49,54 +52,31 @@ public class Main {
 		terrain = new Terrain();
 		player = new Player();
 		r.addElement(terrain);
-		// Blue berries
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.BLUEBERRY_BUSH));
-		}
-		// Cacti
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.CACTUS));
-		}
-		// Strawberries
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.STRAWBERRY_BUSH));
-		}
-		// Apples
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.APPLE_TREE));
-		}
-		// Cherry
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.CHERRY_TREE));
-		}
-		// Melon
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.MELON_VINE));
-		}
-		// Orange
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.ORANGE_TREE));
-		}
-		// Peach
-		for (int i = 0; i < 500; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new FruitPlant(position, Fruit.PEACH_TREE));
-		}
-
-		// Barley
-		for (int i = 0; i < 400; i++) {
-			Tuple position = new Tuple(Registrar.rand.nextInt(1025), Registrar.rand.nextInt(1025));
-			r.addElement(new VegetablePlant(position, Vegetable.BARLEY));
-		}
-		r.addElement(new Shovel());
 		r.addElement(player);
+		
+		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 50);
+		addElement(new FruitPlant(Fruit.CACTUS), 50);
+		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), 50);
+		addElement(new FruitPlant(Fruit.APPLE_TREE), 50);
+		addElement(new FruitPlant(Fruit.CHERRY_TREE), 50);
+		addElement(new FruitPlant(Fruit.MELON_VINE), 50);
+		addElement(new FruitPlant(Fruit.ORANGE_TREE), 50);
+		addElement(new FruitPlant(Fruit.PEACH_TREE), 50);
+
+		addElement(new VegetablePlant(Vegetable.BARLEY), 100);
+
+		addElement(new TreePlant(Tree.SAVANNAH), 1000);
+		addElement(new TreePlant(Tree.MESQUITE), 1000);
+		addElement(new TreePlant(Tree.SPRUCE), 1000);
+		addElement(new TreePlant(Tree.PINE), 1000);
+		addElement(new TreePlant(Tree.WILLOW), 1000);
+		addElement(new TreePlant(Tree.RUBBER), 1000);
+		addElement(new TreePlant(Tree.OAK), 1000);
+		addElement(new TreePlant(Tree.MAPLE), 1000);
+
+		addElement(new Stone(), 300);
+		
+		r.addElement(new Shovel());
 		r.run();
 	}
 
@@ -120,11 +100,35 @@ public class Main {
 		return closestElement;
 	}
 
+	public static double findClosestDistance(Tuple point) {
+		Element closestElement = r.getElement(0);
+		double closestDistance = point.getDist(closestElement.getPosition());
+		for (int i = 0; i < r.registrySize(); i++) {
+			Tuple tempPoint = r.getElement(i).getPosition();
+			if (tempPoint == null)
+				continue;
+
+			double tempDist = tempPoint.getDist(point);
+			// This method will try not to return itself
+			if (point == r.getElement(i).getPosition())
+				continue;
+			if (tempDist < closestDistance) {
+				closestDistance = tempDist;
+				closestElement = r.getElement(i);
+			}
+		}
+		return closestDistance;
+	}
+
 	public static Holdable findNearestHoldable(Tuple point) {
 		Holdable closestHoldable = holdables.get(0);
-		double closestDistance = point.getDist(closestHoldable.getPosition());
+		double closestDistance = 10000000;
 		for (int i = 0; i < holdables.size(); i++) {
-			double tempDist = holdables.get(i).getPosition().getDist(point);
+			Tuple tempPoint = holdables.get(i).getPosition();
+			if (tempPoint == null) {
+				continue;
+			}
+			double tempDist = tempPoint.getDist(point);
 			if (point == holdables.get(i).getPosition())
 				continue;
 			if (tempDist < closestDistance) {
@@ -133,5 +137,11 @@ public class Main {
 			}
 		}
 		return closestHoldable;
+	}
+
+	void addElement(Element e, int quantity) {
+		for (int i = 0; i < quantity; i++) {
+			r.addElement(e.clone());
+		}
 	}
 }

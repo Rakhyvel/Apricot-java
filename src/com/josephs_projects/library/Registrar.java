@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -24,6 +25,8 @@ public class Registrar {
     private boolean running = false;
     private double dt = 1000 / 60.0;
     public static int ticks = 0;
+    
+    Comparator<Element> comparator = new YPositionComparator();
 
     public Registrar(String title, int width, int height){
         frame = new JFrame(title);
@@ -64,7 +67,7 @@ public class Registrar {
         while(running){
             while ((System.currentTimeMillis() - current) > dt){
                 tick();
-                current = System.currentTimeMillis();
+                current += dt;
                 ticks++;
             }
             render();
@@ -85,8 +88,9 @@ public class Registrar {
         }
 
         Graphics g = bs.getDrawGraphics();
+        registry.sort(comparator);
         for (int i = 0; i < registry.size(); i++){
-            registry.get(i).render(render);
+        	registry.get(i).render(render);
         }
         
         render.render(g);
@@ -104,5 +108,21 @@ public class Registrar {
     public void stop(){
         running = false;
         System.exit(0);
+    }
+    
+    public class YPositionComparator implements Comparator<Element> {
+		@Override
+		public int compare(Element arg0, Element arg1) {
+			if(arg0 == null)
+				return 0;
+			if(arg1 == null)
+				return 0;
+			if(arg0.getPosition() == null)
+				return 0;
+			if(arg1.getPosition() == null)
+				return 0;
+						
+			return (int)(arg0.getPosition().getY() * 65 - arg1.getPosition().getY() * 65);
+		}
     }
 }

@@ -18,7 +18,8 @@ public class Map {
 		this.width = width;
 		this.height = height;
 
-//		rand.setSeed(0);
+		String seed = "Joseph Shimel";
+		rand.setSeed(seed.hashCode());
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -163,7 +164,7 @@ public class Map {
 			float z = getPlot(x, y);
 			if (z <= 0.5)
 				continue;
-			tempMap[i] = tempMap[i] - (z - 0.5);
+			tempMap[i] = tempMap[i] * (1 - (z - 0.5));
 		}
 		return tempMap;
 	}
@@ -223,8 +224,10 @@ public class Map {
 	int getColor(float value, double temperature, double precip) {
 		if (value < 0.5)
 			return 255 << 24 | 105 << 8 | 148;
-		int x = (int) Math.max(0, (temperature - 25) * (860 / 85.0));
-		int y = (int) (precip) * 860;
-		return biomes[x + y];
+		temperature = Math.max(0, Math.min(85, temperature - 25));
+		
+		int x = (int) ((temperature / 85.0) * 4095);
+		int y = (int) ((precip / 100.0) * 475);
+		return biomes[x + y * 4096];
 	}
 }

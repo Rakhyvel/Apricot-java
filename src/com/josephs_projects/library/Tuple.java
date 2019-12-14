@@ -14,6 +14,12 @@ public class Tuple {
     }
 
     public Tuple(Tuple t){
+    	if(t == null) {
+    		this.x = 0;
+    		this.y = 0;
+    		return;
+    	}
+    	
         this.x = t.x;
         this.y = t.y;
     }
@@ -66,7 +72,7 @@ public class Tuple {
     	
     	if (o instanceof Tuple) {
     		Tuple t = (Tuple)o;
-    		return (x == t.x) && (y == t.y);
+    		return getDist(t) < 0.1;
     	}
     	
     	return false;

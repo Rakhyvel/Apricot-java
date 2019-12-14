@@ -7,7 +7,7 @@ public abstract class Being {
 	protected Tuple position = new Tuple();
 	protected Tuple target = new Tuple();
 
-	double speed = 1 / 8.0;
+	protected double speed = 1 / 16.0;
 	protected int birthTick;
 	protected GrowthStage growthStage;
 	protected double waterHardiness = 0;
@@ -25,7 +25,7 @@ public abstract class Being {
 	}
 
 	public static enum GrowthStage {
-		BABY, CHILD, SUBADULT, ADULT;
+		BABY, CHILD, SUBADULT, ADULT, PREGNANT;
 	}
 
 	protected double[] hungers = { 1, // Fruit
@@ -36,10 +36,6 @@ public abstract class Being {
 	};
 	protected int awakeTicks = 0;
 	protected int temperature = 72;
-
-	public Tuple getPosition() {
-		return position;
-	}
 	
 	public abstract void remove();
 

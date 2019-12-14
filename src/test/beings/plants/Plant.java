@@ -44,12 +44,22 @@ public abstract class Plant extends Being{
 		return Main.terrain.getPlot(position) <= 0.5;
 	}
 	
+	public boolean checkBadTemp() {
+		return Math.abs(Main.terrain.getTemp(position) - preferedTemp) > 20;
+	}
+	
 	public void drinkWater() {
 		eat((100 - Main.terrain.getPrecipitation(position))/100.0, Hunger.WATER);
 	}
 	
 	public void dieIfBadTemp() {
-		if(Math.abs(Main.terrain.getTemp(position) - preferedTemp) > 20) {
+		if(checkBadTemp()) {
+			remove();
+		}
+	}
+	
+	public void dieIfRootRot() {
+		if((99 - Main.terrain.getPrecipitation(position)) / 35.0 + 1.5 < waterHardiness) {
 			remove();
 		}
 	}

@@ -38,13 +38,17 @@ public class Player extends Being implements Element {
 			usedDown = true;
 		} else if (usedDown) {
 			usedDown = false;
-			interact();
+			// Holdable's use() method is used for things like food and shovels, where there
+			// is no interactable to be used.
+			// Most holdables probably won't use it.
 			if (hand != null) {
 				hand.use();
 				if (hand.isConsumed()) {
 					hand = null;
 				}
 			}
+			
+			interact();
 		}
 
 		keyMove();
@@ -52,11 +56,27 @@ public class Player extends Being implements Element {
 
 	@Override
 	public void render(Render r) {
-		r.drawRect(6 * 64 - 3, 7 * 32 - 32, 64, 64, 255 << 24 | 255 << 16);
+		r.drawRect(6 * 64 - 3, 7 * 32 - 64, 64, 64, 255 << 24 | 255 << 16);
 	}
 
 	@Override
-	public void input() {
+	public void input() {}
+
+	@Override
+	public void remove() {
+		// Sorry can't do that :)
+		// TODO: Make it so you can
+	}
+
+	@Override
+	public Tuple getPosition() {
+		return position;
+	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
 	}
 
 	void keyMove() {
@@ -73,14 +93,6 @@ public class Player extends Being implements Element {
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_D) && position.getX() == target.getX()) {
 			target.setX(target.getX() + 1);
 		}
-	}
-
-	public void remove() {
-		// Sorry can't do that :)
-	}
-
-	public Tuple getPosition() {
-		return position;
 	}
 
 	public int getX() {
@@ -129,10 +141,16 @@ public class Player extends Being implements Element {
 	}
 
 	void interact() {
+		if(Main.interactables.size() == 0)
+			return;
+		
 		Interactable interactable = Main.interactables.get(0);
-		double closestDistance = interactable.getPosition().getDist(position);
+		double closestDistance = 1000000000;
 		for (int i = 0; i < Main.interactables.size(); i++) {
-			double tempDist = Main.interactables.get(i).getPosition().getDist(position);
+			Tuple tempPoint = Main.interactables.get(i).getPosition();
+			if(tempPoint == null)
+				continue;
+			double tempDist = tempPoint.getDist(position);
 			if (tempDist < closestDistance) {
 				closestDistance = tempDist;
 				interactable = Main.interactables.get(i);
@@ -147,10 +165,22 @@ public class Player extends Being implements Element {
 	static Tuple getRandomTuple() {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
-			int x = Registrar.rand.nextInt(685)+170;
-			int y = Registrar.rand.nextInt(685)+170;
+			int x = Registrar.rand.nextInt(685) + 170;
+			int y = 205;//Registrar.rand.nextInt(685) + 170;
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5);
 		return randPoint;
+	}
+	
+	public void setHand(Holdable h) {
+		if(hand != null)
+			return;
+		
+		h.pickup();
+		hand = h;
+	}
+	
+	public Element clone() {
+		return null;
 	}
 }

@@ -55,6 +55,16 @@ public class FruitObject implements Element, Holdable, Plantable {
 	public Tuple getPosition() {
 		return position;
 	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
+	}
+	
+	public Element clone() {
+		return new FruitObject(new Tuple(position), type);
+	}
 
 	@Override
 	public boolean pickup() {
@@ -85,7 +95,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 
 	public void sprout() {
 		remove();
-		FruitPlant plant = new FruitPlant(new Tuple(position), type);
+		FruitPlant plant = (FruitPlant) new FruitPlant(type).setPosition(position);
 		plant = (FruitPlant) plant.setGrowthStage(Being.GrowthStage.BABY);
 		Main.r.addElement(plant);
 	}

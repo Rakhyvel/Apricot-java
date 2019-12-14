@@ -51,13 +51,30 @@ public class Hole implements Element, Interactable {
 	}
 
 	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
+	}
+	
+	public Element clone() {
+		return new Hole(new Tuple(position));
+	}
+
+	@Override
 	public void interact(Holdable hand) {
 		if (hand instanceof Shovel) {
 			Element closestElement = findElement();
 			if (closestElement == null)
 				return;
-
+			
+			if (!(closestElement instanceof Plantable))
+				return;
+			
+			if(!((Shovel)hand).fullOfDirt)
+				return;
+			
 			((Plantable) closestElement).sprout();
+			remove();
 		}
 	}
 

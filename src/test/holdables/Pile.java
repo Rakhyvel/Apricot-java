@@ -52,9 +52,19 @@ public class Pile implements Element {
 		// TODO Auto-generated method stub
 		return position;
 	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
+	}
 
 	public void remove() {
 		Main.r.removeElement(this);
+	}
+	
+	public Element clone() {
+		return new Pile(new Tuple(position), amount, material);
 	}
 
 }

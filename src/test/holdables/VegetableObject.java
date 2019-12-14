@@ -52,6 +52,12 @@ public class VegetableObject implements Element, Holdable {
 	public Tuple getPosition() {
 		return position;
 	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		this.position = new Tuple(position);
+		return this;
+	}
 
 	@Override
 	public boolean pickup() {
@@ -81,5 +87,9 @@ public class VegetableObject implements Element, Holdable {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
+	}
+	
+	public Element clone() {
+		return new VegetableObject(new Tuple(position), type);
 	}
 }

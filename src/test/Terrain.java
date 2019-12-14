@@ -31,9 +31,10 @@ public class Terrain implements Element {
 		// probably wouldn't help much
 		int size = Main.zoom;
 		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
+//		int[] image = Render.getScreenBlend(mapImage[(int)Main.player.getPosition().getX() + (int)Main.player.getPosition().getY() * 1025], tile);
 		for (int i = 0; i < mapImage.length; i++) {
-			int x = (i % width) * size - Main.player.getX() - 32;
-			int y = (i / width) * size - Main.player.getY() - 32;
+			int x = (i % width) * size - Main.player.getX();
+			int y = (i / width) * size - Main.player.getY();
 			if (x < -size)
 				continue;
 			if (y < -size)
@@ -42,7 +43,7 @@ public class Terrain implements Element {
 				continue;
 			if (y - size > Registrar.canvas.getHeight())
 				continue;
-//			r.drawImage(x, y, size, Render.getScreenBlend(mapImage[i], tile), 1, 0);
+//			r.drawImage(x, y, size, image, 1, 0);
 			r.drawRect(x, y, size, size, mapImage[i]);
 		}
 	}
@@ -53,7 +54,12 @@ public class Terrain implements Element {
 
 	public Tuple getPosition() {
 		// Should never be called
-		return new Tuple(2000, 2000);
+		return new Tuple(2000, -2000);
+	}
+	
+	@Override
+	public Element setPosition(Tuple position) {
+		return this;
 	}
 
 	public void remove() {
@@ -64,11 +70,20 @@ public class Terrain implements Element {
 		return map.getPlot(point);
 	}
 
+	/**
+	 * 
+	 * @param point
+	 * @return An double corresponding to the precipitation at that point ranging from 0-99, 0 being moist, 99 being dry.
+	 */
 	public double getPrecipitation(Tuple point) {
 		return map.getPrecipitation(point);
 	}
 
 	public int getTemp(Tuple point) {
 		return (int) map.getTemp(point);
+	}
+	
+	public Element clone() {
+		return null;
 	}
 }
