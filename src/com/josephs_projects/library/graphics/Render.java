@@ -2,8 +2,12 @@ package com.josephs_projects.library.graphics;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+
+import com.josephs_projects.library.Registrar;
 
 public class Render extends Canvas {
 
@@ -12,6 +16,7 @@ public class Render extends Canvas {
 	int height;
 	BufferedImage img;
 	int[] pixels;
+	
 
 	public Render(int x, int y) {
 		width = x;
@@ -24,7 +29,13 @@ public class Render extends Canvas {
 	 * Calls all objects to render to pixels int array, draws pixel array to screen.
 	 */
 	public void render(Graphics g) {
-		g.drawImage(img, 0, 0, null);
+		AffineTransform at = new AffineTransform();
+		double scale = Registrar.frame.getWidth() / (double)img.getWidth();
+		BufferedImage after = new BufferedImage(Registrar.frame.getWidth(), Registrar.frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		at.scale(scale, scale);
+		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		after = scaleOp.filter(img, after);
+		g.drawImage(after, 0, 0, null);
 	}
 
 	/**
@@ -118,7 +129,7 @@ public class Render extends Canvas {
 		// Initializing some variables
 		int h = 1, r, g, b;
 		double cos = 0, sin = 0;
-		float invTwoFiftyFive = 1/255.0f;
+		float invTwoFiftyFive = 1 / 255.0f;
 
 		// Finding the height of the image
 		if (w > 0) {
@@ -157,10 +168,10 @@ public class Render extends Canvas {
 
 			// Calculate position of pixels
 			double x1 = (i % w) - halfW; // X coord of pixel on screen, centered around origin
-			double y1 = i / w - halfH;   // Y coord of pixel on screen, centered around origin
-			double x2 = (int) (x1 + x);  // X coord of pixel on screen, centered around image center
-			double y2 = (int) (y1 + y);  // Y coord of pixel on screen, centered around image center
-			
+			double y1 = i / w - halfH; // Y coord of pixel on screen, centered around origin
+			double x2 = (int) (x1 + x); // X coord of pixel on screen, centered around image center
+			double y2 = (int) (y1 + y); // Y coord of pixel on screen, centered around image center
+
 			// Rotate pixels if rotation, since rotation is slow
 			if (rotate != 0) {
 				x2 = (int) (x1 * cos - y1 * sin + x);

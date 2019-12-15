@@ -1,4 +1,4 @@
-package test.holdables.tools;
+package test.holdables;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
@@ -6,21 +6,23 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.holdables.tools.Stone;
+import test.holdables.tools.ToolObject;
 import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-public class Knife extends ToolObject implements Holdable, Element {
+public class Stick implements Element, Holdable, Interactable{
 	Tuple position;
 	boolean held = false;
 
-	public Knife() {
+	public Stick(Tuple position) {
+		this.position = position;
 		Main.holdables.add(this);
-		position = new Tuple(512, 205);
+		Main.interactables.add(this);
 	}
 
 	@Override
 	public void tick() {
-		if (durability <= -1)
-			remove();
 	}
 
 	@Override
@@ -34,23 +36,17 @@ public class Knife extends ToolObject implements Holdable, Element {
 			x = 50;
 			y = Registrar.canvas.getHeight() - 106;
 		}
-		if (hafted)
-			r.drawRect(x, y, 3, 64, 255 << 24 | 150 << 16 | 75 << 8 | 0);
-
-		r.drawRect(x - 15, y, 15, 40, 255 << 24 | 128 << 16 | 128 << 8 | 128);
+		r.drawRect(x - 22, y - 1, 44, 3, 255 << 24 | 150 << 16 | 75 << 8 | 0);
 	}
 
 	@Override
-	public void input() {
-	}
+	public void input() {}
 
 	@Override
 	public void remove() {
-		Main.holdables.remove(this);
 		Main.r.removeElement(this);
-		if (held) {
-			Main.player.setHand(null);
-		}
+		Main.holdables.remove(this);
+		Main.interactables.remove(this);
 	}
 
 	@Override
@@ -65,7 +61,7 @@ public class Knife extends ToolObject implements Holdable, Element {
 	}
 
 	public Element clone() {
-		return new Shovel();
+		return new Stone();
 	}
 
 	@Override
@@ -90,5 +86,29 @@ public class Knife extends ToolObject implements Holdable, Element {
 	@Override
 	public boolean isConsumed() {
 		return false;
+	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if(hand instanceof ToolObject) {
+			if(((ToolObject) hand).hafted)
+				return false;
+			
+			((ToolObject) hand).hafted = true;
+			position = Stick.getRandomTuple();
+			return true;
+		}
+		return false;
+	}
+
+	static Tuple getRandomTuple() {
+		Tuple randPoint = new Tuple(513, 205);
+		do {
+			int x = Registrar.rand.nextInt(1025);
+			int y = Registrar.rand.nextInt(1025);
+			randPoint = new Tuple(x, y);
+		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
+				|| Main.player.getPosition().getDist(randPoint) < 7);
+		return randPoint;
 	}
 }

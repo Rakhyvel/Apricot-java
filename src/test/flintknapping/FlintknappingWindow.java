@@ -13,6 +13,8 @@ public class FlintknappingWindow {
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, // do not use a custom Icon
 				options, // the titles of buttons
 				options[3]);// default button title
+		if(n == -1)
+			return Tool.GARBAGE;
 		return options[n];
 	}
 

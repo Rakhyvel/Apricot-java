@@ -1,13 +1,41 @@
 package test.holdables.tools;
 
 import com.josephs_projects.library.Registrar;
+import com.josephs_projects.library.Tuple;
 
-public class ToolObject {
+import test.Main;
+import test.holdables.Stick;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
+
+public abstract class ToolObject implements Interactable{
 	protected int durability = 3;
+	public boolean hafted = false;
+	
+	public ToolObject() {
+		Main.interactables.add(this);
+	}
 	
 	public void perhapsBreak() {
-		if(Registrar.rand.nextInt(10) == 0) {
+		if(Registrar.rand.nextInt(6) == 0) {
 			durability--;
 		}
 	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if(hand instanceof Stick) {
+			if(hafted)
+				return false;
+			hafted = true;
+			hand.drop();
+			((Stick) hand).setPosition(Stone.getRandomTuple());
+			Main.player.setHand(null);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public abstract Tuple getPosition();
 }

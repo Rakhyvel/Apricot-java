@@ -16,12 +16,13 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 	public Stone() {
 		this.position = getRandomTuple();
 		Main.holdables.add(this);
-		Main.interactables.add(this);
+		// DON'T ADD STONES TO INTERACTABLES!
+		// Stones are TOOLS! They are added in ToolObject
 	}
 
 	@Override
 	public void tick() {
-		if(durability <= -1) {
+		if (durability <= -1) {
 			held = false;
 			position = getRandomTuple();
 		}
@@ -29,11 +30,16 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 
 	@Override
 	public void render(Render r) {
+		int x = 0;
+		int y = 0;
 		if (!held) {
-			int x = (int) position.getX() * 64 - Main.player.getX() + 32;
-			int y = (int) position.getY() * 64 - Main.player.getY() + 32;
-			r.drawRect(x - 20, y - 20, 40, 40, 255 << 24 | 60 << 16 | 60 << 8 | 60);
+			x = (int) position.getX() * 64 - Main.player.getX() + 32;
+			y = (int) position.getY() * 64 - Main.player.getY() + 32;
+		} else {
+			x = 50;
+			y = Registrar.frame.getHeight() - 106;
 		}
+		r.drawRect(x - 20, y - 20, 40, 40, 255 << 24 | 60 << 16 | 60 << 8 | 60);
 	}
 
 	@Override
@@ -66,7 +72,7 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 	public boolean pickup() {
 		held = true;
 		position.setX(-100);
-		position.setY(-100);
+		position.setY(3000);
 		return true;
 	}
 
@@ -91,7 +97,7 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 	public boolean interact(Holdable hand) {
 		if (hand instanceof Stone) {
 			Tool tool = Main.flintknappingWindow.getTool();
-			switch(tool) {
+			switch (tool) {
 			case SHOVEL_HEAD:
 				Shovel shovel = new Shovel();
 				shovel.setPosition(position);

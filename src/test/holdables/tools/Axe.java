@@ -1,6 +1,7 @@
 package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
+import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -18,18 +19,25 @@ public class Axe extends ToolObject implements Holdable, Element {
 
 	@Override
 	public void tick() {
-		if(durability <= -1)
+		if (durability <= -1)
 			remove();
 	}
 
 	@Override
 	public void render(Render r) {
+		int x = 0;
+		int y = 0;
 		if (!held) {
-			int x = (int) position.getX() * 64 - Main.player.getX() + 32;
-			int y = (int) position.getY() * 64 - Main.player.getY();
-			r.drawRect(x, y, 3, 64, 255 << 24 | 90 << 16 | 90 << 8 | 90);
-			r.drawRect(x - 10, y+20, 20, 20, 255 << 24 | 128 << 16 | 128 << 8 | 128);
+			x = (int) position.getX() * 64 - Main.player.getX() + 32;
+			y = (int) position.getY() * 64 - Main.player.getY() + 32;
+		} else {
+			x = 50;
+			y = Registrar.canvas.getHeight() - 106;
 		}
+		if (hafted)
+			r.drawRect(x, y, 3, 64, 255 << 24 | 150 << 16 | 75 << 8 | 0);
+
+		r.drawRect(x - 10, y + 10, 20, 20, 255 << 24 | 128 << 16 | 128 << 8 | 128);
 	}
 
 	@Override
@@ -40,7 +48,7 @@ public class Axe extends ToolObject implements Holdable, Element {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
-		if(held) {
+		if (held) {
 			Main.player.setHand(null);
 		}
 	}
@@ -64,7 +72,7 @@ public class Axe extends ToolObject implements Holdable, Element {
 	public boolean pickup() {
 		held = true;
 		position.setX(-100);
-		position.setY(-100);
+		position.setY(3000);
 		return true;
 	}
 
@@ -76,7 +84,8 @@ public class Axe extends ToolObject implements Holdable, Element {
 	}
 
 	@Override
-	public void use() {}
+	public void use() {
+	}
 
 	@Override
 	public boolean isConsumed() {

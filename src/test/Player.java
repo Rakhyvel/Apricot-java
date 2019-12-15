@@ -1,7 +1,7 @@
 package test;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
@@ -44,9 +44,6 @@ public class Player extends Being implements Element {
 			
 			if (hand != null) {
 				hand.use();
-				if (hand.isConsumed()) {
-					hand = null;
-				}
 			}
 		}
 
@@ -108,7 +105,7 @@ public class Player extends Being implements Element {
 		// Hand is not full, there is nothing on the ground (to pickup)
 		if (closest == null)
 			return;
-
+		
 		// Hand is full, there is nothing on the ground
 		if (hand != null) {
 			drop();
@@ -123,7 +120,6 @@ public class Player extends Being implements Element {
 		if (closest.pickup())
 			hand = closest;
 
-		System.out.println(hand);
 	}
 
 	void drop() {
@@ -143,7 +139,7 @@ public class Player extends Being implements Element {
 		if(Main.interactables.size() == 0)
 			return false;
 		
-		ArrayList<Interactable> interactables = new ArrayList<>();
+		HashSet<Interactable> interactables = new HashSet<>();
 		for (int i = 0; i < Main.interactables.size(); i++) {
 			Tuple tempPoint = Main.interactables.get(i).getPosition();
 			if(tempPoint == null)
@@ -171,8 +167,10 @@ public class Player extends Being implements Element {
 		return randPoint;
 	}
 	
-	public void setHand(Holdable h) {		
-		h.pickup();
+	public void setHand(Holdable h) {
+		System.out.println(h);
+		if (h != null)
+			h.pickup();
 		hand = h;
 	}
 	

@@ -12,6 +12,8 @@ public class Terrain implements Element {
 	Map map = new Map(width, height, 2);
 	int[] mapImage;
 	int[] tile = Main.spritesheet.getSubset(2, 0, 64);
+	int[] water = Main.spritesheet.getSubset(0, 0, 64);
+	int[][] tiles = new int[9 * 77][64 * 64];
 	Tuple offset = new Tuple(0, 0);
 
 	int xOffset = 0;
@@ -19,6 +21,9 @@ public class Terrain implements Element {
 
 	public Terrain() {
 		mapImage = map.getImage();
+		for (int i = 0; i < map.biomes.length; i++) {
+			tiles[i] = Render.getScreenBlend(map.biomes[i], tile);
+		}
 	}
 
 	@Override
@@ -31,20 +36,24 @@ public class Terrain implements Element {
 		// probably wouldn't help much
 		int size = Main.zoom;
 		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
-//		int[] image = Render.getScreenBlend(mapImage[(int)Main.player.getPosition().getX() + (int)Main.player.getPosition().getY() * 1025], tile);
-		for (int i = 0; i < mapImage.length; i++) {
-			int x = (i % width) * size - Main.player.getX();
-			int y = (i / width) * size - Main.player.getY();
-			if (x < -size)
-				continue;
-			if (y < -size)
-				continue;
-			if (x - size > Registrar.canvas.getWidth())
-				continue;
-			if (y - size > Registrar.canvas.getHeight())
-				continue;
-//			r.drawImage(x, y, size, image, 1, 0);
-			r.drawRect(x, y, size, size, mapImage[i]);
+		for (int x = (int) (Main.player.getPosition().getX() - 7); x < Main.player.getPosition().getX() + 8; x++) {
+			for (int y = (int) (Main.player.getPosition().getY() - 3); y < Main.player.getPosition().getY() + 5; y++) {
+				int x1 = x * size - Main.player.getX() - 32;
+				int y1 = y * size - Main.player.getY() - 32;
+				if (x < -size)
+					continue;
+				if (y < -size)
+					continue;
+				if (x - size > Registrar.canvas.getWidth())
+					continue;
+				if (y - size > Registrar.canvas.getHeight())
+					continue;
+				if(map.getPlot(x, y) > 0.5) {
+					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * width))], 1, 0);
+				} else {
+					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
+				}
+			}
 		}
 	}
 
@@ -56,7 +65,7 @@ public class Terrain implements Element {
 		// Should never be called
 		return new Tuple(2000, -2000);
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		return this;
@@ -73,7 +82,8 @@ public class Terrain implements Element {
 	/**
 	 * 
 	 * @param point
-	 * @return An double corresponding to the precipitation at that point ranging from 0-99, 0 being moist, 99 being dry.
+	 * @return An double corresponding to the precipitation at that point ranging
+	 *         from 0-99, 0 being moist, 99 being dry.
 	 */
 	public double getPrecipitation(Tuple point) {
 		return map.getPrecipitation(point);
@@ -82,7 +92,7 @@ public class Terrain implements Element {
 	public int getTemp(Tuple point) {
 		return (int) map.getTemp(point);
 	}
-	
+
 	public Element clone() {
 		return null;
 	}

@@ -12,7 +12,7 @@ public class Map {
 	private int width;
 	private int height;
 	Image img = new Image();
-	private int[] biomes = Image.loadImage("/res/biomes.png");
+	public int[] biomes = Image.loadImage("/res/biomes.png");
 
 	public Map(int width, int height, int depth) {
 		this.width = width;
@@ -172,13 +172,17 @@ public class Map {
 	public double getTemp(Tuple point) {
 		int x = (int) point.getX();
 		int y = (int) point.getY();
-		return temperature[y * width + x];
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			return temperature[y * width + x];
+		return -1;
 	}
 
 	public double getPrecipitation(Tuple point) {
 		int x = (int) point.getX();
 		int y = (int) point.getY();
-		return precipitation[y * width + x];
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			return precipitation[y * width + x];
+		return -1;
 	}
 
 	public double[] generatePrecipitation() {
@@ -226,8 +230,23 @@ public class Map {
 			return 255 << 24 | 105 << 8 | 148;
 		temperature = Math.max(0, Math.min(85, temperature - 25));
 		
-		int x = (int) ((temperature / 85.0) * 4095);
-		int y = (int) ((precip / 100.0) * 475);
-		return biomes[x + y * 4096];
+		int x = (int) ((temperature / 85.0) * 77);
+		int y = (int) ((precip / 100.0) * 9);
+		return biomes[x + y * 77];
+	}
+	
+	public int getColorIndex(int index) {
+		int x = (index % width);
+		int y = (index / width);
+		float value = mountain[x][y];
+		double temperature = this.temperature[index];
+		double precip = precipitation[index];
+		if (value < 0.5)
+			return 255 << 24 | 105 << 8 | 148;
+		temperature = Math.max(0, Math.min(85, temperature - 25));
+		
+		x = (int) ((temperature / 85.0) * 77);
+		y = (int) ((precip / 100.0) * 9);
+		return Math.max(0, x + y * 77);
 	}
 }

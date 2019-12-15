@@ -1,6 +1,7 @@
 package test.holdables;
 
 import com.josephs_projects.library.Element;
+import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -38,21 +39,27 @@ public class VegetableObject implements Element, Holdable {
 
 	@Override
 	public void render(Render r) {
+		int x = 0;
+		int y = 0;
 		if (!held) {
-			int x = (int) position.getX() * 64 - Main.player.getX() + 32;
-			int y = (int) position.getY() * 64 - Main.player.getY() + 32;
-			r.drawImage(x, y, 64, image, 1, 0);
+			x = (int) position.getX() * 64 - Main.player.getX() + 32;
+			y = (int) position.getY() * 64 - Main.player.getY() + 32;
+		} else {
+			x = 50;
+			y = Registrar.canvas.getHeight() - 106;
 		}
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override
-	public void input() {}
+	public void input() {
+	}
 
 	@Override
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
@@ -63,7 +70,7 @@ public class VegetableObject implements Element, Holdable {
 	public boolean pickup() {
 		held = true;
 		position.setX(-100);
-		position.setY(-100);
+		position.setY(3000);
 		return true;
 	}
 
@@ -87,11 +94,11 @@ public class VegetableObject implements Element, Holdable {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
-		if(held) {
+		if (held) {
 			Main.player.setHand(null);
 		}
 	}
-	
+
 	public Element clone() {
 		return new VegetableObject(new Tuple(position), type);
 	}

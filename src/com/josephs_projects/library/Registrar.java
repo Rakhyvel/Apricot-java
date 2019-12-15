@@ -16,7 +16,7 @@ import com.josephs_projects.library.input.Mouse;
 public class Registrar {
     public ArrayList<Element> registry = new ArrayList<>();
     public static Random rand = new Random();
-    private static JFrame frame;
+    public static JFrame frame;
     public static Canvas canvas;
     public static Mouse mouse;
     public static Keyboard keyboard;

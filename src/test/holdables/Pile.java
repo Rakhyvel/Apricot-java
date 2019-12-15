@@ -10,15 +10,15 @@ import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
 public class Pile implements Element, Interactable {
-	public static enum PileMaterial{
-		DIRT;
+	public static enum Material{
+		DIRT, LOG;
 	}
 	
 	Tuple position;
 	int amount = 0;
-	PileMaterial material;
+	Material material;
 
-	public Pile(Tuple position, int amount, PileMaterial material) {
+	public Pile(Tuple position, int amount, Material material) {
 		this.position = position;
 		this.amount = amount;
 		this.material = material;
@@ -61,6 +61,7 @@ public class Pile implements Element, Interactable {
 
 	public void remove() {
 		Main.r.removeElement(this);
+		Main.interactables.remove(this);
 	}
 	
 	public Element clone() {
@@ -69,7 +70,8 @@ public class Pile implements Element, Interactable {
 
 	@Override
 	public boolean interact(Holdable hand) {
-		if(hand instanceof Shovel) {
+		// TIP: MAKE ABSOLUTE SURE you return true or false. Don't leave empty threads
+		if(hand instanceof Shovel && material == Material.DIRT) {
 			if(((Shovel)hand).fullOfDirt) {
 				increase();
 				((Shovel)hand).fullOfDirt = false;
@@ -78,7 +80,22 @@ public class Pile implements Element, Interactable {
 				((Shovel)hand).fullOfDirt = true;
 			}
 			return true;
+		} else if (hand instanceof Log && material == Material.LOG) {
+			increase();
+			hand.remove();
+			return true;
 		}
+		if(hand != null)
+			return false;
+		
+		if(material == Material.LOG) {
+			decrease();
+			Log log = new Log(new Tuple(-100, 10000));
+			Main.r.addElement(log);
+			Main.player.setHand(log);
+			return true;
+		}
+		
 		return false;
 	}
 

@@ -64,6 +64,10 @@ public class Hole implements Element, Interactable {
 	@Override
 	public boolean interact(Holdable hand) {
 		if (hand instanceof Shovel) {
+			// Shovel must be hafted to work
+			if(!((Shovel) hand).hafted)
+				return false;
+			
 			if(((Shovel)hand).fullOfDirt) {
 				remove();
 				((Shovel)hand).fullOfDirt = false;

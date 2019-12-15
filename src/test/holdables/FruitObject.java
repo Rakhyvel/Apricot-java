@@ -1,6 +1,7 @@
 package test.holdables;
 
 import com.josephs_projects.library.Element;
+import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -40,11 +41,16 @@ public class FruitObject implements Element, Holdable, Plantable {
 
 	@Override
 	public void render(Render r) {
+		int x = 0;
+		int y = 0;
 		if (!held) {
-			int x = (int) position.getX() * 64 - Main.player.getX() + 32;
-			int y = (int) position.getY() * 64 - Main.player.getY() + 32;
-			r.drawImage(x, y, 64, image, 1, 0);
+			x = (int) position.getX() * 64 - Main.player.getX() + 32;
+			y = (int) position.getY() * 64 - Main.player.getY() + 32;
+		} else {
+			x = 50;
+			y = Registrar.canvas.getHeight() - 106;
 		}
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override
@@ -55,13 +61,13 @@ public class FruitObject implements Element, Holdable, Plantable {
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
 		return this;
 	}
-	
+
 	public Element clone() {
 		return new FruitObject(new Tuple(position), type);
 	}
@@ -71,7 +77,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 		held = true;
 		onBush = false;
 		position.setX(-100);
-		position.setY(-100);
+		position.setY(3000);
 		return true;
 	}
 
@@ -103,7 +109,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
-		if(held) {
+		if (held) {
 			Main.player.setHand(null);
 		}
 	}

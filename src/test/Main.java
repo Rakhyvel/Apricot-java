@@ -36,6 +36,9 @@ import test.interfaces.Interactable;
  * X Add trees
  * 
  * X Add sorted rendering
+ * 
+ * - Add interactions
+ * 	    - Add log to pile type
  */
 
 public class Main {
@@ -55,6 +58,7 @@ public class Main {
 		player = new Player();
 		r.addElement(terrain);
 		r.addElement(player);
+		r.addElement(new GUI());
 		
 		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 50);
 		addElement(new FruitPlant(Fruit.CACTUS), 50);
@@ -77,6 +81,8 @@ public class Main {
 		addElement(new TreePlant(Tree.MAPLE), 1000);
 
 		addElement(new Stone(), 1000);
+		
+		System.out.println(r.registrySize());
 		
 		r.run();
 	}

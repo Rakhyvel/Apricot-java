@@ -1,4 +1,4 @@
-package test.holdables.tools;
+package test.holdables;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
@@ -6,24 +6,20 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
-import test.holdables.Hole;
-import test.holdables.Pile;
+import test.holdables.tools.Stone;
 import test.interfaces.Holdable;
 
-public class Shovel extends ToolObject implements Holdable, Element {
+public class TreeFoliage implements Element, Holdable {
 	Tuple position;
 	boolean held = false;
-	public boolean fullOfDirt = false;
 
-	public Shovel() {
+	public TreeFoliage(Tuple position) {
+		this.position = position;
 		Main.holdables.add(this);
-		position = new Tuple(512, 205);
 	}
 
 	@Override
 	public void tick() {
-		if (durability <= -1)
-			remove();
 	}
 
 	@Override
@@ -37,14 +33,7 @@ public class Shovel extends ToolObject implements Holdable, Element {
 			x = 50;
 			y = Registrar.canvas.getHeight() - 106;
 		}
-		if (hafted)
-			r.drawRect(x, y, 3, 64, 255 << 24 | 150 << 16 | 75 << 8 | 0);
-
-		if (fullOfDirt) {
-			r.drawRect(x - 10, y, 20, 20, 255 << 24 | 90 << 16 | 60 << 8 | 10);
-		} else {
-			r.drawRect(x - 10, y, 20, 20, 255 << 24 | 128 << 16 | 128 << 8 | 128);
-		}
+		r.drawRect(x - 22, y - 22, 44, 44, 255 << 24 | 75 << 16 | 255 << 8 | 0);
 	}
 
 	@Override
@@ -53,11 +42,8 @@ public class Shovel extends ToolObject implements Holdable, Element {
 
 	@Override
 	public void remove() {
-		Main.holdables.remove(this);
 		Main.r.removeElement(this);
-		if (held) {
-			Main.player.setHand(null);
-		}
+		Main.holdables.remove(this);
 	}
 
 	@Override
@@ -72,7 +58,7 @@ public class Shovel extends ToolObject implements Holdable, Element {
 	}
 
 	public Element clone() {
-		return new Shovel();
+		return new Stone();
 	}
 
 	@Override
@@ -92,37 +78,10 @@ public class Shovel extends ToolObject implements Holdable, Element {
 
 	@Override
 	public void use() {
-		if (!hafted)
-			return;
-
-		if (fullOfDirt) {
-			Pile pile = new Pile(new Tuple(Main.player.getPosition()), 1, Pile.Material.DIRT);
-			Main.r.addElement(pile);
-			fullOfDirt = false;
-			return;
-		}
-
-		Hole hole = new Hole(new Tuple(Main.player.getPosition()));
-		Main.r.addElement(hole);
-		fullOfDirt = true;
-
 	}
 
 	@Override
 	public boolean isConsumed() {
 		return false;
-	}
-
-	Element findElement() {
-		Element closest = null;
-		double closestDistance = 1;
-		for (int i = 0; i < Main.r.registrySize(); i++) {
-			double tempDist = Main.r.getElement(i).getPosition().getDist(Main.player.getPosition());
-			if (tempDist < closestDistance) {
-				closestDistance = tempDist;
-				closest = Main.r.getElement(i);
-			}
-		}
-		return closest;
 	}
 }
