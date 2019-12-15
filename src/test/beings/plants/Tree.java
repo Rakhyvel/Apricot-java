@@ -3,10 +3,10 @@ package test.beings.plants;
 import com.josephs_projects.library.graphics.Image;
 
 public enum Tree {
-	SAVANNAH("palm", 3, 110), MESQUITE("mesquite", 3, 110), 
-	SPRUCE("spruce", 3, 20), PINE("pine", 3, 40), 
-	WILLOW("willow", 1.5, 100), RUBBER("rubber", 1.5, 100),
-	OAK("oak", 1.5, 60), MAPLE("maple", 1.5, 60);
+	SAVANNAH("palm", 3, 110), MESQUITE("mesquite", 3, 90), 
+	SPRUCE("spruce", 3, 30), PINE("pine", 3, 50), 
+	WILLOW("willow", 1.5, 90), RUBBER("rubber", 1.5, 110),
+	OAK("oak", 1.5, 50), MAPLE("maple", 1.5, 30);
 	public double waterHardiness;
 	public int preferedTemp;
 	public int[] babyImage;

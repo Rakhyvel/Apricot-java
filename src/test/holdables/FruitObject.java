@@ -103,5 +103,8 @@ public class FruitObject implements Element, Holdable, Plantable {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
+		if(held) {
+			Main.player.setHand(null);
+		}
 	}
 }

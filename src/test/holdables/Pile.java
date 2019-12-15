@@ -5,11 +5,11 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.holdables.tools.Shovel;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-/* TODO: Make it so that piles can hold more than one load, like a real pile. 
- * Also there should be piles of all kinds of stuff like logs and sand idk figure it out.
-*/
-public class Pile implements Element {
+public class Pile implements Element, Interactable {
 	public static enum PileMaterial{
 		DIRT;
 	}
@@ -22,6 +22,7 @@ public class Pile implements Element {
 		this.position = position;
 		this.amount = amount;
 		this.material = material;
+		Main.interactables.add(this);
 	}
 
 	@Override
@@ -49,7 +50,6 @@ public class Pile implements Element {
 
 	@Override
 	public Tuple getPosition() {
-		// TODO Auto-generated method stub
 		return position;
 	}
 	
@@ -65,6 +65,21 @@ public class Pile implements Element {
 	
 	public Element clone() {
 		return new Pile(new Tuple(position), amount, material);
+	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if(hand instanceof Shovel) {
+			if(((Shovel)hand).fullOfDirt) {
+				increase();
+				((Shovel)hand).fullOfDirt = false;
+			} else {
+				decrease();
+				((Shovel)hand).fullOfDirt = true;
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

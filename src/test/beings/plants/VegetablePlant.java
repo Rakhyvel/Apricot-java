@@ -79,11 +79,13 @@ public class VegetablePlant extends Plant implements Element, Interactable{
 	}
 
 	@Override
-	public void interact(Holdable hand) {
+	public boolean interact(Holdable hand) {
 		if(hand == null) {
 			Main.player.setHand(new VegetableObject(new Tuple(position), type));
 			remove();
+			return true;
 		}
+		return false;
 	}
 	
 	static Tuple getRandomTuple() {

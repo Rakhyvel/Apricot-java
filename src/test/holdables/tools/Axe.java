@@ -1,62 +1,63 @@
-package test.holdables;
+package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
-import test.Player;
-import test.beings.plants.Vegetable;
 import test.interfaces.Holdable;
 
-/**
- * Represents the actual object players can eat
- * 
- * @author Joseph Shimel
- *
- */
-public class VegetableObject implements Element, Holdable {
+public class Axe extends ToolObject implements Holdable, Element {
 	Tuple position;
 	boolean held = false;
-	int[] image = Main.spritesheet.getSubset(1, 0, 64);
-	boolean onBush = true;
-	double decay = 1;
-	Vegetable type;
 
-	public VegetableObject(Tuple position, Vegetable type) {
-		this.position = position;
+	public Axe() {
 		Main.holdables.add(this);
-		this.type = type;
+		position = new Tuple(512, 205);
 	}
 
 	@Override
 	public void tick() {
-		if (decay < 0.01) {
+		if(durability <= -1)
 			remove();
-		}
 	}
 
 	@Override
 	public void render(Render r) {
 		if (!held) {
 			int x = (int) position.getX() * 64 - Main.player.getX() + 32;
-			int y = (int) position.getY() * 64 - Main.player.getY() + 32;
-			r.drawImage(x, y, 64, image, 1, 0);
+			int y = (int) position.getY() * 64 - Main.player.getY();
+			r.drawRect(x, y, 3, 64, 255 << 24 | 90 << 16 | 90 << 8 | 90);
+			r.drawRect(x - 10, y+20, 20, 20, 255 << 24 | 128 << 16 | 128 << 8 | 128);
 		}
 	}
 
 	@Override
-	public void input() {}
+	public void input() {
+	}
+
+	@Override
+	public void remove() {
+		Main.holdables.remove(this);
+		Main.r.removeElement(this);
+		if(held) {
+			Main.player.setHand(null);
+		}
+	}
 
 	@Override
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
 		return this;
+	}
+
+	public Element clone() {
+		return new Shovel();
 	}
 
 	@Override
@@ -75,24 +76,10 @@ public class VegetableObject implements Element, Holdable {
 	}
 
 	@Override
-	public void use() {
-		Main.player.eat(decay, Player.Hunger.VEGETABLE);
-	}
+	public void use() {}
 
 	@Override
 	public boolean isConsumed() {
-		return true;
-	}
-
-	public void remove() {
-		Main.holdables.remove(this);
-		Main.r.removeElement(this);
-		if(held) {
-			Main.player.setHand(null);
-		}
-	}
-	
-	public Element clone() {
-		return new VegetableObject(new Tuple(position), type);
+		return false;
 	}
 }

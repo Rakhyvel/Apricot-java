@@ -5,6 +5,7 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.holdables.tools.Shovel;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 import test.interfaces.Plantable;
@@ -61,34 +62,37 @@ public class Hole implements Element, Interactable {
 	}
 
 	@Override
-	public void interact(Holdable hand) {
+	public boolean interact(Holdable hand) {
 		if (hand instanceof Shovel) {
-			Element closestElement = findElement();
-			if (closestElement == null)
-				return;
-			
-			if (!(closestElement instanceof Plantable))
-				return;
-			
-			if(!((Shovel)hand).fullOfDirt)
-				return;
-			
-			((Plantable) closestElement).sprout();
-			remove();
+			if(((Shovel)hand).fullOfDirt) {
+				remove();
+				((Shovel)hand).fullOfDirt = false;
+				sprout();
+			}
+			return true;
 		}
+		return false;
 	}
 
-	Element findElement() {
-		Element closestElement = null;
+	void sprout() {
+		Holdable closestElement = findSeed();
+		if (closestElement == null)
+			return;
+		
+		((Plantable) closestElement).sprout();
+		remove();
+	}
+	
+	Holdable findSeed() {
+		Holdable closestElement = null;
 		double closestDistance = 1;
-		for (int i = 0; i < Main.r.registrySize(); i++) {
-			double tempDist = Main.r.getElement(i).getPosition().getDist(position);
-			if (!(Main.r.getElement(i) instanceof Plantable))
+		for (int i = 0; i < Main.holdables.size(); i++) {
+			double tempDist = Main.holdables.get(i).getPosition().getDist(position);
+			if (!(Main.holdables.get(i) instanceof Plantable))
 				continue;
-			// This method will try not to return itself
 			if (tempDist < closestDistance) {
 				closestDistance = tempDist;
-				closestElement = Main.r.getElement(i);
+				closestElement = Main.holdables.get(i);
 			}
 		}
 		return closestElement;

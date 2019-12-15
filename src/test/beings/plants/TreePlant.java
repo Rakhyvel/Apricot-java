@@ -7,9 +7,13 @@ import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.beings.Being;
+import test.holdables.tools.Axe;
+import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-public class TreePlant extends Plant implements Element {
+public class TreePlant extends Plant implements Element, Interactable {
 	Tree type;
+	int hits = 0;
 
 	public TreePlant(Tree type) {
 		super(getRandomTuple());
@@ -17,6 +21,7 @@ public class TreePlant extends Plant implements Element {
 		setWaterHardiness(type.waterHardiness);
 		preferedTemp = type.preferedTemp;
 		this.type = type;
+		Main.interactables.add(this);
 	}
 
 	@Override
@@ -86,5 +91,16 @@ public class TreePlant extends Plant implements Element {
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 2);
 		return randPoint;
+	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if(hand instanceof Axe) {
+			((Axe) hand).perhapsBreak();
+			hits++;
+			if(hits > 4)
+				remove();
+		}
+		return false;
 	}
 }

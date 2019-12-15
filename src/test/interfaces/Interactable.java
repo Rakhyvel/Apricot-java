@@ -11,7 +11,7 @@ import com.josephs_projects.library.Tuple;
  *
  */
 public interface Interactable {
-	void interact(Holdable hand);
+	boolean interact(Holdable hand);
 
 	Tuple getPosition();
 }

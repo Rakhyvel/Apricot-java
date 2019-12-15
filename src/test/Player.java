@@ -1,6 +1,7 @@
 package test;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
@@ -38,17 +39,15 @@ public class Player extends Being implements Element {
 			usedDown = true;
 		} else if (usedDown) {
 			usedDown = false;
-			// Holdable's use() method is used for things like food and shovels, where there
-			// is no interactable to be used.
-			// Most holdables probably won't use it.
+			if (interact())
+				return;
+			
 			if (hand != null) {
 				hand.use();
 				if (hand.isConsumed()) {
 					hand = null;
 				}
 			}
-			
-			interact();
 		}
 
 		keyMove();
@@ -140,42 +139,39 @@ public class Player extends Being implements Element {
 		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
 	}
 
-	void interact() {
+	boolean interact() {
 		if(Main.interactables.size() == 0)
-			return;
+			return false;
 		
-		Interactable interactable = Main.interactables.get(0);
-		double closestDistance = 1000000000;
+		ArrayList<Interactable> interactables = new ArrayList<>();
 		for (int i = 0; i < Main.interactables.size(); i++) {
 			Tuple tempPoint = Main.interactables.get(i).getPosition();
 			if(tempPoint == null)
 				continue;
 			double tempDist = tempPoint.getDist(position);
-			if (tempDist < closestDistance) {
-				closestDistance = tempDist;
-				interactable = Main.interactables.get(i);
+			if (tempDist < 1) {
+				interactables.add(Main.interactables.get(i));
 			}
 		}
-		if (closestDistance >= 1)
-			return;
-
-		interactable.interact(hand);
+		
+		boolean interacted = false;
+		for(Interactable i : interactables) {
+			interacted |= i.interact(hand);
+		}
+		return interacted;
 	}
 
 	static Tuple getRandomTuple() {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(685) + 170;
-			int y = 205;//Registrar.rand.nextInt(685) + 170;
+			int y = 256;//Registrar.rand.nextInt(685) + 170;
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5);
 		return randPoint;
 	}
 	
-	public void setHand(Holdable h) {
-		if(hand != null)
-			return;
-		
+	public void setHand(Holdable h) {		
 		h.pickup();
 		hand = h;
 	}

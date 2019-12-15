@@ -93,13 +93,15 @@ public class FruitPlant extends Plant implements Element, Interactable {
 	}
 
 	@Override
-	public void interact(Holdable hand) {
+	public boolean interact(Holdable hand) {
 		if (hand == null && growthStage == GrowthStage.PREGNANT) {
 			FruitObject fruit = new FruitObject(new Tuple(position), type);
 			Main.r.addElement(fruit);
 			Main.player.setHand(fruit);
 			growthStage = GrowthStage.ADULT;
+			return true;
 		}
+		return false;
 	}
 
 	/**

@@ -1,13 +1,15 @@
-package test.holdables;
+package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.holdables.Hole;
+import test.holdables.Pile;
 import test.interfaces.Holdable;
 
-public class Shovel implements Holdable, Element {
+public class Shovel extends ToolObject implements Holdable, Element {
 	Tuple position;
 	boolean held = false;
 	public boolean fullOfDirt = false;
@@ -18,7 +20,10 @@ public class Shovel implements Holdable, Element {
 	}
 
 	@Override
-	public void tick() {}
+	public void tick() {
+		if(durability <= -1)
+			remove();
+	}
 
 	@Override
 	public void render(Render r) {
@@ -42,19 +47,22 @@ public class Shovel implements Holdable, Element {
 	public void remove() {
 		Main.holdables.remove(this);
 		Main.r.removeElement(this);
+		if(held) {
+			Main.player.setHand(null);
+		}
 	}
-	
+
 	@Override
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
 		return this;
 	}
-	
+
 	public Element clone() {
 		return new Shovel();
 	}
@@ -73,39 +81,19 @@ public class Shovel implements Holdable, Element {
 		position.setX(Main.player.getPosition().getX());
 		position.setY(Main.player.getPosition().getY());
 	}
-	
-	@Override
-	public void use() {
-		Element closest = findElement();
 
+	@Override
+	public void use() {		
 		if (fullOfDirt) {
-			if (closest == null) {
-				// Shovel is full and there is nothing
-				Pile pile = new Pile(new Tuple(Main.player.getPosition()), 1, Pile.PileMaterial.DIRT);
-				Main.r.addElement(pile);
-				fullOfDirt = false;
-			} else if (closest instanceof Hole) {
-				// Shovel is full and there is a hole to fill
-				closest.remove();
-				fullOfDirt = false;
-			} else if (closest instanceof Pile) {
-				// Shovel is full and there is a pile to add to
-				Pile pile = (Pile) closest;
-				pile.increase();
-				fullOfDirt = false;
-			}
+			Pile pile = new Pile(new Tuple(Main.player.getPosition()), 1, Pile.PileMaterial.DIRT);
+			Main.r.addElement(pile);
+			fullOfDirt = false;
 			return;
 		}
-		if (closest == null) {
-			// Shovel is empty and there was nothing obstructing
-			Hole hole = new Hole(new Tuple(Main.player.getPosition()));
-			Main.r.addElement(hole);
-			fullOfDirt = true;
-		} else if (closest instanceof Pile) {
-			// Shovel is empty and there is a pile of dirt
-			((Pile) closest).decrease();
-			fullOfDirt = true;
-		}
+
+		Hole hole = new Hole(new Tuple(Main.player.getPosition()));
+		Main.r.addElement(hole);
+		fullOfDirt = true;
 
 	}
 
@@ -118,8 +106,6 @@ public class Shovel implements Holdable, Element {
 		Element closest = null;
 		double closestDistance = 1;
 		for (int i = 0; i < Main.r.registrySize(); i++) {
-			if (!(Main.r.getElement(i) instanceof Hole) && !(Main.r.getElement(i) instanceof Pile))
-				continue;
 			double tempDist = Main.r.getElement(i).getPosition().getDist(Main.player.getPosition());
 			if (tempDist < closestDistance) {
 				closestDistance = tempDist;

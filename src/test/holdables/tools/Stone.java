@@ -1,4 +1,4 @@
-package test.holdables;
+package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
@@ -9,7 +9,7 @@ import test.Main;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
-public class Stone implements Element, Holdable, Interactable {
+public class Stone extends ToolObject implements Element, Holdable, Interactable {
 	Tuple position;
 	boolean held = false;
 
@@ -20,7 +20,12 @@ public class Stone implements Element, Holdable, Interactable {
 	}
 
 	@Override
-	public void tick() {}
+	public void tick() {
+		if(durability <= -1) {
+			held = false;
+			position = getRandomTuple();
+		}
+	}
 
 	@Override
 	public void render(Render r) {
@@ -32,7 +37,8 @@ public class Stone implements Element, Holdable, Interactable {
 	}
 
 	@Override
-	public void input() {}
+	public void input() {
+	}
 
 	@Override
 	public void remove() {
@@ -45,13 +51,13 @@ public class Stone implements Element, Holdable, Interactable {
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
 		return this;
 	}
-	
+
 	public Element clone() {
 		return new Stone();
 	}
@@ -82,20 +88,43 @@ public class Stone implements Element, Holdable, Interactable {
 	}
 
 	@Override
-	public void interact(Holdable hand) {
-		if(hand instanceof Stone) {
-			System.out.println("Hey, you're a stone too!");
-			remove();
+	public boolean interact(Holdable hand) {
+		if (hand instanceof Stone) {
+			Tool tool = Main.flintknappingWindow.getTool();
+			switch(tool) {
+			case SHOVEL_HEAD:
+				Shovel shovel = new Shovel();
+				shovel.setPosition(position);
+				Main.r.addElement(shovel);
+				break;
+			case AXE_HEAD:
+				Axe axe = new Axe();
+				axe.setPosition(position);
+				Main.r.addElement(axe);
+				break;
+			case KNIFE_BLADE:
+				Knife knife = new Knife();
+				knife.setPosition(position);
+				Main.r.addElement(knife);
+				break;
+			default:
+				break;
+			}
+			position = getRandomTuple();
+			((Stone) hand).perhapsBreak();
+			return true;
 		}
+		return false;
 	}
-	
+
 	static Tuple getRandomTuple() {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(1025);
 			int y = Registrar.rand.nextInt(1025);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) < 0.5 && Main.findClosestDistance(randPoint) < 1);
+		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
+				|| Main.player.getPosition().getDist(randPoint) < 7);
 		return randPoint;
 	}
 

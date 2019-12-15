@@ -13,8 +13,8 @@ import test.beings.plants.Tree;
 import test.beings.plants.TreePlant;
 import test.beings.plants.Vegetable;
 import test.beings.plants.VegetablePlant;
-import test.holdables.Shovel;
-import test.holdables.Stone;
+import test.flintknapping.FlintknappingWindow;
+import test.holdables.tools.Stone;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -46,8 +46,10 @@ public class Main {
 	public static Registrar r;
 	public static Terrain terrain;
 	public static int zoom = 64;
+	public static FlintknappingWindow flintknappingWindow;
 
 	public Main() {
+		flintknappingWindow = new FlintknappingWindow();
 		r = new Registrar("Test RPG Game", 13 * 64, 7 * 64);
 		terrain = new Terrain();
 		player = new Player();
@@ -74,9 +76,8 @@ public class Main {
 		addElement(new TreePlant(Tree.OAK), 1000);
 		addElement(new TreePlant(Tree.MAPLE), 1000);
 
-		addElement(new Stone(), 300);
+		addElement(new Stone(), 1000);
 		
-		r.addElement(new Shovel());
 		r.run();
 	}
 
