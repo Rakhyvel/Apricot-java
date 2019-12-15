@@ -1,7 +1,6 @@
 package test;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -12,7 +11,7 @@ public class GUI implements Element{
 
 	@Override
 	public void render(Render r) {
-		r.drawRect(-1, Registrar.canvas.getHeight() - 107, 100, 100, 180 << 24 | 86 << 16 | 86 << 8 | 86);
+		r.drawRect(-1, 7 * 64 - 107, 100, 100, 180 << 24 | 86 << 16 | 86 << 8 | 86);
 	}
 
 	@Override

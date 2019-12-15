@@ -169,8 +169,9 @@ public class Player extends Being implements Element {
 	
 	public void setHand(Holdable h) {
 		System.out.println(h);
-		if (h != null)
+		if (h != null) {
 			h.pickup();
+		}
 		hand = h;
 	}
 	

@@ -1,24 +1,34 @@
 package test.holdables;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 
-public class Log implements Element, Holdable {
+public class Log implements Element, Holdable, Interactable {
 	Tuple position;
 	boolean held = false;
+	int[] image;
+	double decay = 1;
 
 	public Log(Tuple position) {
 		this.position = position;
 		Main.holdables.add(this);
+		Main.interactables.add(this);
+		image = Image.loadImage("/res/plants/log.png");
 	}
 
 	@Override
 	public void tick() {
+		decay *= 0.9998;
+
+		if (decay < 0.01) {
+			remove();
+		}
 	}
 
 	@Override
@@ -30,9 +40,9 @@ public class Log implements Element, Holdable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		r.drawRect(x - 14, y - 44, 28, 44, 255 << 24 | 150 << 16 | 75 << 8 | 0);
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override
@@ -46,6 +56,7 @@ public class Log implements Element, Holdable {
 		if (held) {
 			Main.player.setHand(null);
 		}
+		Main.interactables.remove(this);
 	}
 
 	@Override
@@ -81,13 +92,22 @@ public class Log implements Element, Holdable {
 
 	@Override
 	public void use() {
-		Pile pile = new Pile(new Tuple(Main.player.getPosition()), 1, Pile.Material.LOG);
-		Main.r.addElement(pile);
-		remove();
 	}
 
 	@Override
 	public boolean isConsumed() {
+		return false;
+	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if (hand instanceof Log) {
+			Pile pile = new Pile(new Tuple(Main.player.getPosition()), 2, Pile.Material.LOG);
+			Main.r.addElement(pile);
+			remove();
+			hand.remove();
+			Main.player.setHand(null);
+		}
 		return false;
 	}
 }

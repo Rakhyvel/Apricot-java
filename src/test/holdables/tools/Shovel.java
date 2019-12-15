@@ -1,8 +1,8 @@
 package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
@@ -14,10 +14,14 @@ public class Shovel extends ToolObject implements Holdable, Element {
 	Tuple position;
 	boolean held = false;
 	public boolean fullOfDirt = false;
+	int[] dirtImg;
 
 	public Shovel() {
 		Main.holdables.add(this);
 		position = new Tuple(512, 205);
+		haftedImg = Image.loadImage("/res/tools/shovel/hafted.png");
+		headImg = Image.loadImage("/res/tools/shovel/head.png");
+		dirtImg = Image.loadImage("/res/tools/shovel/haftedDirt.png");
 	}
 
 	@Override
@@ -35,15 +39,17 @@ public class Shovel extends ToolObject implements Holdable, Element {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		if (hafted)
-			r.drawRect(x, y, 3, 64, 255 << 24 | 150 << 16 | 75 << 8 | 0);
 
-		if (fullOfDirt) {
-			r.drawRect(x - 10, y, 20, 20, 255 << 24 | 90 << 16 | 60 << 8 | 10);
+		if (hafted) {
+			if (fullOfDirt) {
+				r.drawImage(x, y, 64, dirtImg, 1, 0);
+			} else {
+				r.drawImage(x, y, 64, haftedImg, 1, 0);
+			}
 		} else {
-			r.drawRect(x - 10, y, 20, 20, 255 << 24 | 128 << 16 | 128 << 8 | 128);
+			r.drawImage(x, y, 64, headImg, 1, 0);
 		}
 	}
 

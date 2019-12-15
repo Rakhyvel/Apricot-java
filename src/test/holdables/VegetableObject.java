@@ -1,7 +1,6 @@
 package test.holdables;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
@@ -46,7 +45,7 @@ public class VegetableObject implements Element, Holdable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106;
 		}
 		r.drawImage(x, y, 64, image, 1, 0);
 	}

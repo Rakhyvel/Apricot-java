@@ -1,8 +1,8 @@
 package test.holdables.tools;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
@@ -15,6 +15,8 @@ public class Knife extends ToolObject implements Holdable, Element {
 	public Knife() {
 		Main.holdables.add(this);
 		position = new Tuple(512, 205);
+		haftedImg = Image.loadImage("/res/tools/knife/hafted.png");
+		headImg = Image.loadImage("/res/tools/knife/head.png");
 	}
 
 	@Override
@@ -32,12 +34,13 @@ public class Knife extends ToolObject implements Holdable, Element {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		if (hafted)
-			r.drawRect(x, y, 3, 64, 255 << 24 | 150 << 16 | 75 << 8 | 0);
-
-		r.drawRect(x - 15, y, 15, 40, 255 << 24 | 128 << 16 | 128 << 8 | 128);
+		if (hafted) {
+			r.drawImage(x, y, 64, haftedImg, 1, 0);
+		} else {
+			r.drawImage(x, y, 64, headImg, 1, 0);
+		}
 	}
 
 	@Override

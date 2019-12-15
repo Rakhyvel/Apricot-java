@@ -3,23 +3,44 @@ package test.holdables;
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.beings.Being;
+import test.beings.plants.Tree;
+import test.beings.plants.TreePlant;
 import test.holdables.tools.Stone;
 import test.interfaces.Holdable;
+import test.interfaces.Plantable;
 
-public class TreeFoliage implements Element, Holdable {
+public class TreeFoliage implements Element, Holdable, Plantable {
+	Tree type;
 	Tuple position;
 	boolean held = false;
+	int[] image;
+	int birthTick;
+	double decay = 1;
 
-	public TreeFoliage(Tuple position) {
+	public TreeFoliage(Tuple position, Tree type) {
 		this.position = position;
 		Main.holdables.add(this);
+		image = Image.loadImage("/res/plants/foliage.png");
+		birthTick = Registrar.ticks;
+		this.type = type;
 	}
 
 	@Override
 	public void tick() {
+		if(Registrar.rand.nextInt(8000) == 0 && !held) {
+			sprout();
+		}
+		
+		decay *= 0.9999;
+
+		if (decay < 0.01) {
+			remove();
+		}
 	}
 
 	@Override
@@ -31,9 +52,9 @@ public class TreeFoliage implements Element, Holdable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		r.drawRect(x - 22, y - 22, 44, 44, 255 << 24 | 75 << 16 | 255 << 8 | 0);
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override
@@ -83,5 +104,30 @@ public class TreeFoliage implements Element, Holdable {
 	@Override
 	public boolean isConsumed() {
 		return false;
+	}
+
+	@Override
+	public void sprout() {
+		remove();
+		
+		if(nearestTreeDistance() < 2)
+			return;
+		
+		TreePlant plant = (TreePlant) new TreePlant(position, type);
+		plant = (TreePlant) plant.setGrowthStage(Being.GrowthStage.BABY);
+		Main.r.addElement(plant);		
+	}
+	
+	double nearestTreeDistance() {
+		double closestDistance = 3;
+		for (int i = 0; i < Main.interactables.size(); i++) {
+			double tempDist = Main.interactables.get(i).getPosition().getDist(position);
+			if (!(Main.interactables.get(i) instanceof TreePlant))
+				continue;
+			if (tempDist < closestDistance) {
+				closestDistance = tempDist;
+			}
+		}
+		return closestDistance;
 	}
 }

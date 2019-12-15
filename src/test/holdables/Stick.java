@@ -3,6 +3,7 @@ package test.holdables;
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
@@ -14,16 +15,17 @@ import test.interfaces.Interactable;
 public class Stick implements Element, Holdable, Interactable{
 	Tuple position;
 	boolean held = false;
+	int[] image;
 
 	public Stick(Tuple position) {
 		this.position = position;
 		Main.holdables.add(this);
 		Main.interactables.add(this);
+		image = Image.loadImage("/res/tools/stick.png");
 	}
 
 	@Override
-	public void tick() {
-	}
+	public void tick() {}
 
 	@Override
 	public void render(Render r) {
@@ -34,9 +36,9 @@ public class Stick implements Element, Holdable, Interactable{
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.canvas.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		r.drawRect(x - 22, y - 1, 44, 3, 255 << 24 | 150 << 16 | 75 << 8 | 0);
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import test.interfaces.Interactable;
 public abstract class ToolObject implements Interactable{
 	protected int durability = 3;
 	public boolean hafted = false;
+	int[] haftedImg;
+	int[] headImg;
 	
 	public ToolObject() {
 		Main.interactables.add(this);

@@ -3,6 +3,7 @@ package test.holdables.tools;
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
@@ -16,6 +17,7 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 	public Stone() {
 		this.position = getRandomTuple();
 		Main.holdables.add(this);
+		haftedImg = Image.loadImage("/res/tools/stone.png");
 		// DON'T ADD STONES TO INTERACTABLES!
 		// Stones are TOOLS! They are added in ToolObject
 	}
@@ -37,9 +39,9 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = Registrar.frame.getHeight() - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		r.drawRect(x - 20, y - 20, 40, 40, 255 << 24 | 60 << 16 | 60 << 8 | 60);
+		r.drawImage(x, y, 64, haftedImg, 1, 0);
 	}
 
 	@Override

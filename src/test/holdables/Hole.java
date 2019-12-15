@@ -2,6 +2,7 @@ package test.holdables;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
@@ -20,10 +21,12 @@ import test.interfaces.Plantable;
  */
 public class Hole implements Element, Interactable {
 	Tuple position;
+	int[] image;
 
 	public Hole(Tuple position) {
 		this.position = position;
 		Main.interactables.add(this);
+		image = Image.loadImage("/res/hole.png");
 	}
 
 	@Override
@@ -34,7 +37,7 @@ public class Hole implements Element, Interactable {
 	public void render(Render r) {
 		int x = (int) position.getX() * 64 - Main.player.getX() + 32;
 		int y = (int) position.getY() * 64 - Main.player.getY() + 32;
-		r.drawRect(x - 20, y, 40, 20, 255 << 24 | 90 << 16 | 60 << 8 | 10);
+		r.drawImage(x, y, 64, image, 1, 0);
 	}
 
 	@Override

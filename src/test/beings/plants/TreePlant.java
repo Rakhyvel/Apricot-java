@@ -54,6 +54,10 @@ public class TreePlant extends Plant implements Element, Interactable {
 		dieIfDehydrated();
 		dieIfBadTemp();
 		dieIfRootRot();
+
+		if(Registrar.ticks - birthTick > 10000 && Registrar.rand.nextInt(480000) == 0) {
+			chop();
+		}
 	}
 
 	@Override
@@ -122,45 +126,53 @@ public class TreePlant extends Plant implements Element, Interactable {
 			((Axe) hand).perhapsBreak();
 			hits++;
 			if (hits > 4) {
-				int randDirection = Registrar.rand.nextInt(4);
-				Tuple additivePoint = null;
-				Tuple endPoint = null;
-				switch (randDirection) {
-				case 0:
-					additivePoint = new Tuple(0, 1);
-					break;
-				case 1:
-					additivePoint = new Tuple(1, 0);
-					break;
-				case 2:
-					additivePoint = new Tuple(0, -1);
-					break;
-				case 3:
-					additivePoint = new Tuple(-1, 0);
-					break;
-				}
-
-				int randLength = 3;
-				for (int i = 0; i < randLength; i++) {
-					endPoint = additivePoint.scalar(i);
-					addLog(position.addTuple(endPoint));
-				}
-				Main.r.addElement(new Log(position));
-
-				endPoint = position.addTuple(endPoint);
-				addFoliage(endPoint.addTuple(new Tuple(-1, -1)));
-				addFoliage(endPoint.addTuple(new Tuple(-1, 0)));
-				addFoliage(endPoint.addTuple(new Tuple(-1, 1)));
-				addFoliage(endPoint.addTuple(new Tuple(0, -1)));
-				addFoliage(endPoint.addTuple(new Tuple(0, 0)));
-				addFoliage(endPoint.addTuple(new Tuple(0, 1)));
-				addFoliage(endPoint.addTuple(new Tuple(1, -1)));
-				addFoliage(endPoint.addTuple(new Tuple(1, 0)));
-				addFoliage(endPoint.addTuple(new Tuple(1, 1)));
-				remove();
+				chop();
 			}
+		} else if (hand == null) {
+			Stick stick = new Stick(new Tuple(-100, 3000));
+			Main.r.addElement(stick);
+			Main.player.setHand(stick);
 		}
 		return false;
+	}
+	
+	void chop() {
+		int randDirection = Registrar.rand.nextInt(4);
+		Tuple additivePoint = null;
+		Tuple endPoint = null;
+		switch (randDirection) {
+		case 0:
+			additivePoint = new Tuple(0, 1);
+			break;
+		case 1:
+			additivePoint = new Tuple(1, 0);
+			break;
+		case 2:
+			additivePoint = new Tuple(0, -1);
+			break;
+		case 3:
+			additivePoint = new Tuple(-1, 0);
+			break;
+		}
+
+		int randLength = 3;
+		for (int i = 0; i < randLength; i++) {
+			endPoint = additivePoint.scalar(i);
+			addLog(position.addTuple(endPoint));
+		}
+		Main.r.addElement(new Log(position));
+
+		endPoint = position.addTuple(endPoint);
+		addFoliage(endPoint.addTuple(new Tuple(-1, -1)));
+		addFoliage(endPoint.addTuple(new Tuple(-1, 0)));
+		addFoliage(endPoint.addTuple(new Tuple(-1, 1)));
+		addFoliage(endPoint.addTuple(new Tuple(0, -1)));
+		addFoliage(endPoint.addTuple(new Tuple(0, 0)));
+		addFoliage(endPoint.addTuple(new Tuple(0, 1)));
+		addFoliage(endPoint.addTuple(new Tuple(1, -1)));
+		addFoliage(endPoint.addTuple(new Tuple(1, 0)));
+		addFoliage(endPoint.addTuple(new Tuple(1, 1)));
+		remove();
 	}
 	
 	Tuple getNearTuple() {
@@ -190,15 +202,14 @@ public class TreePlant extends Plant implements Element, Interactable {
 		Element nearestElement = Main.findNearestElement(point);
 
 		if (nearestElement.getPosition().getDist(point) == 0) {
-			System.out.println("Too close!");
 			return;
 		}
 
 		int randFoliage = Registrar.rand.nextInt(4);
 		if (randFoliage == 0) {
-			Main.r.addElement(new Stick(point));
+//			Main.r.addElement(new Stick(point));
 		} else if (randFoliage == 1){
-			Main.r.addElement(new TreeFoliage(point));
+			Main.r.addElement(new TreeFoliage(point, type));
 		}
 
 	}

@@ -14,6 +14,7 @@ import test.beings.plants.TreePlant;
 import test.beings.plants.Vegetable;
 import test.beings.plants.VegetablePlant;
 import test.flintknapping.FlintknappingWindow;
+import test.holdables.tools.Shovel;
 import test.holdables.tools.Stone;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
@@ -38,7 +39,15 @@ import test.interfaces.Interactable;
  * X Add sorted rendering
  * 
  * - Add interactions
- * 	    - Add log to pile type
+ * 	    X Add log to pile type
+ * - Add images for:
+ *     X Foliage
+ *     X Logs
+ *     X Holes
+ *     X Dirt piles
+ *     X Log piles
+ *     
+ * - Foliage should grow more trees
  */
 
 public class Main {
@@ -59,6 +68,9 @@ public class Main {
 		r.addElement(terrain);
 		r.addElement(player);
 		r.addElement(new GUI());
+		Shovel shovel = (Shovel) new Shovel().setPosition(player.getPosition());
+		shovel.hafted = true;
+		r.addElement(shovel);
 		
 		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 50);
 		addElement(new FruitPlant(Fruit.CACTUS), 50);
