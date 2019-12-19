@@ -9,6 +9,8 @@ import com.josephs_projects.library.graphics.SpriteSheet;
 
 import test.beings.plants.Fruit;
 import test.beings.plants.FruitPlant;
+import test.beings.plants.Grain;
+import test.beings.plants.GrainPlant;
 import test.beings.plants.Tree;
 import test.beings.plants.TreePlant;
 import test.beings.plants.Vegetable;
@@ -38,16 +40,37 @@ import test.interfaces.Interactable;
  * 
  * X Add sorted rendering
  * 
+ * - Add all vegetables
+ * 
  * - Add interactions
  * 	    X Add log to pile type
- * - Add images for:
+ * 
+ * X Add images for:
  *     X Foliage
  *     X Logs
  *     X Holes
  *     X Dirt piles
  *     X Log piles
  *     
- * - Foliage should grow more trees
+ * X Foliage should grow more trees
+ * 
+ * X Split vegetables and grains
+ *      X Add grain meal and seeds
+ * - Add unadded vegetables
+ * - Add unadded fruits
+ * - Add unadded grains
+ * - Add unadded trees perhaps
+ * 
+ * - Add images for all added food
+ * 
+ * - Add water drinking for players
+ * - Add sicknesses
+ * - Add warmth requirement
+ * - Add rest requirement
+ * 
+ * - Update images for all plants, make them unique
+ * - Add brush
+ * 
  */
 
 public class Main {
@@ -63,6 +86,8 @@ public class Main {
 	public Main() {
 		flintknappingWindow = new FlintknappingWindow();
 		r = new Registrar("Test RPG Game", 13 * 64, 7 * 64);
+		Registrar.rand.setSeed(100);
+		System.out.println("Generating terrain");
 		terrain = new Terrain();
 		player = new Player();
 		r.addElement(terrain);
@@ -72,17 +97,31 @@ public class Main {
 		shovel.hafted = true;
 		r.addElement(shovel);
 		
-		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 50);
-		addElement(new FruitPlant(Fruit.CACTUS), 50);
-		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), 50);
-		addElement(new FruitPlant(Fruit.APPLE_TREE), 50);
-		addElement(new FruitPlant(Fruit.CHERRY_TREE), 50);
-		addElement(new FruitPlant(Fruit.MELON_VINE), 50);
-		addElement(new FruitPlant(Fruit.ORANGE_TREE), 50);
-		addElement(new FruitPlant(Fruit.PEACH_TREE), 50);
+		System.out.println("Generating fruit");
+		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 500);
+		addElement(new FruitPlant(Fruit.CACTUS), 500);
+		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), 500);
+		addElement(new FruitPlant(Fruit.APPLE_TREE), 500);
+		addElement(new FruitPlant(Fruit.CHERRY_TREE), 500);
+		addElement(new FruitPlant(Fruit.MELON_VINE), 500);
+		addElement(new FruitPlant(Fruit.ORANGE_TREE), 500);
+		addElement(new FruitPlant(Fruit.PEACH_TREE), 500);
 
-		addElement(new VegetablePlant(Vegetable.BARLEY), 100);
+		System.out.println("Generating vegetables");
+		addElement(new VegetablePlant(Vegetable.CARROT), 500);
+		addElement(new VegetablePlant(Vegetable.PEPPER), 500);
+		addElement(new VegetablePlant(Vegetable.POTATO), 500);
+		addElement(new VegetablePlant(Vegetable.TOMATO), 500);
 
+		System.out.println("Generating grains");
+		addElement(new GrainPlant(Grain.BARLEY), 500);
+		addElement(new GrainPlant(Grain.CORN), 500);
+		addElement(new GrainPlant(Grain.RYE), 500);
+		addElement(new GrainPlant(Grain.WHEAT), 500);
+		addElement(new GrainPlant(Grain.OAT), 500);
+		addElement(new GrainPlant(Grain.RICE), 500);
+
+		System.out.println("Generating trees");
 		addElement(new TreePlant(Tree.SAVANNAH), 1000);
 		addElement(new TreePlant(Tree.MESQUITE), 1000);
 		addElement(new TreePlant(Tree.SPRUCE), 1000);
@@ -92,6 +131,7 @@ public class Main {
 		addElement(new TreePlant(Tree.OAK), 1000);
 		addElement(new TreePlant(Tree.MAPLE), 1000);
 
+		System.out.println("Generating stones");
 		addElement(new Stone(), 1000);
 		
 		System.out.println(r.registrySize());

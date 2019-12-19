@@ -7,7 +7,7 @@ public abstract class Being {
 	protected Tuple position = new Tuple();
 	protected Tuple target = new Tuple();
 
-	protected double speed = 1 / 16.0;
+	protected double speed = 1 / 8.0;
 	protected int birthTick;
 	protected GrowthStage growthStage;
 	protected double waterHardiness = 0;
@@ -21,22 +21,30 @@ public abstract class Being {
 	}
 
 	public static enum Hunger {
-		FRUIT, VEGETABLE, MEAT, DAIRY, WATER;
+		FRUIT(0), GRAIN(1), VEGETABLE(2), MEAT(3), DAIRY(4);
+		int ordinal;
+
+		Hunger(int ordinal) {
+			this.ordinal = ordinal;
+		}
 	}
 
 	public static enum GrowthStage {
 		BABY, CHILD, SUBADULT, ADULT, PREGNANT;
 	}
 
-	protected double[] hungers = { 1, // Fruit
+	public double[] nutrition = { 0.3, // Fruit
+			1, // Grain
 			1, // Vegetable
 			1, // Meat
 			1, // Dairy
 			1, // Water
 	};
+	public int hungerTimer = 504000;
+	public double waterTimer = 72000;
 	protected int awakeTicks = 0;
 	protected int temperature = 72;
-	
+
 	public abstract void remove();
 
 	protected void move() {
@@ -54,14 +62,25 @@ public abstract class Being {
 	}
 
 	protected void decayHunger() {
-		for (int i = 0; i < hungers.length - 1; i++) {
-			hungers[i] = hungers[i] * 0.9999;
+		hungerTimer--;
+		waterTimer--;
+		for (int i = 0; i < nutrition.length - 1; i++) {
+			nutrition[i] *= 0.999999999;
 		}
-		hungers[Hunger.WATER.ordinal()] = hungers[Hunger.WATER.ordinal()] * waterHardiness;
 	}
 
 	public void eat(double amount, Hunger hunger) {
-		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * (amount + 1));
+		// dairy/meat (0.5) > grain (0.333) > vegetable (0.25) > fruit (0.2)
+		hungerTimer = (int) Math.min(504000, hungerTimer + amount);
+
+		// 1.27 was chosen because it can fill nutrition bar in five meals from 30%,
+		// which felt right
+		nutrition[hunger.ordinal()] = (nutrition[hunger.ordinal()]) * 1.27;
+		nutrition[hunger.ordinal()] = Math.min(1, nutrition[hunger.ordinal()]);
+	}
+	
+	public void drink(double amount) {
+		waterTimer += (int) Math.min(72000, waterTimer + amount);
 	}
 
 	public Being setGrowthStage(Being.GrowthStage growthStage) {
@@ -74,17 +93,12 @@ public abstract class Being {
 	}
 
 	public void dieIfStarving() {
-		for (int i = 0; i < hungers.length - 1; i++) {
-			if (hungers[i] < 0.1) {
-				remove();
-				return;
-			}
-		}
+		if(hungerTimer <= 0) 
+			remove();
 	}
 
 	public void dieIfDehydrated() {
-		if (hungers[Hunger.WATER.ordinal()] < 0.1) {
+		if(waterTimer <= 0)
 			remove();
-		}
 	}
 }

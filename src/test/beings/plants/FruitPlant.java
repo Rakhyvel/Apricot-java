@@ -8,7 +8,7 @@ import com.josephs_projects.library.graphics.Render;
 import test.Main;
 import test.Player;
 import test.beings.Being;
-import test.holdables.FruitObject;
+import test.holdables.food.FruitObject;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -22,24 +22,32 @@ public class FruitPlant extends Plant implements Element, Interactable {
 	public Fruit type;
 
 	public FruitPlant(Fruit type) {
-		super(getRandomTuple());
+		super(FruitPlant.getRandomTuple(type.preferedTemp, type.waterHardiness));
 		growthStage = Being.GrowthStage.ADULT;
-		setWaterHardiness(type.waterHardiness);
+		waterHardiness = type.waterHardiness;
 		preferedTemp = type.preferedTemp;
 		this.type = type;
 		Main.interactables.add(this);
+		waterTimer = .01;
 	}
 
 	@Override
 	public void tick() {
-		if ((Registrar.ticks - birthTick) % 200 == 199 && growthStage == GrowthStage.ADULT)
-			growthStage = GrowthStage.PREGNANT;
+//		if ((Registrar.ticks - birthTick) % 200 == 199 && growthStage == GrowthStage.ADULT)
+//		growthStage = GrowthStage.PREGNANT;
 
 		grow();
 		decayHunger();
 		drinkWater();
-		dieIfDehydrated();
-		dieIfBadTemp();
+		if (waterTimer <= 0 || checkBadTemp())
+			remove();
+		if (dieIfRootRot())
+			remove();
+		if (type != Fruit.CACTUS)
+			dieIfBadTemp();
+		
+		if(!Main.r.registryContains((Element) this))
+			remove();
 	}
 
 	@Override
@@ -95,7 +103,7 @@ public class FruitPlant extends Plant implements Element, Interactable {
 	@Override
 	public boolean interact(Holdable hand) {
 		if (hand == null && growthStage == GrowthStage.PREGNANT) {
-			FruitObject fruit = new FruitObject(new Tuple(position), type);
+			FruitObject fruit = new FruitObject(new Tuple(), type);
 			Main.r.addElement(fruit);
 			Main.player.setHand(fruit);
 			growthStage = GrowthStage.ADULT;
@@ -112,7 +120,7 @@ public class FruitPlant extends Plant implements Element, Interactable {
 		if (growthStage != GrowthStage.ADULT)
 			return;
 
-		if (hungers[Hunger.WATER.ordinal()] < 0.5)
+		if (waterTimer < 36000)
 			return;
 
 		Element nearestHoldable = Main.findNearestElement(position);
@@ -126,13 +134,15 @@ public class FruitPlant extends Plant implements Element, Interactable {
 		Main.holdables.add(newBerry);
 	}
 
-	static Tuple getRandomTuple() {
+	static Tuple getRandomTuple(double preferedTemp, double waterHardiness) {
 		Tuple randPoint;
 		do {
 			int x = Registrar.rand.nextInt(1025);
 			int y = Registrar.rand.nextInt(1025);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1);
+		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
+				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20
+				);
 		return randPoint;
 	}
 }

@@ -1,4 +1,4 @@
-package test.holdables;
+package test.holdables.food;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
@@ -7,35 +7,40 @@ import com.josephs_projects.library.graphics.Render;
 import test.Main;
 import test.Player;
 import test.beings.Being;
-import test.beings.plants.Fruit;
-import test.beings.plants.FruitPlant;
+import test.beings.plants.Grain;
+import test.beings.plants.GrainPlant;
+import test.holdables.tools.Knife;
 import test.interfaces.Holdable;
+import test.interfaces.Interactable;
 import test.interfaces.Plantable;
 
-public class FruitObject implements Element, Holdable, Plantable {
+public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	Tuple position;
 	boolean held = false;
 	int[] image = Main.spritesheet.getSubset(1, 0, 64);
 	boolean onBush = true;
 	double decay = 1;
-	Fruit type;
+	Grain type;
+	// Can thresh by pouring into bowl, then another bowl, or using knife.
+	// Can plant either threshed or not
+	// Can feed to livestock either threshed or not
+	// Can only eat if threshed.
+	boolean threshed = false;
 
-	public FruitObject(Tuple position, Fruit type) {
+	public GrainObject(Tuple position, Grain type) {
 		this.position = position;
 		Main.holdables.add(this);
+		Main.interactables.add(this);
 		this.type = type;
 	}
 
 	@Override
 	public void tick() {
-		// Assumes all berries are on bush when game is first loaded
-		if (!onBush)
-			decay *= 0.999;
+		decay *= 0.99999;
 
 		if (decay < 0.01) {
 			remove();
 		}
-
 	}
 
 	@Override
@@ -67,14 +72,9 @@ public class FruitObject implements Element, Holdable, Plantable {
 		return this;
 	}
 
-	public Element clone() {
-		return new FruitObject(new Tuple(position), type);
-	}
-
 	@Override
 	public boolean pickup() {
 		held = true;
-		onBush = false;
 		position.setX(-100);
 		position.setY(3000);
 		return true;
@@ -85,24 +85,20 @@ public class FruitObject implements Element, Holdable, Plantable {
 		held = false;
 		position.setX(Main.player.getPosition().getX());
 		position.setY(Main.player.getPosition().getY());
-
 	}
 
 	@Override
 	public void use() {
-		Main.player.eat(decay, Player.Hunger.FRUIT);
+		if(threshed) {
+			Main.player.eat(decay * 504000 * 0.333, Player.Hunger.GRAIN);
+		} else {
+			System.out.println("Yuck! That hasn't been threshed! Feed that to the pigs!");
+		}
 	}
 
 	@Override
 	public boolean isConsumed() {
 		return true;
-	}
-
-	public void sprout() {
-		remove();
-		FruitPlant plant = (FruitPlant) new FruitPlant(type).setPosition(position);
-		plant = (FruitPlant) plant.setGrowthStage(Being.GrowthStage.BABY);
-		Main.r.addElement(plant);
 	}
 
 	public void remove() {
@@ -111,5 +107,28 @@ public class FruitObject implements Element, Holdable, Plantable {
 		if (held) {
 			Main.player.setHand(null);
 		}
+		Main.interactables.remove(this);
 	}
+
+	public Element clone() {
+		return new GrainObject(new Tuple(position), type);
+	}
+
+	@Override
+	public boolean interact(Holdable hand) {
+		if (hand instanceof Knife) {
+			threshed = true;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void sprout() {
+		remove();
+		GrainPlant plant = (GrainPlant) new GrainPlant(type).setPosition(position);
+		plant = (GrainPlant) plant.setGrowthStage(Being.GrowthStage.BABY);
+		Main.r.addElement(plant);
+	}
+
 }

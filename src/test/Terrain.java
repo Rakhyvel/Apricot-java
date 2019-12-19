@@ -30,7 +30,6 @@ public class Terrain implements Element {
 	public void tick() {
 	}
 
-	@Override
 	public void render(Render r) {
 		// Could be optimized to only iterate over tiles known to be visible, but
 		// probably wouldn't help much
@@ -40,19 +39,41 @@ public class Terrain implements Element {
 			for (int y = (int) (Main.player.getPosition().getY() - 3); y < Main.player.getPosition().getY() + 5; y++) {
 				int x1 = x * size - Main.player.getX() - 32;
 				int y1 = y * size - Main.player.getY() - 32;
-				if (x < -size)
+				if (x1 < -size)
 					continue;
-				if (y < -size)
+				if (y1 < -size)
 					continue;
-				if (x - size > Registrar.canvas.getWidth())
+				if (x1 - size > Registrar.canvas.getWidth())
 					continue;
-				if (y - size > Registrar.canvas.getHeight())
+				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
 				if(map.getPlot(x, y) > 0.5) {
 					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * width))], 1, 0);
 				} else {
 					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
 				}
+			}
+		}
+	}
+	
+	public void r0nder(Render r) {
+		// Could be optimized to only iterate over tiles known to be visible, but
+		// probably wouldn't help much
+		int size = Main.zoom;
+		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int x1 = x * size - Main.player.getX() - 32;
+				int y1 = y * size - Main.player.getY() - 32;
+				if (x1 < -size)
+					continue;
+				if (y1 < -size)
+					continue;
+				if (x1 - size > Registrar.canvas.getWidth())
+					continue;
+				if (y1 - size > Registrar.canvas.getHeight())
+					continue;
+				r.drawRect(x1, y1, size, size, mapImage[x + y * width]);
 			}
 		}
 	}

@@ -54,6 +54,10 @@ public class Registrar {
         registry.remove(element);
     }
     
+    public boolean registryContains(Element element) {
+		return registry.contains(element);
+	}
+    
     public Element getElement(int index) {
     	return registry.get(index);
     }
@@ -63,14 +67,22 @@ public class Registrar {
     }
 
     public void run() {
-        long current = System.currentTimeMillis();
+        double previous = System.currentTimeMillis();
+        double lag = 0;
         while(running){
-            while ((System.currentTimeMillis() - current) > dt){
-                tick();
-                current += dt;
-                ticks++;
-            }
-            render();
+        	double current = System.currentTimeMillis();
+        	double elapsed = current - previous;
+        	
+        	previous = current;
+
+        	lag+= elapsed;
+        	
+        	while(lag >= dt) {
+        		tick();
+        		lag -= dt;
+        	}
+        	
+        	render();        	
         }
     }
 

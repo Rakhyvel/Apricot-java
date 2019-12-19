@@ -7,14 +7,14 @@ import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.beings.Being;
-import test.holdables.food.VegetableObject;
+import test.holdables.food.GrainObject;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
-public class VegetablePlant extends Plant implements Element, Interactable{
-	public Vegetable type;
+public class GrainPlant extends Plant implements Element, Interactable{
+	public Grain type;
 	
-	public VegetablePlant(Vegetable type) {
+	public GrainPlant(Grain type) {
 		super(getRandomTuple());
 		growthStage = Being.GrowthStage.ADULT;
 		waterHardiness = type.waterHardiness;
@@ -82,15 +82,15 @@ public class VegetablePlant extends Plant implements Element, Interactable{
 	}
 	
 	public Element clone() {
-		return new VegetablePlant(type);
+		return new GrainPlant(type);
 	}
 
 	@Override
 	public boolean interact(Holdable hand) {
 		if(hand == null) {
-			VegetableObject vegetable = new VegetableObject(new Tuple(), type);
-			Main.r.addElement(vegetable);
-			Main.player.setHand(vegetable);
+			GrainObject grain = new GrainObject(new Tuple(), type);
+			Main.r.addElement(grain);
+			Main.player.setHand(grain);
 			remove();
 			return true;
 		}

@@ -4,20 +4,20 @@ import com.josephs_projects.library.graphics.Image;
 
 public enum Fruit {
 	// Dry-hot
-	PEACH_TREE("peach", 3, 80), 
-	CACTUS("cactus", 10000, 110),
+	PEACH_TREE("peach", 5, 75), 
+	CACTUS("cactus", 10, 90),
 
 	// Dry-cool
-	BLUEBERRY_BUSH("blueberry", 3, 40),
-	CHERRY_TREE("cherry", 3, 60),
+	BLUEBERRY_BUSH("blueberry", 40, 68),
+	CHERRY_TREE("cherry", 20, 40),
 
 	// Wet-hot
-	ORANGE_TREE("orange", 2, 80), 
-	MELON_VINE("melon", 1.5, 80),
+	ORANGE_TREE("orange", 45, 90), 
+	MELON_VINE("melon", 40, 80),
 
 	// Wet-cool
-	APPLE_TREE("apple", 2, 60),
-	STRAWBERRY_BUSH("strawberry", 1.5, 60);
+	APPLE_TREE("apple", 25, 45),
+	STRAWBERRY_BUSH("strawberry", 40, 80);
 
 	public double waterHardiness;
 	public int preferedTemp;

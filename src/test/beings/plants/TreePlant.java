@@ -21,10 +21,11 @@ public class TreePlant extends Plant implements Element, Interactable {
 	public TreePlant(Tree type) {
 		super(getRandomTuple());
 		growthStage = Being.GrowthStage.ADULT;
-		setWaterHardiness(type.waterHardiness);
+		waterHardiness = type.waterHardiness;
 		preferedTemp = type.preferedTemp;
 		this.type = type;
 		Main.interactables.add(this);
+		waterTimer = .1;
 		int numberOfSticks = (int) Math.max(0, Registrar.rand.nextInt(10) - 8);
 		for (int i = 0; i < numberOfSticks; i++) {
 			Tuple tempPoint = getNearTuple();
@@ -51,13 +52,17 @@ public class TreePlant extends Plant implements Element, Interactable {
 		grow();
 		decayHunger();
 		drinkWater();
-		dieIfDehydrated();
+		if (waterTimer <= 0 || checkBadTemp())
+			remove();
+		if (dieIfRootRot())
+			remove();
 		dieIfBadTemp();
-		dieIfRootRot();
-
 		if(Registrar.ticks - birthTick > 10000 && Registrar.rand.nextInt(480000) == 0) {
 			chop();
 		}
+
+		if(!Main.r.registryContains((Element) this))
+			remove();
 	}
 
 	@Override

@@ -20,6 +20,11 @@ public class Player extends Being implements Element {
 	public Player() {
 		super(getRandomTuple());
 		target = new Tuple(position);
+		setWaterHardiness(15634); // Magic number, player will die with 20 minutes no water
+//		hungers[Hunger.FRUIT.ordinal()] = 0.02;
+		// f(x) = x / (x+1)
+		// water = water * f(x)
+		// x is chosen to be 15634 so that player dies without water
 	}
 
 	@Override
@@ -127,12 +132,6 @@ public class Player extends Being implements Element {
 			hand.drop();
 		}
 		hand = null;
-	}
-
-	public void eat(double amount, Hunger hunger) {
-		amount += 1;
-		System.out.println("Nom nom " + hungers[hunger.ordinal()] + " hunger after " + amount);
-		hungers[hunger.ordinal()] = Math.min(1, hungers[hunger.ordinal()] * amount);
 	}
 
 	boolean interact() {

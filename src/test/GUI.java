@@ -12,6 +12,8 @@ public class GUI implements Element{
 	@Override
 	public void render(Render r) {
 		r.drawRect(-1, 7 * 64 - 107, 100, 100, 180 << 24 | 86 << 16 | 86 << 8 | 86);
+		r.drawRect(20, 20, 300, 20, 255 << 24);
+		r.drawRect(20, 20, (int)(300 * Main.player.hungerTimer / 504000), 20, 255 << 24 | 255 << 8);
 	}
 
 	@Override

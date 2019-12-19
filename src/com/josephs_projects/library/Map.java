@@ -1,11 +1,8 @@
 package com.josephs_projects.library;
 
-import java.util.Random;
-
 import com.josephs_projects.library.graphics.Image;
 
 public class Map {
-	Random rand = new Random();
 	private float[][] mountain;
 	private double[] temperature;
 	private double[] precipitation;
@@ -18,8 +15,8 @@ public class Map {
 		this.width = width;
 		this.height = height;
 
-		String seed = "Joseph Shimel";
-		rand.setSeed(seed.hashCode());
+//		String seed = "Joseph Shimel";
+//		rand.setSeed(seed.hashCode());
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -45,9 +42,11 @@ public class Map {
 				int x = (i % width) * wavelength;
 				int y = (i / width) * wavelength;
 				if (frequency <= 2) {
-					noise[x][y] = rand.nextFloat();
+					noise[x][y] = Registrar.rand.nextFloat() + 0.1f;
+					if(x == 0 || y == 0 || x == this.width-1 || y == this.height-1)
+						noise[x][y] = Registrar.rand.nextFloat()/4.0f;
 				} else {
-					noise[x][y] = ((2 * rand.nextFloat() - 1f) * amplitude);
+					noise[x][y] = ((2 * Registrar.rand.nextFloat() - 1f) * amplitude);
 				}
 			}
 			for (int i = 0; i < this.width * this.height; i++) {

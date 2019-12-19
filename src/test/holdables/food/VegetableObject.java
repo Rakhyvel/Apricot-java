@@ -1,4 +1,4 @@
-package test.holdables;
+package test.holdables.food;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
@@ -6,8 +6,11 @@ import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
 import test.Player;
+import test.beings.Being;
 import test.beings.plants.Vegetable;
+import test.beings.plants.VegetablePlant;
 import test.interfaces.Holdable;
+import test.interfaces.Plantable;
 
 /**
  * Represents the actual object players can eat
@@ -15,7 +18,7 @@ import test.interfaces.Holdable;
  * @author Joseph Shimel
  *
  */
-public class VegetableObject implements Element, Holdable {
+public class VegetableObject implements Element, Holdable, Plantable {
 	Tuple position;
 	boolean held = false;
 	int[] image = Main.spritesheet.getSubset(1, 0, 64);
@@ -31,6 +34,8 @@ public class VegetableObject implements Element, Holdable {
 
 	@Override
 	public void tick() {
+		decay *= 0.999;
+		
 		if (decay < 0.01) {
 			remove();
 		}
@@ -82,7 +87,7 @@ public class VegetableObject implements Element, Holdable {
 
 	@Override
 	public void use() {
-		Main.player.eat(decay, Player.Hunger.VEGETABLE);
+		Main.player.eat(decay * 504000 * 0.2, Player.Hunger.VEGETABLE);
 	}
 
 	@Override
@@ -100,5 +105,13 @@ public class VegetableObject implements Element, Holdable {
 
 	public Element clone() {
 		return new VegetableObject(new Tuple(position), type);
+	}
+
+	@Override
+	public void sprout() {
+		remove();
+		VegetablePlant plant = (VegetablePlant) new VegetablePlant(type).setPosition(position);
+		plant = (VegetablePlant) plant.setGrowthStage(Being.GrowthStage.BABY);
+		Main.r.addElement(plant);
 	}
 }

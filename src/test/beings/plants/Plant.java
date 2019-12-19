@@ -21,10 +21,6 @@ public abstract class Plant extends Being{
 		if((Registrar.ticks - birthTick) % 200 != 199)
 			return;
 		
-//		Making sure plant has enough water
-		if (hungers[Hunger.WATER.ordinal()] < 0.5)
-			return;
-		
 		switch (growthStage) {
 		case SUBADULT:
 			growthStage = Being.GrowthStage.ADULT;
@@ -49,7 +45,13 @@ public abstract class Plant extends Being{
 	}
 	
 	public void drinkWater() {
-		eat((100 - Main.terrain.getPrecipitation(position))/100.0, Hunger.WATER);
+		// If theres more rain than the minimum, water increases
+		// if rain < waterHardiness
+		drink(invertedRain() / waterHardiness);
+	}
+	
+	double invertedRain() {
+		return 99 - Main.terrain.getPrecipitation(position);
 	}
 	
 	public void dieIfBadTemp() {
@@ -58,9 +60,7 @@ public abstract class Plant extends Being{
 		}
 	}
 	
-	public void dieIfRootRot() {
-		if((99 - Main.terrain.getPrecipitation(position)) / 35.0 + 1.5 < waterHardiness) {
-			remove();
-		}
+	public boolean dieIfRootRot() {
+		return invertedRain() > (waterHardiness * 2 + 20);
 	}
 }
