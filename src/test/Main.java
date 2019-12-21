@@ -40,8 +40,6 @@ import test.interfaces.Interactable;
  * 
  * X Add sorted rendering
  * 
- * - Add all vegetables
- * 
  * - Add interactions
  * 	    X Add log to pile type
  * 
@@ -56,10 +54,9 @@ import test.interfaces.Interactable;
  * 
  * X Split vegetables and grains
  *      X Add grain meal and seeds
- * - Add unadded vegetables
- * - Add unadded fruits
- * - Add unadded grains
- * - Add unadded trees perhaps
+ * X Add unadded vegetables
+ * X Add unadded fruits
+ * X Add unadded grains
  * 
  * - Add images for all added food
  * 
@@ -70,6 +67,8 @@ import test.interfaces.Interactable;
  * 
  * - Update images for all plants, make them unique
  * - Add brush
+ * 
+ * - Buy Thomas a new laptop when this game is big
  * 
  */
 
@@ -98,28 +97,50 @@ public class Main {
 		r.addElement(shovel);
 		
 		System.out.println("Generating fruit");
-		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), 500);
-		addElement(new FruitPlant(Fruit.CACTUS), 500);
-		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), 500);
-		addElement(new FruitPlant(Fruit.APPLE_TREE), 500);
-		addElement(new FruitPlant(Fruit.CHERRY_TREE), 500);
-		addElement(new FruitPlant(Fruit.MELON_VINE), 500);
-		addElement(new FruitPlant(Fruit.ORANGE_TREE), 500);
-		addElement(new FruitPlant(Fruit.PEACH_TREE), 500);
+		int numberOfFruit = 64;
+		addElement(new FruitPlant(Fruit.CACTUS), numberOfFruit);
+		addElement(new FruitPlant(Fruit.APPLE_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.BANANA_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.CHERRY_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.LEMON_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.OLIVE_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.ORANGE_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.PEACH_TREE), numberOfFruit);
+		addElement(new FruitPlant(Fruit.PLUM_TREE), numberOfFruit);
+
+		addElement(new FruitPlant(Fruit.BLACKBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.BLUEBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.BUNCHBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.CLOUDBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.CRANBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.ELDERBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.GOOSEBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.RASPBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.SNOWBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), numberOfFruit);
+		addElement(new FruitPlant(Fruit.WINTERGREENBERRY_BUSH), numberOfFruit);
 
 		System.out.println("Generating vegetables");
-		addElement(new VegetablePlant(Vegetable.CARROT), 500);
-		addElement(new VegetablePlant(Vegetable.PEPPER), 500);
-		addElement(new VegetablePlant(Vegetable.POTATO), 500);
-		addElement(new VegetablePlant(Vegetable.TOMATO), 500);
+		int numberOfVegetables = 128;
+		addElement(new VegetablePlant(Vegetable.CARROT), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.PEPPER), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.POTATO), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.TOMATO), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.CABBAGE), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.GREENBEAN), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.ONION), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.RUTABAGA), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.SOYBEAN), numberOfVegetables);
+		addElement(new VegetablePlant(Vegetable.SQUASH), numberOfVegetables);
 
 		System.out.println("Generating grains");
-		addElement(new GrainPlant(Grain.BARLEY), 500);
-		addElement(new GrainPlant(Grain.CORN), 500);
-		addElement(new GrainPlant(Grain.RYE), 500);
-		addElement(new GrainPlant(Grain.WHEAT), 500);
-		addElement(new GrainPlant(Grain.OAT), 500);
-		addElement(new GrainPlant(Grain.RICE), 500);
+		int numberOfGrain = 500;
+		addElement(new GrainPlant(Grain.BARLEY), numberOfGrain);
+		addElement(new GrainPlant(Grain.CORN), numberOfGrain);
+		addElement(new GrainPlant(Grain.RYE), numberOfGrain);
+		addElement(new GrainPlant(Grain.WHEAT), numberOfGrain);
+		addElement(new GrainPlant(Grain.OAT), numberOfGrain);
+		addElement(new GrainPlant(Grain.RICE), numberOfGrain);
 
 		System.out.println("Generating trees");
 		addElement(new TreePlant(Tree.SAVANNAH), 1000);

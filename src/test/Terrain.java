@@ -47,7 +47,7 @@ public class Terrain implements Element {
 					continue;
 				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
-				if(map.getPlot(x, y) > 0.5) {
+				if(map.getPlot(x, y) >= 0.5) {
 					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * width))], 1, 0);
 				} else {
 					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
@@ -56,7 +56,7 @@ public class Terrain implements Element {
 		}
 	}
 	
-	public void r0nder(Render r) {
+	public void ronder(Render r) {
 		// Could be optimized to only iterate over tiles known to be visible, but
 		// probably wouldn't help much
 		int size = Main.zoom;

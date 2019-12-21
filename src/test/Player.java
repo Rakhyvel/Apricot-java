@@ -38,6 +38,7 @@ public class Player extends Being implements Element {
 		} else if (pickupDown) {
 			pickupDown = false;
 			pickup();
+			System.out.println(Main.r.registrySize());
 		}
 
 		if (Registrar.mouse.getMouseLeftDown()) {
@@ -160,7 +161,7 @@ public class Player extends Being implements Element {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(685) + 170;
-			int y = 256;//Registrar.rand.nextInt(685) + 170;
+			int y = 512;//Registrar.rand.nextInt(685) + 170;
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5);
 		return randPoint;

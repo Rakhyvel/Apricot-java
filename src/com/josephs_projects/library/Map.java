@@ -163,7 +163,7 @@ public class Map {
 			float z = getPlot(x, y);
 			if (z <= 0.5)
 				continue;
-			tempMap[i] = tempMap[i] * (1 - (z - 0.5));
+			tempMap[i] = tempMap[i] - z * 40;
 		}
 		return tempMap;
 	}

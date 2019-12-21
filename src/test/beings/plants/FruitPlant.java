@@ -34,19 +34,22 @@ public class FruitPlant extends Plant implements Element, Interactable {
 	@Override
 	public void tick() {
 //		if ((Registrar.ticks - birthTick) % 200 == 199 && growthStage == GrowthStage.ADULT)
-//		growthStage = GrowthStage.PREGNANT;
+		growthStage = GrowthStage.PREGNANT;
 
 		grow();
+
 		decayHunger();
 		drinkWater();
-		if (waterTimer <= 0 || checkBadTemp())
+
+		if (checkBadTemp())
 			remove();
-		if (dieIfRootRot())
+
+		if(dieIfRootRot())
 			remove();
-		if (type != Fruit.CACTUS)
-			dieIfBadTemp();
-		
-		if(!Main.r.registryContains((Element) this))
+
+		dieIfDehydrated();
+
+		if (!Main.r.registryContains((Element) this))
 			remove();
 	}
 
@@ -141,8 +144,7 @@ public class FruitPlant extends Plant implements Element, Interactable {
 			int y = Registrar.rand.nextInt(1025);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
-				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20
-				);
+				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20);
 		return randPoint;
 	}
 }

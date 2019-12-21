@@ -21,19 +21,23 @@ public class VegetablePlant extends Plant implements Element, Interactable{
 		preferedTemp = type.preferedTemp;
 		Main.interactables.add(this);
 		this.type = type;
-		waterTimer = .01;
+		waterTimer = 5200;
 	}
 
 	@Override
 	public void tick() {		
 		grow();
+		
 		decayHunger();
 		drinkWater();
-		if(waterTimer <= 0 || checkBadTemp())
+		
+		if(checkBadTemp())
 			remove();
+		
 		if(dieIfRootRot())
 			remove();
-		dieIfBadTemp();
+		
+		dieIfDehydrated();
 
 		if(!Main.r.registryContains((Element) this))
 			remove();
@@ -98,12 +102,12 @@ public class VegetablePlant extends Plant implements Element, Interactable{
 	}
 	
 	static Tuple getRandomTuple() {
-		Tuple randPoint = new Tuple(513, 205);
+		Tuple randPoint;
 		do {
 			int x = Registrar.rand.nextInt(1025);
 			int y = Registrar.rand.nextInt(1025);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1);
+		} while (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) < 1);
 		return randPoint;
 	}
 }
