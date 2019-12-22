@@ -129,8 +129,8 @@ public class Stone extends ToolObject implements Element, Holdable, Interactable
 		int x, y;
 		Tuple randPoint = new Tuple(513, 205);
 		do {
-			x = Registrar.rand.nextInt(1025);
-			y = Registrar.rand.nextInt(1025);
+			x = Registrar.rand.nextInt(Main.size);
+			y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) < 1
 				|| Main.player.getPosition().getDist(randPoint) < 7);

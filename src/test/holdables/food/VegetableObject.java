@@ -21,7 +21,7 @@ import test.interfaces.Plantable;
 public class VegetableObject implements Element, Holdable, Plantable {
 	Tuple position;
 	boolean held = false;
-	int[] image = Main.spritesheet.getSubset(1, 0, 64);
+	int[] image;
 	boolean onBush = true;
 	double decay = 1;
 	Vegetable type;
@@ -29,6 +29,7 @@ public class VegetableObject implements Element, Holdable, Plantable {
 	public VegetableObject(Tuple position, Vegetable type) {
 		this.position = position;
 		Main.holdables.add(this);
+		image = type.holdableImage;
 		this.type = type;
 	}
 

@@ -14,9 +14,7 @@ public class Map {
 	public Map(int width, int height, int depth) {
 		this.width = width;
 		this.height = height;
-
-//		String seed = "Joseph Shimel";
-//		rand.setSeed(seed.hashCode());
+		
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -27,6 +25,8 @@ public class Map {
 				mountain[x][y] = mountain[x][y] + tempMountain[x][y];
 			}
 		}
+		
+		mountain = normalize(mountain);
 
 		temperature = generateTempMap();
 		precipitation = generatePrecipitation();
@@ -138,6 +138,25 @@ public class Map {
 		if (x >= 0 && x < width && y >= 0 && y < height)
 			return mountain[x][y];
 		return -1;
+	}
+	
+	public float[][] normalize(float[][] mountain) {
+		float averageValue = 0;
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < height; y++) {
+				averageValue += mountain[x][y];
+			}
+		}
+		
+		averageValue /= (width * height);
+		float multiplicativeValue = 0.5f / averageValue;
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < height; y++) {
+				mountain[x][y] *= multiplicativeValue;
+			}
+		}
+		
+		return mountain;
 	}
 
 	public double[] generateTempMap() {

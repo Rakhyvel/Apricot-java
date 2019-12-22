@@ -7,9 +7,7 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 public class Terrain implements Element {
-	int width = 1025;
-	int height = 1025;
-	Map map = new Map(width, height, 2);
+	Map map = new Map(Main.size, Main.size, 2);
 	int[] mapImage;
 	int[] tile = Main.spritesheet.getSubset(2, 0, 64);
 	int[] water = Main.spritesheet.getSubset(0, 0, 64);
@@ -31,8 +29,7 @@ public class Terrain implements Element {
 	}
 
 	public void render(Render r) {
-		// Could be optimized to only iterate over tiles known to be visible, but
-		// probably wouldn't help much
+		// Image rendering, draws tiles
 		int size = Main.zoom;
 		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
 		for (int x = (int) (Main.player.getPosition().getX() - 7); x < Main.player.getPosition().getX() + 8; x++) {
@@ -48,7 +45,7 @@ public class Terrain implements Element {
 				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
 				if(map.getPlot(x, y) >= 0.5) {
-					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * width))], 1, 0);
+					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * Main.size))], 1, 0);
 				} else {
 					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
 				}
@@ -57,12 +54,11 @@ public class Terrain implements Element {
 	}
 	
 	public void ronder(Render r) {
-		// Could be optimized to only iterate over tiles known to be visible, but
-		// probably wouldn't help much
+		// Square rendering
 		int size = Main.zoom;
 		r.drawRect(0, 0, 13 * 64, 7 * 64, 254 << 24);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < Main.size; x++) {
+			for (int y = 0; y < Main.size; y++) {
 				int x1 = x * size - Main.player.getX() - 32;
 				int y1 = y * size - Main.player.getY() - 32;
 				if (x1 < -size)
@@ -73,7 +69,7 @@ public class Terrain implements Element {
 					continue;
 				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
-				r.drawRect(x1, y1, size, size, mapImage[x + y * width]);
+				r.drawRect(x1, y1, size, size, mapImage[x + y * Main.size]);
 			}
 		}
 	}

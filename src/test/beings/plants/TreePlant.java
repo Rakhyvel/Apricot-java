@@ -26,6 +26,7 @@ public class TreePlant extends Plant implements Element, Interactable {
 		this.type = type;
 		Main.interactables.add(this);
 		waterTimer = .1;
+		
 		int numberOfSticks = (int) Math.max(0, Registrar.rand.nextInt(10) - 8);
 		for (int i = 0; i < numberOfSticks; i++) {
 			Tuple tempPoint = getNearTuple();
@@ -50,18 +51,19 @@ public class TreePlant extends Plant implements Element, Interactable {
 	@Override
 	public void tick() {		
 		grow();
+
 		decayHunger();
 		drinkWater();
-		if (waterTimer <= 0 || checkBadTemp())
-			remove();
-		if (dieIfRootRot())
-			remove();
-		dieIfBadTemp();
-		if(Registrar.ticks - birthTick > 10000 && Registrar.rand.nextInt(480000) == 0) {
-			chop();
-		}
 
-		if(!Main.r.registryContains((Element) this))
+		if (checkBadTemp())
+			remove();
+
+		if(dieIfRootRot())
+			remove();
+
+		dieIfDehydrated();
+
+		if (!Main.r.registryContains((Element) this))
 			remove();
 	}
 
@@ -114,10 +116,10 @@ public class TreePlant extends Plant implements Element, Interactable {
 	static Tuple getRandomTuple() {
 		Tuple randPoint;
 		do {
-			int x = Registrar.rand.nextInt(1025);
-			int y = Registrar.rand.nextInt(1025);
+			int x = Registrar.rand.nextInt(Main.size);
+			int y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 2);
+		} while (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) < 2);
 		return randPoint;
 	}
 
@@ -192,7 +194,7 @@ public class TreePlant extends Plant implements Element, Interactable {
 			y = (y == position.getY()) ? y + 1 : y;
 			randPoint = new Tuple(x, y);
 			tries++;
-		} while (tries < 1 && (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) == 0));
+		} while (tries < 1 && (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) == 0));
 		return randPoint;
 	}
 

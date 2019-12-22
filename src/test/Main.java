@@ -16,7 +16,6 @@ import test.beings.plants.TreePlant;
 import test.beings.plants.Vegetable;
 import test.beings.plants.VegetablePlant;
 import test.flintknapping.FlintknappingWindow;
-import test.holdables.tools.Shovel;
 import test.holdables.tools.Stone;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
@@ -75,40 +74,40 @@ import test.interfaces.Interactable;
 public class Main {
 	public static SpriteSheet spritesheet = new SpriteSheet("/res/spritesheet.png", 256);
 	public static SpriteSheet food = new SpriteSheet("/res/food.png", 1024);
+	public static SpriteSheet playerSprites = new SpriteSheet("/res/player.png", 256);
 	public static Player player;
 	public static ArrayList<Holdable> holdables = new ArrayList<>();
 	public static ArrayList<Interactable> interactables = new ArrayList<>();
 	public static Registrar r;
 	public static Terrain terrain;
 	public static int zoom = 64;
+	// Must be 256 or bigger (1 << 7)
+	public static int size = (1 << 10) + 1;
 	public static FlintknappingWindow flintknappingWindow;
 
 	public Main() {
 		flintknappingWindow = new FlintknappingWindow();
-		r = new Registrar("Test RPG Game", 13 * 64, 7 * 64);
-		Registrar.rand.setSeed(100);
+		r = new Registrar("Space to pickup, click to interact, THOMAS", 13 * 64, 7 * 64);
 		System.out.println("Generating terrain");
 		terrain = new Terrain();
 		player = new Player();
 		r.addElement(terrain);
 		r.addElement(player);
 		r.addElement(new GUI());
-		Shovel shovel = (Shovel) new Shovel().setPosition(player.getPosition());
-		shovel.hafted = true;
-		r.addElement(shovel);
 
 		System.out.println("Generating trees");
-		addElement(new TreePlant(Tree.SAVANNAH), 1000);
-		addElement(new TreePlant(Tree.MESQUITE), 1000);
-		addElement(new TreePlant(Tree.SPRUCE), 1000);
-		addElement(new TreePlant(Tree.PINE), 1000);
-		addElement(new TreePlant(Tree.WILLOW), 1000);
-		addElement(new TreePlant(Tree.RUBBER), 1000);
-		addElement(new TreePlant(Tree.OAK), 1000);
-		addElement(new TreePlant(Tree.MAPLE), 1000);
+		int numberOfTrees = (int)(size);
+		addElement(new TreePlant(Tree.SAVANNAH), numberOfTrees);
+		addElement(new TreePlant(Tree.MESQUITE), numberOfTrees);
+		addElement(new TreePlant(Tree.SPRUCE), numberOfTrees);
+		addElement(new TreePlant(Tree.PINE), numberOfTrees);
+		addElement(new TreePlant(Tree.WILLOW), numberOfTrees);
+		addElement(new TreePlant(Tree.RUBBER), numberOfTrees);
+		addElement(new TreePlant(Tree.OAK), numberOfTrees);
+		addElement(new TreePlant(Tree.MAPLE), numberOfTrees);
 		
 		System.out.println("Generating fruit");
-		int numberOfFruit = 150;
+		int numberOfFruit = size / 20;
 		addElement(new FruitPlant(Fruit.CACTUS), numberOfFruit);
 		addElement(new FruitPlant(Fruit.APPLE_TREE), numberOfFruit);
 		addElement(new FruitPlant(Fruit.BANANA_TREE), numberOfFruit);
@@ -132,7 +131,7 @@ public class Main {
 		addElement(new FruitPlant(Fruit.WINTERGREENBERRY_BUSH), numberOfFruit);
 
 		System.out.println("Generating vegetables");
-		int numberOfVegetables = 128;
+		int numberOfVegetables = size / 10;
 		addElement(new VegetablePlant(Vegetable.CARROT), numberOfVegetables);
 		addElement(new VegetablePlant(Vegetable.PEPPER), numberOfVegetables);
 		addElement(new VegetablePlant(Vegetable.POTATO), numberOfVegetables);
@@ -145,7 +144,7 @@ public class Main {
 		addElement(new VegetablePlant(Vegetable.SQUASH), numberOfVegetables);
 
 		System.out.println("Generating grains");
-		int numberOfGrain = 200;
+		int numberOfGrain = size / 5;
 		addElement(new GrainPlant(Grain.BARLEY), numberOfGrain);
 		addElement(new GrainPlant(Grain.CORN), numberOfGrain);
 		addElement(new GrainPlant(Grain.RYE), numberOfGrain);
@@ -154,7 +153,7 @@ public class Main {
 		addElement(new GrainPlant(Grain.RICE), numberOfGrain);
 
 		System.out.println("Generating stones");
-		addElement(new Stone(), 1000);
+		addElement(new Stone(), size);
 		
 		System.out.println(r.registrySize());
 		
@@ -179,6 +178,19 @@ public class Main {
 			}
 		}
 		return closestElement;
+	}
+	
+	public static boolean interactableExists(Tuple point) {
+		for (int i = 0; i < interactables.size(); i++) {
+			// Only used for walking, should be able to walk over holdables
+			if (interactables.get(i) instanceof Holdable)
+				continue;
+			
+			if(interactables.get(i).getPosition().equals(point)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static double findClosestDistance(Tuple point) {

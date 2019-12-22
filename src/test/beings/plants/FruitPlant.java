@@ -28,7 +28,7 @@ public class FruitPlant extends Plant implements Element, Interactable {
 		preferedTemp = type.preferedTemp;
 		this.type = type;
 		Main.interactables.add(this);
-		waterTimer = .01;
+		waterTimer = 5200;
 	}
 
 	@Override
@@ -140,8 +140,8 @@ public class FruitPlant extends Plant implements Element, Interactable {
 	static Tuple getRandomTuple(double preferedTemp, double waterHardiness) {
 		Tuple randPoint;
 		do {
-			int x = Registrar.rand.nextInt(1025);
-			int y = Registrar.rand.nextInt(1025);
+			int x = Registrar.rand.nextInt(Main.size);
+			int y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
 				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20);

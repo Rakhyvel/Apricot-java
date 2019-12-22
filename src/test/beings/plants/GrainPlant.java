@@ -101,8 +101,8 @@ public class GrainPlant extends Plant implements Element, Interactable{
 	static Tuple getRandomTuple(float preferedTemp) {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
-			int x = Registrar.rand.nextInt(1025);
-			int y = Registrar.rand.nextInt(1025);
+			int x = Registrar.rand.nextInt(Main.size);
+			int y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
 				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20);

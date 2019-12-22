@@ -72,7 +72,7 @@ public class Tuple {
     	
     	if (o instanceof Tuple) {
     		Tuple t = (Tuple)o;
-    		return getDist(t) < 0.1;
+    		return getDist(t) < 0.6;
     	}
     	
     	return false;
