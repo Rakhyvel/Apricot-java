@@ -74,6 +74,7 @@ import test.interfaces.Interactable;
 
 public class Main {
 	public static SpriteSheet spritesheet = new SpriteSheet("/res/spritesheet.png", 256);
+	public static SpriteSheet food = new SpriteSheet("/res/food.png", 1024);
 	public static Player player;
 	public static ArrayList<Holdable> holdables = new ArrayList<>();
 	public static ArrayList<Interactable> interactables = new ArrayList<>();
@@ -95,9 +96,19 @@ public class Main {
 		Shovel shovel = (Shovel) new Shovel().setPosition(player.getPosition());
 		shovel.hafted = true;
 		r.addElement(shovel);
+
+		System.out.println("Generating trees");
+		addElement(new TreePlant(Tree.SAVANNAH), 1000);
+		addElement(new TreePlant(Tree.MESQUITE), 1000);
+		addElement(new TreePlant(Tree.SPRUCE), 1000);
+		addElement(new TreePlant(Tree.PINE), 1000);
+		addElement(new TreePlant(Tree.WILLOW), 1000);
+		addElement(new TreePlant(Tree.RUBBER), 1000);
+		addElement(new TreePlant(Tree.OAK), 1000);
+		addElement(new TreePlant(Tree.MAPLE), 1000);
 		
 		System.out.println("Generating fruit");
-		int numberOfFruit = 64;
+		int numberOfFruit = 150;
 		addElement(new FruitPlant(Fruit.CACTUS), numberOfFruit);
 		addElement(new FruitPlant(Fruit.APPLE_TREE), numberOfFruit);
 		addElement(new FruitPlant(Fruit.BANANA_TREE), numberOfFruit);
@@ -134,23 +145,13 @@ public class Main {
 		addElement(new VegetablePlant(Vegetable.SQUASH), numberOfVegetables);
 
 		System.out.println("Generating grains");
-		int numberOfGrain = 500;
+		int numberOfGrain = 200;
 		addElement(new GrainPlant(Grain.BARLEY), numberOfGrain);
 		addElement(new GrainPlant(Grain.CORN), numberOfGrain);
 		addElement(new GrainPlant(Grain.RYE), numberOfGrain);
 		addElement(new GrainPlant(Grain.WHEAT), numberOfGrain);
 		addElement(new GrainPlant(Grain.OAT), numberOfGrain);
 		addElement(new GrainPlant(Grain.RICE), numberOfGrain);
-
-		System.out.println("Generating trees");
-		addElement(new TreePlant(Tree.SAVANNAH), 1000);
-		addElement(new TreePlant(Tree.MESQUITE), 1000);
-		addElement(new TreePlant(Tree.SPRUCE), 1000);
-		addElement(new TreePlant(Tree.PINE), 1000);
-		addElement(new TreePlant(Tree.WILLOW), 1000);
-		addElement(new TreePlant(Tree.RUBBER), 1000);
-		addElement(new TreePlant(Tree.OAK), 1000);
-		addElement(new TreePlant(Tree.MAPLE), 1000);
 
 		System.out.println("Generating stones");
 		addElement(new Stone(), 1000);

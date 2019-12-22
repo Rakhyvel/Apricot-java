@@ -9,6 +9,8 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.beings.Being;
+import test.beings.plants.Fruit;
+import test.beings.plants.FruitPlant;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -38,7 +40,16 @@ public class Player extends Being implements Element {
 		} else if (pickupDown) {
 			pickupDown = false;
 			pickup();
-			System.out.println(Main.r.registrySize());
+			int numberOfTheseFruit = 0;
+			for(int i = 0; i < Main.interactables.size(); i++) {
+				if(Main.interactables.get(i) instanceof FruitPlant) {
+					if(((FruitPlant) Main.interactables.get(i)).type == Fruit.BLUEBERRY_BUSH) {
+						numberOfTheseFruit ++;
+						
+					}
+				}
+			}
+			System.out.println(numberOfTheseFruit);
 		}
 
 		if (Registrar.mouse.getMouseLeftDown()) {
@@ -161,7 +172,7 @@ public class Player extends Being implements Element {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(685) + 170;
-			int y = 512;//Registrar.rand.nextInt(685) + 170;
+			int y = Registrar.rand.nextInt(685) + 170;
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5);
 		return randPoint;

@@ -15,7 +15,7 @@ public class GrainPlant extends Plant implements Element, Interactable{
 	public Grain type;
 	
 	public GrainPlant(Grain type) {
-		super(getRandomTuple());
+		super(getRandomTuple(type.preferedTemp));
 		growthStage = Being.GrowthStage.ADULT;
 		waterHardiness = type.waterHardiness;
 		preferedTemp = type.preferedTemp;
@@ -27,15 +27,16 @@ public class GrainPlant extends Plant implements Element, Interactable{
 	@Override
 	public void tick() {		
 		grow();
+
 		decayHunger();
 		drinkWater();
-		if(waterTimer <= 0 || checkBadTemp())
-			remove();
-		if(dieIfRootRot())
-			remove();
-		dieIfBadTemp();
 
-		if(!Main.r.registryContains((Element) this))
+		if (checkBadTemp())
+			remove();
+
+		dieIfDehydrated();
+
+		if (!Main.r.registryContains((Element) this))
 			remove();
 	}
 
@@ -97,13 +98,14 @@ public class GrainPlant extends Plant implements Element, Interactable{
 		return false;
 	}
 	
-	static Tuple getRandomTuple() {
+	static Tuple getRandomTuple(float preferedTemp) {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(1025);
 			int y = Registrar.rand.nextInt(1025);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1);
+		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
+				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20);
 		return randPoint;
 	}
 }

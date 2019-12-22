@@ -15,7 +15,7 @@ import test.interfaces.Plantable;
 public class FruitObject implements Element, Holdable, Plantable {
 	Tuple position;
 	boolean held = false;
-	int[] image = Main.spritesheet.getSubset(1, 0, 64);
+	int[] image;
 	boolean onBush = true;
 	double decay = 1;
 	Fruit type;
@@ -23,6 +23,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 	public FruitObject(Tuple position, Fruit type) {
 		this.position = position;
 		Main.holdables.add(this);
+		image = type.holdableImage;
 		this.type = type;
 	}
 
@@ -47,7 +48,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = 7 * 64 - 106;
+			y = 7 * 64 - 106 + 48;
 		}
 		r.drawImage(x, y, 64, image, 1, 0);
 	}
