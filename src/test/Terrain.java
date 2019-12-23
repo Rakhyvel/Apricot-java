@@ -44,8 +44,9 @@ public class Terrain implements Element {
 					continue;
 				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
-				if(map.getPlot(x, y) >= 0.5) {
-					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex(x + y * Main.size))], 1, 0);
+				
+				if(map.getPlot(x - 1, y - 1) >= 0.5) {
+					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex((x-1) + (y-1) * Main.size))], 1, 0);
 				} else {
 					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
 				}

@@ -102,13 +102,13 @@ public class Shovel extends ToolObject implements Holdable, Element {
 			return;
 
 		if (fullOfDirt) {
-			Pile pile = new Pile(new Tuple(Main.player.getPosition()), 1, Pile.Material.DIRT);
+			Pile pile = new Pile(new Tuple(Main.player.getLookAt()), 1, Pile.Material.DIRT);
 			Main.r.addElement(pile);
 			fullOfDirt = false;
 			return;
 		}
 
-		Hole hole = new Hole(new Tuple(Main.player.getPosition()));
+		Hole hole = new Hole(new Tuple(Main.player.getLookAt()));
 		Main.r.addElement(hole);
 		fullOfDirt = true;
 

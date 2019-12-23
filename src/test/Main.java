@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
+import com.josephs_projects.library.graphics.Font;
 import com.josephs_projects.library.graphics.SpriteSheet;
 
 import test.beings.plants.Fruit;
@@ -57,12 +58,14 @@ import test.interfaces.Interactable;
  * X Add unadded fruits
  * X Add unadded grains
  * 
- * - Add images for all added food
+ * X Add images for all added food
  * 
- * - Add water drinking for players
+ * X Add water drinking for players
  * - Add sicknesses
  * - Add warmth requirement
  * - Add rest requirement
+ * 
+ * - Change Element in library to ask for render order
  * 
  * - Update images for all plants, make them unique
  * - Add brush
@@ -75,6 +78,8 @@ public class Main {
 	public static SpriteSheet spritesheet = new SpriteSheet("/res/spritesheet.png", 256);
 	public static SpriteSheet food = new SpriteSheet("/res/food.png", 1024);
 	public static SpriteSheet playerSprites = new SpriteSheet("/res/player.png", 256);
+	public static Font font = new Font(new SpriteSheet("/res/font16.png", 256), 16);
+	public static Font font32 = new Font(new SpriteSheet("/res/font32.png", 512), 32);
 	public static Player player;
 	public static ArrayList<Holdable> holdables = new ArrayList<>();
 	public static ArrayList<Interactable> interactables = new ArrayList<>();
@@ -86,17 +91,20 @@ public class Main {
 	public static FlintknappingWindow flintknappingWindow;
 
 	public Main() {
+		System.out.println(size);
 		flintknappingWindow = new FlintknappingWindow();
-		r = new Registrar("Space to pickup, click to interact, THOMAS", 13 * 64, 7 * 64);
+		r = new Registrar("Generating world, please wait", 13 * 64, 7 * 64);
 		System.out.println("Generating terrain");
+		String seed = "Joseph Shimel";
+		Registrar.rand.setSeed(seed.hashCode());
 		terrain = new Terrain();
 		player = new Player();
 		r.addElement(terrain);
 		r.addElement(player);
 		r.addElement(new GUI());
 
-		System.out.println("Generating trees");
-		int numberOfTrees = (int)(size);
+		Registrar.frame.setTitle("Generating trees...");
+		int numberOfTrees = (int)(size * size) / 1000;
 		addElement(new TreePlant(Tree.SAVANNAH), numberOfTrees);
 		addElement(new TreePlant(Tree.MESQUITE), numberOfTrees);
 		addElement(new TreePlant(Tree.SPRUCE), numberOfTrees);
@@ -105,9 +113,9 @@ public class Main {
 		addElement(new TreePlant(Tree.RUBBER), numberOfTrees);
 		addElement(new TreePlant(Tree.OAK), numberOfTrees);
 		addElement(new TreePlant(Tree.MAPLE), numberOfTrees);
-		
-		System.out.println("Generating fruit");
-		int numberOfFruit = size / 20;
+
+		Registrar.frame.setTitle("Generating fruit...");
+		int numberOfFruit = (size * size) / 25000;
 		addElement(new FruitPlant(Fruit.CACTUS), numberOfFruit);
 		addElement(new FruitPlant(Fruit.APPLE_TREE), numberOfFruit);
 		addElement(new FruitPlant(Fruit.BANANA_TREE), numberOfFruit);
@@ -130,8 +138,8 @@ public class Main {
 		addElement(new FruitPlant(Fruit.STRAWBERRY_BUSH), numberOfFruit);
 		addElement(new FruitPlant(Fruit.WINTERGREENBERRY_BUSH), numberOfFruit);
 
-		System.out.println("Generating vegetables");
-		int numberOfVegetables = size / 10;
+		Registrar.frame.setTitle("Generating vegetables...");
+		int numberOfVegetables = (size * size) / 20000;
 		addElement(new VegetablePlant(Vegetable.CARROT), numberOfVegetables);
 		addElement(new VegetablePlant(Vegetable.PEPPER), numberOfVegetables);
 		addElement(new VegetablePlant(Vegetable.POTATO), numberOfVegetables);
@@ -143,8 +151,8 @@ public class Main {
 		addElement(new VegetablePlant(Vegetable.SOYBEAN), numberOfVegetables);
 		addElement(new VegetablePlant(Vegetable.SQUASH), numberOfVegetables);
 
-		System.out.println("Generating grains");
-		int numberOfGrain = size / 5;
+		Registrar.frame.setTitle("Generating grains...");
+		int numberOfGrain = (size * size) / 20000;
 		addElement(new GrainPlant(Grain.BARLEY), numberOfGrain);
 		addElement(new GrainPlant(Grain.CORN), numberOfGrain);
 		addElement(new GrainPlant(Grain.RYE), numberOfGrain);
@@ -152,11 +160,12 @@ public class Main {
 		addElement(new GrainPlant(Grain.OAT), numberOfGrain);
 		addElement(new GrainPlant(Grain.RICE), numberOfGrain);
 
-		System.out.println("Generating stones");
+		Registrar.frame.setTitle("Generating stones...");
 		addElement(new Stone(), size);
 		
 		System.out.println(r.registrySize());
-		
+
+		Registrar.frame.setTitle("Code name Apricot");
 		r.run();
 	}
 
@@ -168,7 +177,7 @@ public class Main {
 		Element closestElement = r.getElement(0);
 		double closestDistance = point.getDist(closestElement.getPosition());
 		for (int i = 0; i < r.registrySize(); i++) {
-			double tempDist = r.getElement(i).getPosition().getDist(point);
+			double tempDist = r.getElement(i).getPosition().getCabDist(point);
 			// This method will try not to return itself
 			if (point == r.getElement(i).getPosition())
 				continue;
@@ -201,7 +210,7 @@ public class Main {
 			if (tempPoint == null)
 				continue;
 
-			double tempDist = tempPoint.getDist(point);
+			double tempDist = tempPoint.getCabDist(point);
 			// This method will try not to return itself
 			if (point == r.getElement(i).getPosition())
 				continue;
@@ -221,7 +230,7 @@ public class Main {
 			if (tempPoint == null) {
 				continue;
 			}
-			double tempDist = tempPoint.getDist(point);
+			double tempDist = tempPoint.getCabDist(point);
 			if (point == holdables.get(i).getPosition())
 				continue;
 			if (tempDist < closestDistance) {
@@ -233,6 +242,7 @@ public class Main {
 	}
 
 	void addElement(Element e, int quantity) {
+		r.addElement(e);
 		for (int i = 0; i < quantity; i++) {
 			r.addElement(e.clone());
 		}

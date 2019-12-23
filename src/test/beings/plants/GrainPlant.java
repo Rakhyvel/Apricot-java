@@ -11,7 +11,7 @@ import test.holdables.food.GrainObject;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
-public class GrainPlant extends Plant implements Element, Interactable{
+public class GrainPlant extends Plant implements Element, Interactable {
 	public Grain type;
 	
 	public GrainPlant(Grain type) {

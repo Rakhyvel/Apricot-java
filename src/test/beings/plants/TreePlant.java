@@ -62,9 +62,6 @@ public class TreePlant extends Plant implements Element, Interactable {
 			remove();
 
 		dieIfDehydrated();
-
-		if (!Main.r.registryContains((Element) this))
-			remove();
 	}
 
 	@Override
@@ -119,7 +116,7 @@ public class TreePlant extends Plant implements Element, Interactable {
 			int x = Registrar.rand.nextInt(Main.size);
 			int y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
-		} while (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) < 2);
+		} while (Main.terrain.getPlot(randPoint) <= 0.5 || Main.findClosestDistance(randPoint) < 3);
 		return randPoint;
 	}
 
@@ -200,7 +197,7 @@ public class TreePlant extends Plant implements Element, Interactable {
 
 	void addLog(Tuple point) {
 		Element nearestElement = Main.findNearestElement(point);
-		if (nearestElement.getPosition().getDist(point) > 0) {
+		if (nearestElement.getPosition().getCabDist(point) > 0) {
 			Main.r.addElement(new Log(point));
 		}
 	}
@@ -208,7 +205,7 @@ public class TreePlant extends Plant implements Element, Interactable {
 	void addFoliage(Tuple point) {
 		Element nearestElement = Main.findNearestElement(point);
 
-		if (nearestElement.getPosition().getDist(point) == 0) {
+		if (nearestElement.getPosition().getCabDist(point) == 0) {
 			return;
 		}
 

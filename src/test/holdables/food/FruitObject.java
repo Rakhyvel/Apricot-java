@@ -16,8 +16,7 @@ public class FruitObject implements Element, Holdable, Plantable {
 	Tuple position;
 	boolean held = false;
 	int[] image;
-	boolean onBush = true;
-	double decay = 1;
+	double amount = 100800;
 	Fruit type;
 
 	public FruitObject(Tuple position, Fruit type) {
@@ -29,11 +28,9 @@ public class FruitObject implements Element, Holdable, Plantable {
 
 	@Override
 	public void tick() {
-		// Assumes all berries are on bush when game is first loaded
-		if (!onBush)
-			decay *= 0.99993;
+		amount -= 1.4;
 
-		if (decay < 0.01) {
+		if (amount < 1) {
 			remove();
 		}
 
@@ -75,7 +72,6 @@ public class FruitObject implements Element, Holdable, Plantable {
 	@Override
 	public boolean pickup() {
 		held = true;
-		onBush = false;
 		position.setX(-100);
 		position.setY(3000);
 		return true;
@@ -90,7 +86,9 @@ public class FruitObject implements Element, Holdable, Plantable {
 
 	@Override
 	public void use() {
-		Main.player.eat(decay * 504000 * 0.2, Player.Hunger.FRUIT);
+		int eatenAmount = 504000 - Main.player.hungerTimer;
+		Main.player.eat(amount, Player.Hunger.FRUIT);
+		amount -= eatenAmount;
 	}
 
 	@Override

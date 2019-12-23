@@ -23,13 +23,7 @@ public class Log implements Element, Holdable, Interactable {
 	}
 
 	@Override
-	public void tick() {
-		decay *= 0.9998;
-
-		if (decay < 0.01) {
-			remove();
-		}
-	}
+	public void tick() {}
 
 	@Override
 	public void render(Render r) {
@@ -102,7 +96,7 @@ public class Log implements Element, Holdable, Interactable {
 	@Override
 	public boolean interact(Holdable hand) {
 		if (hand instanceof Log) {
-			Pile pile = new Pile(new Tuple(Main.player.getPosition()), 2, Pile.Material.LOG);
+			Pile pile = new Pile(new Tuple(Main.player.getLookAt()), 2, Pile.Material.LOG);
 			Main.r.addElement(pile);
 			remove();
 			hand.remove();

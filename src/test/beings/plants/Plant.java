@@ -61,6 +61,6 @@ public abstract class Plant extends Being{
 	}
 	
 	public boolean dieIfRootRot() {
-		return invertedRain() > (waterHardiness * 2 + 20);
+		return invertedRain() > (waterHardiness * 8);
 	}
 }

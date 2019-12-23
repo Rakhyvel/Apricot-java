@@ -36,7 +36,7 @@ public class TreeFoliage implements Element, Holdable, Plantable {
 			sprout();
 		}
 		
-		decay *= 0.9999;
+		decay *= 0.99999;
 
 		if (decay < 0.01) {
 			remove();

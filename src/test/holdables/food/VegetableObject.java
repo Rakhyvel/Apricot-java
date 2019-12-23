@@ -23,7 +23,7 @@ public class VegetableObject implements Element, Holdable, Plantable {
 	boolean held = false;
 	int[] image;
 	boolean onBush = true;
-	double decay = 1;
+	double amount = 126000;
 	Vegetable type;
 
 	public VegetableObject(Tuple position, Vegetable type) {
@@ -35,9 +35,9 @@ public class VegetableObject implements Element, Holdable, Plantable {
 
 	@Override
 	public void tick() {
-		decay *= 0.999;
+		amount--;
 		
-		if (decay < 0.01) {
+		if (amount < 1) {
 			remove();
 		}
 	}
@@ -51,7 +51,7 @@ public class VegetableObject implements Element, Holdable, Plantable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = 7 * 64 - 106;
+			y = 7 * 64 - 106 + 48;
 		}
 		r.drawImage(x, y, 64, image, 1, 0);
 	}
@@ -88,7 +88,9 @@ public class VegetableObject implements Element, Holdable, Plantable {
 
 	@Override
 	public void use() {
-		Main.player.eat(decay * 504000 * 0.2, Player.Hunger.VEGETABLE);
+		int eatenAmount = 504000 - Main.player.hungerTimer;
+		Main.player.eat(amount, Player.Hunger.VEGETABLE);
+		amount -= eatenAmount;
 	}
 
 	@Override

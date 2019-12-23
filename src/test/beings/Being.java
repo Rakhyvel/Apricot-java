@@ -7,7 +7,7 @@ public abstract class Being {
 	protected Tuple position = new Tuple();
 	protected Tuple target = new Tuple();
 
-	protected double speed = 1 / 8.0;
+	protected double speed = 1 / 14.0;
 	protected int birthTick;
 	protected GrowthStage growthStage;
 	protected double waterHardiness = 0;
@@ -42,7 +42,7 @@ public abstract class Being {
 	};
 	public int hungerTimer = 504000;
 	public double waterTimer = 72000;
-	protected int awakeTicks = 0;
+	public int awakeTicks = 96000;
 	protected int temperature = 72;
 
 	public abstract void remove();
@@ -59,6 +59,10 @@ public abstract class Being {
 
 		if (position.getY() > target.getY())
 			position.setY(position.getY() - speed);
+		if(position.getDist(target) < 0.1) {
+			position.setX(target.getX());
+			position.setY(target.getY());
+		}
 	}
 
 	protected void decayHunger() {
@@ -80,7 +84,7 @@ public abstract class Being {
 	}
 	
 	public void drink(double amount) {
-		waterTimer += (int) Math.min(72000, waterTimer + amount);
+		waterTimer = (int) Math.min(72000, waterTimer + amount);
 	}
 
 	public Being setGrowthStage(Being.GrowthStage growthStage) {

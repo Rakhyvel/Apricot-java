@@ -80,6 +80,7 @@ public class Registrar {
         	while(lag >= dt) {
         		tick();
         		lag -= dt;
+        		ticks++;
         	}
         	
         	render();        	

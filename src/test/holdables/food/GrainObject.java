@@ -17,9 +17,9 @@ import test.interfaces.Plantable;
 public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	Tuple position;
 	boolean held = false;
-	int[] image = Main.spritesheet.getSubset(1, 0, 64);
+	int[] grassImage;
 	boolean onBush = true;
-	double decay = 1;
+	double amount = 168000;
 	Grain type;
 	// Can thresh by pouring into bowl, then another bowl, or using knife.
 	// Can plant either threshed or not
@@ -29,6 +29,7 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 
 	public GrainObject(Tuple position, Grain type) {
 		this.position = position;
+		grassImage = type.grassImage;
 		Main.holdables.add(this);
 		Main.interactables.add(this);
 		this.type = type;
@@ -36,9 +37,9 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 
 	@Override
 	public void tick() {
-		decay *= 0.99999;
+		amount--;
 
-		if (decay < 0.01) {
+		if (amount < 1) {
 			remove();
 		}
 	}
@@ -52,9 +53,13 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 			y = (int) position.getY() * 64 - Main.player.getY() + 32;
 		} else {
 			x = 50;
-			y = 7 * 64 - 106;
+			y = 7 * 64 - 106 + 48;
 		}
-		r.drawImage(x, y, 64, image, 1, 0);
+		if(!threshed) {
+			r.drawImage(x, y, 64, grassImage, 1, 0);
+		} else {
+			// TODO Add ground
+		}
 	}
 
 	@Override
@@ -90,7 +95,9 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	@Override
 	public void use() {
 		if(threshed) {
-			Main.player.eat(decay * 504000 * 0.333, Player.Hunger.GRAIN);
+			int eatenAmount = 504000 - Main.player.hungerTimer;
+			Main.player.eat(amount, Player.Hunger.GRAIN);
+			amount -= eatenAmount;
 		} else {
 			System.out.println("Yuck! That hasn't been threshed! Feed that to the pigs!");
 		}
@@ -98,7 +105,7 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 
 	@Override
 	public boolean isConsumed() {
-		return true;
+		return threshed;
 	}
 
 	public void remove() {

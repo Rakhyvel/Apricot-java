@@ -52,6 +52,10 @@ public class Tuple {
         return Math.sqrt((this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y));
     }
     
+    public Double getCabDist(Tuple t) {
+    	return Math.abs(this.x - t.x) + Math.abs(this.y - t.y);
+    }
+    
     public Double magnitude() {
     	return Math.sqrt((x * x) + (y * y));
     }
