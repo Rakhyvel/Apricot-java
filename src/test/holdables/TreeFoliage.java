@@ -32,11 +32,11 @@ public class TreeFoliage implements Element, Holdable, Plantable {
 
 	@Override
 	public void tick() {
-		if(Registrar.rand.nextInt(8000) == 0 && !held) {
+		if(Registrar.rand.nextInt(72000) == 0 && !held) {
 			sprout();
 		}
 		
-		decay *= 0.99999;
+		decay *= 0.999999;
 
 		if (decay < 0.01) {
 			remove();

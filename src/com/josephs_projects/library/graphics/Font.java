@@ -34,6 +34,9 @@ public class Font {
 	public int getKern(int index) {
 		if (getSize() == 32)
 			return kern16[index]*2+4;
+		if (index > kern16.length) {
+			return 10;
+		}
 		return kern16[index]+1;
 	}
 	

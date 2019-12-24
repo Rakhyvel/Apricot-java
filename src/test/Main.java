@@ -61,14 +61,17 @@ import test.interfaces.Interactable;
  * X Add images for all added food
  * 
  * X Add water drinking for players
- * - Add sicknesses
- * - Add warmth requirement
- * - Add rest requirement
+ * X Add nutrients
+ * X Add warmth requirement
+ * X Add rest requirement
+ *     X Add time
  * 
  * - Change Element in library to ask for render order
- * 
- * - Update images for all plants, make them unique
- * - Add brush
+ * - Add waypoints
+ * - Add light
+ *      - Add firepit
+ * - Add sickness
+ * - Add bushes and tall grass
  * 
  * - Buy Thomas a new laptop when this game is big
  * 
@@ -85,6 +88,7 @@ public class Main {
 	public static ArrayList<Interactable> interactables = new ArrayList<>();
 	public static Registrar r;
 	public static Terrain terrain;
+	public static Time time;
 	public static int zoom = 64;
 	// Must be 256 or bigger (1 << 7)
 	public static int size = (1 << 10) + 1;
@@ -99,9 +103,12 @@ public class Main {
 		Registrar.rand.setSeed(seed.hashCode());
 		terrain = new Terrain();
 		player = new Player();
+		time = new Time();
 		r.addElement(terrain);
 		r.addElement(player);
+		r.addElement(time);
 		r.addElement(new GUI());
+		
 
 		Registrar.frame.setTitle("Generating trees...");
 		int numberOfTrees = (int)(size * size) / 1000;

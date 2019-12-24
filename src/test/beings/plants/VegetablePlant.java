@@ -6,41 +6,47 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
-import test.beings.Being;
 import test.holdables.food.VegetableObject;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
-public class VegetablePlant extends Plant implements Element, Interactable{
+public class VegetablePlant extends Plant implements Element, Interactable {
 	public Vegetable type;
-	
+	double amount = 0;
+
 	public VegetablePlant(Vegetable type) {
 		super(getRandomTuple());
-		growthStage = Being.GrowthStage.ADULT;
+		growthStage = GrowthStage.BABY;
 		waterHardiness = type.waterHardiness;
 		preferedTemp = type.preferedTemp;
 		Main.interactables.add(this);
 		this.type = type;
 		waterTimer = 5200;
+		this.growSpeed = 588000;
 	}
 
 	@Override
-	public void tick() {		
+	public void tick() {
 		grow();
-		
+
 		decayHunger();
 		drinkWater();
-		
-		if(checkBadTemp())
+
+		if (checkBadTemp())
 			remove();
-		
-		if(dieIfRootRot())
+
+		if (dieIfRootRot())
 			remove();
-		
+
 		dieIfDehydrated();
 
-		if(!Main.r.registryContains((Element) this))
+		if (!Main.r.registryContains((Element) this))
 			remove();
+
+		if (growthStage != GrowthStage.ADULT) {
+			amount += (4 / 3.0) * Main.terrain.getNutrient(type.nutrient, position) / 1764000.0;
+			Main.terrain.depleteNutrient(type.nutrient, position);
+		}
 	}
 
 	@Override
@@ -66,41 +72,44 @@ public class VegetablePlant extends Plant implements Element, Interactable{
 	}
 
 	@Override
-	public void input() {}
+	public void input() {
+	}
 
 	@Override
 	public void remove() {
 		Main.r.removeElement(this);
 		Main.interactables.remove(this);
 	}
-	
+
 	@Override
 	public Tuple getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public Element setPosition(Tuple position) {
 		this.position = new Tuple(position);
 		return this;
 	}
-	
+
 	public Element clone() {
 		return new VegetablePlant(type);
 	}
 
 	@Override
 	public boolean interact(Holdable hand) {
-		if(hand == null) {
-			VegetableObject vegetable = new VegetableObject(new Tuple(), type);
-			Main.r.addElement(vegetable);
-			Main.player.setHand(vegetable);
+		if (hand == null) {
+			if (growthStage == GrowthStage.ADULT) {
+				VegetableObject vegetable = new VegetableObject(new Tuple(), type, amount);
+				Main.r.addElement(vegetable);
+				Main.player.setHand(vegetable);
+			}
 			remove();
 			return true;
 		}
 		return false;
 	}
-	
+
 	static Tuple getRandomTuple() {
 		Tuple randPoint;
 		do {

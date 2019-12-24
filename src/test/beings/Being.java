@@ -3,6 +3,8 @@ package test.beings;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 
+import test.Main;
+
 public abstract class Being {
 	protected Tuple position = new Tuple();
 	protected Tuple target = new Tuple();
@@ -43,7 +45,7 @@ public abstract class Being {
 	public int hungerTimer = 504000;
 	public double waterTimer = 72000;
 	public int awakeTicks = 96000;
-	protected int temperature = 72;
+	public double temperatureTimer = 0;
 
 	public abstract void remove();
 
@@ -104,5 +106,9 @@ public abstract class Being {
 	public void dieIfDehydrated() {
 		if(waterTimer <= 0)
 			remove();
+	}
+	
+	public void temperatureTimer() {
+		temperatureTimer += (Main.terrain.getTemp(position) - preferedTemp) / 60.0;
 	}
 }

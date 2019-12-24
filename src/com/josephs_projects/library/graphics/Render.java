@@ -109,7 +109,7 @@ public class Render extends Canvas {
 				// bottom | right | top | left
 				if ((((borders & 1) == 1) && x1 < 2) || (((borders & 2) == 2) && y1 < 2)
 						|| (((borders & 4) == 4) && x1 > w - 3) || (((borders & 8) == 8) && y1 > h - 3)) {
-					pixels[id] = 230 << 16 | 230 << 8 | 230;
+					pixels[id] = 50 << 24 | 230 << 16 | 230 << 8 | 230;
 				} else {
 					pixels[id] = newColor + newColor2;
 				}

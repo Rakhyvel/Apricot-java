@@ -14,7 +14,7 @@ public class Map {
 	public Map(int width, int height, int depth) {
 		this.width = width;
 		this.height = height;
-		
+
 		mountain = perlinNoise(depth, 1f);
 		for (int i2 = depth + 1; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
@@ -25,7 +25,7 @@ public class Map {
 				mountain[x][y] = mountain[x][y] + tempMountain[x][y];
 			}
 		}
-		
+
 		mountain = normalize(mountain);
 
 		temperature = generateTempMap();
@@ -43,8 +43,8 @@ public class Map {
 				int y = (i / width) * wavelength;
 				if (frequency <= 2) {
 					noise[x][y] = Registrar.rand.nextFloat() + 0.1f;
-					if(x == 0 || y == 0 || x == this.width-1 || y == this.height-1)
-						noise[x][y] = Registrar.rand.nextFloat()/4.0f;
+					if (x == 0 || y == 0 || x == this.width - 1 || y == this.height - 1)
+						noise[x][y] = Registrar.rand.nextFloat() / 4.0f;
 				} else {
 					noise[x][y] = ((2 * Registrar.rand.nextFloat() - 1f) * amplitude);
 				}
@@ -139,23 +139,23 @@ public class Map {
 			return mountain[x][y];
 		return -1;
 	}
-	
+
 	public float[][] normalize(float[][] mountain) {
 		float averageValue = 0;
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				averageValue += mountain[x][y];
 			}
 		}
-		
+
 		averageValue /= (width * height);
 		float multiplicativeValue = 0.5f / averageValue;
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				mountain[x][y] *= multiplicativeValue;
 			}
 		}
-		
+
 		return mountain;
 	}
 
@@ -170,7 +170,7 @@ public class Map {
 		// 25 degrees farenheit at poles, 110 degrees farenheit at equator
 		for (int i = 0; i < tempMap.length; i++) {
 			int y = (i / width);
-			tempMap[i] = -(170.0 / (double) height) * Math.abs(y - height / 2.0) + 110;
+			tempMap[i] = -0.15 * Math.abs(y - height / 2) + 114;
 		}
 		return tempMap;
 	}
@@ -207,20 +207,20 @@ public class Map {
 		double[] retval = new double[width * height];
 		for (int y = 0; y < height; y++) {
 			double precipitation = 50;
-			for(int x = width - 1; x >= 0; x--) {
-				if(mountain[x][y] < 0.5) {
+			for (int x = width - 1; x >= 0; x--) {
+				if (mountain[x][y] < 0.5) {
 					precipitation++;
-				} else if (precipitation > 0){
-					if(x == 0)
+				} else if (precipitation > 0) {
+					if (x == 0)
 						continue;
-					if(mountain[x][y] < mountain[x-1][y]) {
-						float diff = 0.1f * (mountain[x-1][y] - mountain[x][y]);
-						diff = (float)Math.sqrt(diff);
-						precipitation *= -diff/(diff + 1.0) + 1;
+					if (mountain[x][y] < mountain[x - 1][y]) {
+						float diff = 0.05f * (mountain[x - 1][y] - mountain[x][y]);
+						diff = (float) Math.sqrt(diff);
+						precipitation *= -diff / (diff + 1.0) + 1;
 					}
-					
+
 					retval[x + y * width] = (99 - precipitation);
-					retval[x + y * width] *= mountain[x][y];
+					retval[x + y * width] *= mountain[x][y] * 1.1;
 					retval[x + y * width] = Math.max(0, Math.min(99, (retval[x + y * width])));
 				}
 			}
@@ -247,24 +247,23 @@ public class Map {
 		if (value < 0.5)
 			return 255 << 24 | 105 << 8 | 148;
 		temperature = Math.max(0, Math.min(85, temperature - 25));
-		
+
 		int x = (int) ((temperature / 85.0) * 77);
 		int y = (int) ((precip / 100.0) * 9);
 		return biomes[x + y * 77];
 	}
-	
+
 	public int getColorIndex(int index) {
 		int x = (index % width);
 		int y = (index / width);
 		float value = mountain[x][y];
 		double temperature = this.temperature[index];
-		double precip = precipitation[index];
 		if (value < 0.5)
 			return 255 << 24 | 105 << 8 | 148;
 		temperature = Math.max(0, Math.min(85, temperature - 25));
-		
+
 		x = (int) ((temperature / 85.0) * 77);
-		y = (int) ((precip / 100.0) * 9);
+		y = (int) ((temperature / 85.0) * 9);
 		return Math.max(0, x + y * 77);
 	}
 }

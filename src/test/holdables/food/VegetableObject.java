@@ -23,14 +23,15 @@ public class VegetableObject implements Element, Holdable, Plantable {
 	boolean held = false;
 	int[] image;
 	boolean onBush = true;
-	double amount = 126000;
+	double amount;
 	Vegetable type;
 
-	public VegetableObject(Tuple position, Vegetable type) {
+	public VegetableObject(Tuple position, Vegetable type, double amount) {
 		this.position = position;
 		Main.holdables.add(this);
 		image = type.holdableImage;
 		this.type = type;
+		this.amount = 126000 * amount;
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public class VegetableObject implements Element, Holdable, Plantable {
 	}
 
 	public Element clone() {
-		return new VegetableObject(new Tuple(position), type);
+		return null;
 	}
 
 	@Override

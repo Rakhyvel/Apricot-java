@@ -6,12 +6,15 @@ import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
+import test.beings.plants.Nutrient;
+
 public class Terrain implements Element {
 	Map map = new Map(Main.size, Main.size, 2);
 	int[] mapImage;
 	int[] tile = Main.spritesheet.getSubset(2, 0, 64);
 	int[] water = Main.spritesheet.getSubset(0, 0, 64);
 	int[][] tiles = new int[9 * 77][64 * 64];
+	double[][][] nutrients = new double[3][Main.size][Main.size];
 	Tuple offset = new Tuple(0, 0);
 
 	int xOffset = 0;
@@ -22,10 +25,27 @@ public class Terrain implements Element {
 		for (int i = 0; i < map.biomes.length; i++) {
 			tiles[i] = Render.getScreenBlend(map.biomes[i], tile);
 		}
+		// This is very inefficient
+		for (int i = 0; i < 3; i++) {
+			for (int x = 0; x < Main.size; x++) {
+				for (int y = 0; y < Main.size; y++) {
+					nutrients[i][x][y] = 1.0f;
+				}
+			}
+		}
+
 	}
 
 	@Override
 	public void tick() {
+		// Shoot me this is hella inefficient
+		for (int i = 0; i < 3; i++) {
+			for (int x = 0; x < Main.size; x++) {
+				for (int y = 0; y < Main.size; y++) {
+					nutrients[i][x][y] = Math.min(1, nutrients[i][x][y] + 1 / 7056000.0);
+				}
+			}
+		}
 	}
 
 	public void render(Render r) {
@@ -44,16 +64,23 @@ public class Terrain implements Element {
 					continue;
 				if (y1 - size > Registrar.canvas.getHeight())
 					continue;
-				
-				if(map.getPlot(x - 1, y - 1) >= 0.5) {
-					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex((x-1) + (y-1) * Main.size))], 1, 0);
+
+				if (map.getPlot(x - 1, y - 1) >= 0.5) {
+					r.drawImage(x1, y1, size, tiles[Math.max(0, map.getColorIndex((x - 1) + (y - 1) * Main.size))], 1,
+							0);
 				} else {
-					r.drawImage(x1, y1, size, Main.spritesheet.getSubset(0, (int)((Registrar.ticks % 60) * (1/15.0)), 64), 1, 0);
+					r.drawImage(x1, y1, size,
+							Main.spritesheet.getSubset(0, (int) ((Registrar.ticks % 60) * (1 / 15.0)), 64), 1, 0);
 				}
 			}
 		}
+
+		Tuple playerLookAt = Main.player.getLookAt();
+		int x1 = (int) playerLookAt.getX() * size - Main.player.getX();
+		int y1 = (int) playerLookAt.getY() * size - Main.player.getY();
+		r.drawRectBorders(x1, y1, size, size, 0, 15);
 	}
-	
+
 	public void ronder(Render r) {
 		// Square rendering
 		int size = Main.zoom;
@@ -113,5 +140,13 @@ public class Terrain implements Element {
 
 	public Element clone() {
 		return null;
+	}
+
+	public double getNutrient(Nutrient nutrient, Tuple position) {
+		return nutrients[nutrient.ordinal()][(int) position.getX()][(int) position.getY()];
+	}
+
+	public void depleteNutrient(Nutrient nutrient, Tuple position) {
+		nutrients[nutrient.ordinal()][(int) position.getX()][(int) position.getY()] -= 1 / 3528000.0;
 	}
 }

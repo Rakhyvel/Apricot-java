@@ -7,6 +7,7 @@ import test.Main;
 import test.beings.Being;
 
 public abstract class Plant extends Being{
+	int growSpeed = 200;
 	
 	public Plant(Tuple position) {
 		super(position);
@@ -18,7 +19,7 @@ public abstract class Plant extends Being{
 			return;
 		
 		// Reject if not the right time
-		if((Registrar.ticks - birthTick) % 200 != 199)
+		if((Registrar.ticks - birthTick) % growSpeed != growSpeed - 1)
 			return;
 		
 		switch (growthStage) {

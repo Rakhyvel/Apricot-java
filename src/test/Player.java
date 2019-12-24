@@ -9,7 +9,6 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.beings.Being;
-import test.beings.plants.TreePlant;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -49,13 +48,7 @@ public class Player extends Being implements Element {
 		} else if (pickupDown) {
 			pickupDown = false;
 			pickup();
-			int numberOfTheseFruit = 0;
-			for (int i = 0; i < Main.interactables.size(); i++) {
-				if (Main.interactables.get(i) instanceof TreePlant) {
-					numberOfTheseFruit++;
-				}
-			}
-			System.out.println(numberOfTheseFruit);
+			System.out.println("Year: " + Main.time.year + " Day: " + Main.time.day + " Hour: " + Main.time.hour);
 		}
 
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_ENTER)) {
@@ -82,6 +75,7 @@ public class Player extends Being implements Element {
 		}
 
 		keyMove();
+		temperatureTimer();
 	}
 
 	@Override

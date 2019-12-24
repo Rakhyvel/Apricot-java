@@ -19,7 +19,7 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	boolean held = false;
 	int[] grassImage;
 	boolean onBush = true;
-	double amount = 168000;
+	double amount;
 	Grain type;
 	// Can thresh by pouring into bowl, then another bowl, or using knife.
 	// Can plant either threshed or not
@@ -27,17 +27,19 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	// Can only eat if threshed.
 	boolean threshed = false;
 
-	public GrainObject(Tuple position, Grain type) {
+	public GrainObject(Tuple position, Grain type, double amount) {
 		this.position = position;
 		grassImage = type.grassImage;
 		Main.holdables.add(this);
 		Main.interactables.add(this);
 		this.type = type;
+		this.amount = 168000 * amount;
 	}
 
 	@Override
 	public void tick() {
-		amount--;
+		// Grain should last winter, which is 24 days
+		amount -= 1/13.0;
 
 		if (amount < 1) {
 			remove();
@@ -118,7 +120,7 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 	}
 
 	public Element clone() {
-		return new GrainObject(new Tuple(position), type);
+		return null;
 	}
 
 	@Override
