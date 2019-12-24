@@ -6,8 +6,8 @@ import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
-import test.holdables.Hole;
-import test.holdables.Pile;
+import test.interactables.Hole;
+import test.interactables.Pile;
 import test.interfaces.Holdable;
 
 public class Shovel extends ToolObject implements Holdable, Element {
@@ -64,6 +64,10 @@ public class Shovel extends ToolObject implements Holdable, Element {
 		if (held) {
 			Main.player.setHand(null);
 		}
+	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
 	}
 
 	@Override

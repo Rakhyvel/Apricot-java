@@ -110,4 +110,8 @@ public class FruitObject implements Element, Holdable, Plantable {
 			Main.player.setHand(null);
 		}
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY() - 1;
+	}
 }

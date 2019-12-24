@@ -55,6 +55,10 @@ public class Axe extends ToolObject implements Holdable, Element {
 			Main.player.setHand(null);
 		}
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
+	}
 
 	@Override
 	public Tuple getPosition() {

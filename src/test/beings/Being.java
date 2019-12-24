@@ -14,6 +14,7 @@ public abstract class Being {
 	protected GrowthStage growthStage;
 	protected double waterHardiness = 0;
 	protected int preferedTemp = 72;
+	protected boolean resting = false;
 
 	public Being(Tuple position) {
 		this.position = position;
@@ -44,7 +45,7 @@ public abstract class Being {
 	};
 	public int hungerTimer = 504000;
 	public double waterTimer = 72000;
-	public int awakeTicks = 96000;
+	public int awakeTicks = 144000;
 	public double temperatureTimer = 0;
 
 	public abstract void remove();
@@ -87,6 +88,7 @@ public abstract class Being {
 	
 	public void drink(double amount) {
 		waterTimer = (int) Math.min(72000, waterTimer + amount);
+		temperatureTimer -= amount;
 	}
 
 	public Being setGrowthStage(Being.GrowthStage growthStage) {

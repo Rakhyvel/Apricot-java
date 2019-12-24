@@ -42,7 +42,7 @@ public abstract class Plant extends Being{
 	}
 	
 	public boolean checkBadTemp() {
-		return Math.abs(Main.terrain.getTemp(position) - preferedTemp) > 20;
+		return Math.abs(Main.terrain.getTemp(position) - preferedTemp) > 40;
 	}
 	
 	public void drinkWater() {

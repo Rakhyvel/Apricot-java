@@ -77,6 +77,10 @@ public class GrainPlant extends Plant implements Element, Interactable {
 		Main.r.removeElement(this);
 		Main.interactables.remove(this);
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
+	}
 
 	@Override
 	public Tuple getPosition() {
@@ -114,7 +118,7 @@ public class GrainPlant extends Plant implements Element, Interactable {
 			int y = Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5 || Main.findClosestDistance(randPoint) < 1
-				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 20);
+				|| Math.abs(Main.terrain.getTemp(randPoint) - preferedTemp) > 40);
 		return randPoint;
 	}
 }

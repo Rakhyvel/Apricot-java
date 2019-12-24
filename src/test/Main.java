@@ -66,14 +66,29 @@ import test.interfaces.Interactable;
  * X Add rest requirement
  *     X Add time
  * 
- * - Change Element in library to ask for render order
- * - Add waypoints
- * - Add light
+ * X Change Element in library to ask for render order
+ * X Add home marker
+ * X Add light
  *      - Add firepit
+ *      	- Make firepit emit light
+ *      
+ * - Add building
+ *      - Watch some castle-guy videos to get ideas
+ * 
  * - Add sickness
  * - Add bushes and tall grass
  * 
+ * - Add pottery
+ * - Flush out flintknapping and pottery
+ * 
  * - Buy Thomas a new laptop when this game is big
+ * 
+ * Spitball{
+ * - Whittling
+ * - Animals
+ * - Speech bubbles
+ * - Health
+ * }
  * 
  */
 
@@ -86,12 +101,14 @@ public class Main {
 	public static Player player;
 	public static ArrayList<Holdable> holdables = new ArrayList<>();
 	public static ArrayList<Interactable> interactables = new ArrayList<>();
+	public static ArrayList<Element> lightSources = new ArrayList<>();
 	public static Registrar r;
 	public static Terrain terrain;
 	public static Time time;
+	public static Light light;
 	public static int zoom = 64;
 	// Must be 256 or bigger (1 << 7)
-	public static int size = (1 << 10) + 1;
+	public static int size = (1 << 9) + 1;
 	public static FlintknappingWindow flintknappingWindow;
 
 	public Main() {
@@ -104,9 +121,11 @@ public class Main {
 		terrain = new Terrain();
 		player = new Player();
 		time = new Time();
+		light = new Light();
 		r.addElement(terrain);
 		r.addElement(player);
 		r.addElement(time);
+		r.addElement(light);
 		r.addElement(new GUI());
 		
 
@@ -182,9 +201,13 @@ public class Main {
 
 	public static Element findNearestElement(Tuple point) {
 		Element closestElement = r.getElement(0);
-		double closestDistance = point.getDist(closestElement.getPosition());
+		double closestDistance = size;
 		for (int i = 0; i < r.registrySize(); i++) {
-			double tempDist = r.getElement(i).getPosition().getCabDist(point);
+			Tuple tempPoint = r.getElement(i).getPosition();
+			if (tempPoint == null)
+				continue;
+			
+			double tempDist = tempPoint.getCabDist(point);
 			// This method will try not to return itself
 			if (point == r.getElement(i).getPosition())
 				continue;
@@ -210,8 +233,7 @@ public class Main {
 	}
 
 	public static double findClosestDistance(Tuple point) {
-		Element closestElement = r.getElement(0);
-		double closestDistance = point.getDist(closestElement.getPosition());
+		double closestDistance = size;
 		for (int i = 0; i < r.registrySize(); i++) {
 			Tuple tempPoint = r.getElement(i).getPosition();
 			if (tempPoint == null)
@@ -223,7 +245,24 @@ public class Main {
 				continue;
 			if (tempDist < closestDistance) {
 				closestDistance = tempDist;
-				closestElement = r.getElement(i);
+			}
+		}
+		return closestDistance;
+	}
+	
+	public static double findClosestLight(Tuple point) {
+		double closestDistance = size;
+		for (int i = 0; i < lightSources.size(); i++) {
+			Tuple tempPoint = lightSources.get(i).getPosition();
+			if (tempPoint == null)
+				continue;
+
+			double tempDist = tempPoint.getDist(point);
+			// This method will try not to return itself
+			if (point == tempPoint)
+				continue;
+			if (tempDist < closestDistance) {
+				closestDistance = tempDist;
 			}
 		}
 		return closestDistance;

@@ -130,12 +130,8 @@ public class Registrar {
 				return 0;
 			if(arg1 == null)
 				return 0;
-			if(arg0.getPosition() == null)
-				return 0;
-			if(arg1.getPosition() == null)
-				return 0;
 						
-			return (int)(arg0.getPosition().getY() * 65 - arg1.getPosition().getY() * 65);
+			return arg0.getRenderOrder() - arg1.getRenderOrder();
 		}
     }
 }

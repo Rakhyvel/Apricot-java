@@ -50,6 +50,10 @@ public class Stick implements Element, Holdable, Interactable{
 		Main.holdables.remove(this);
 		Main.interactables.remove(this);
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY() - 1;
+	}
 
 	@Override
 	public Tuple getPosition() {

@@ -1,4 +1,4 @@
-package test.holdables;
+package test.interactables;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
@@ -6,6 +6,7 @@ import com.josephs_projects.library.graphics.Render;
 import com.josephs_projects.library.graphics.SpriteSheet;
 
 import test.Main;
+import test.holdables.Log;
 import test.holdables.tools.Shovel;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
@@ -78,6 +79,10 @@ public class Pile implements Element, Interactable {
 	public void remove() {
 		Main.r.removeElement(this);
 		Main.interactables.remove(this);
+	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
 	}
 	
 	public Element clone() {

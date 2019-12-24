@@ -80,6 +80,10 @@ public class VegetablePlant extends Plant implements Element, Interactable {
 		Main.r.removeElement(this);
 		Main.interactables.remove(this);
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
+	}
 
 	@Override
 	public Tuple getPosition() {

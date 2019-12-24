@@ -118,6 +118,10 @@ public class GrainObject implements Element, Holdable, Interactable, Plantable {
 		}
 		Main.interactables.remove(this);
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY() - 1;
+	}
 
 	public Element clone() {
 		return null;

@@ -108,7 +108,7 @@ public class Terrain implements Element {
 
 	public Tuple getPosition() {
 		// Should never be called
-		return new Tuple(2000, -2000);
+		return null;
 	}
 
 	@Override
@@ -118,6 +118,10 @@ public class Terrain implements Element {
 
 	public void remove() {
 		// Can't do that :)
+	}
+	
+	public int getRenderOrder() {
+		return -2000;
 	}
 
 	public float getPlot(Tuple point) {
@@ -135,7 +139,9 @@ public class Terrain implements Element {
 	}
 
 	public int getTemp(Tuple point) {
-		return (int) map.getTemp(point);
+		double hourlyTemp = 5 * Math.sin((Math.PI/12)*(Main.time.hour - 10));
+		double seasonalTemp = 16 * Math.sin((Math.PI/6) * (Main.time.month - 3));
+		return (int) (map.getTemp(point) + hourlyTemp + seasonalTemp);
 	}
 
 	public Element clone() {

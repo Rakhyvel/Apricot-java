@@ -1,4 +1,4 @@
-package test.holdables;
+package test.interactables;
 
 import com.josephs_projects.library.Element;
 import com.josephs_projects.library.Tuple;
@@ -47,6 +47,10 @@ public class Hole implements Element, Interactable {
 	public void remove() {
 		Main.r.removeElement(this);
 		Main.interactables.remove(this);
+	}
+	
+	public int getRenderOrder() {
+		return -1;
 	}
 
 	@Override

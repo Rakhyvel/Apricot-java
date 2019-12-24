@@ -6,15 +6,15 @@ import test.Main;
 
 public enum Fruit {
 	// Trees
-	BANANA_TREE("banana", 40, 85, 0), 
+	BANANA_TREE("banana", 40, 95, 0), 
 	CHERRY_TREE("cherry", 20, 40, 1),
 	APPLE_TREE("apple", 25, 45, 2),
 	LEMON_TREE("lemon", 10, 85, 3),
 	OLIVE_TREE("olive", 25, 75, 4),
-	ORANGE_TREE("orange", 40, 90, 5), 
+	ORANGE_TREE("orange", 40, 95, 5), 
 	PEACH_TREE("peach", 5, 75, 6), 
 	PLUM_TREE("plum", 30, 45, 7), 
-	CACTUS("cactus", 10, 90, 8),
+	CACTUS("cactus", 10, 95, 8),
 
 	// Bushes
 	BLACKBERRY_BUSH("blackberry", 17, 60, 9),
@@ -26,8 +26,8 @@ public enum Fruit {
 	GOOSEBERRY_BUSH("gooseberry", 17, 60, 15),
 	RASPBERRY_BUSH("raspberry", 17, 60, 16),
 	SNOWBERRY_BUSH("snowberry", 17, 40, 17),
-	STRAWBERRY_BUSH("strawberry", 40, 80, 18),
-	WINTERGREENBERRY_BUSH("wintergreenberry", 40, 50, 19);
+	STRAWBERRY_BUSH("strawberry", 40, 85, 18),
+	WINTERGREENBERRY_BUSH("wintergreenberry", 40, 45, 19);
 
 	public double waterHardiness;
 	public int preferedTemp;

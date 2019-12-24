@@ -10,6 +10,8 @@ public interface Element {
 	void input();
 
 	void remove();
+	
+	int getRenderOrder();
 
 	Tuple getPosition();
 

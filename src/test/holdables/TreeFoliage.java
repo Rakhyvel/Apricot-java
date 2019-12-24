@@ -66,6 +66,10 @@ public class TreeFoliage implements Element, Holdable, Plantable {
 		Main.r.removeElement(this);
 		Main.holdables.remove(this);
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY();
+	}
 
 	@Override
 	public Tuple getPosition() {

@@ -6,7 +6,7 @@ public enum Tree {
 	SAVANNAH("palm", 40, 95), MESQUITE("mesquite", 10, 95), 
 	SPRUCE("spruce", 10, 50), PINE("pine", 10, 40), 
 	WILLOW("willow", 45, 90), RUBBER("rubber", 22, 100),
-	OAK("oak", 15, 60), MAPLE("maple", 12, 44);
+	OAK("oak", 15, 55), MAPLE("maple", 12, 44);
 	public double waterHardiness;
 	public int preferedTemp;
 	public int[] babyImage;

@@ -106,6 +106,10 @@ public class VegetableObject implements Element, Holdable, Plantable {
 			Main.player.setHand(null);
 		}
 	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY() - 1;
+	}
 
 	public Element clone() {
 		return null;

@@ -6,6 +6,7 @@ import com.josephs_projects.library.graphics.Image;
 import com.josephs_projects.library.graphics.Render;
 
 import test.Main;
+import test.interactables.Pile;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
@@ -51,6 +52,10 @@ public class Log implements Element, Holdable, Interactable {
 			Main.player.setHand(null);
 		}
 		Main.interactables.remove(this);
+	}
+	
+	public int getRenderOrder() {
+		return (int) position.getY() - 1;
 	}
 
 	@Override

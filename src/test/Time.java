@@ -1,22 +1,31 @@
 package test;
 
 import com.josephs_projects.library.Element;
-import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 public class Time implements Element {
 	public int year = 1000;
 	public int month = 5;
-	public int day = 0;
-	public int hour = 6;
+	public int day = 3;
+	public double hour = 18;
+	
+	private double ticksPerHour = 1 / 4500.0;
+	private double ticksPerHourSkipped = 1 / 15.0;
+	private boolean skip = false;
 
 	@Override
 	public void tick() {
-		if (Registrar.ticks % 6000 == 0)
-			hour++;
+		if(skip) {
+			hour += ticksPerHourSkipped;
+		} else {
+			hour += ticksPerHour;
+		}
 		
-		if (hour == 24) {
+		if(hour > 6 && hour < 18)
+			skip = false;
+		
+		if (hour > 24) {
 			hour = 0;
 			day++;
 		}
@@ -42,10 +51,14 @@ public class Time implements Element {
 	@Override
 	public void remove() {
 	}
+	
+	public int getRenderOrder() {
+		return 0;
+	}
 
 	@Override
 	public Tuple getPosition() {
-		return new Tuple(0,0);
+		return null;
 	}
 
 	@Override
@@ -108,5 +121,13 @@ public class Time implements Element {
 		default:
 			return "";
 		}
+	}
+	
+	public void skipToDay() {
+		skip = true;
+	}
+	
+	public boolean isSkipping() {
+		return skip;
 	}
 }

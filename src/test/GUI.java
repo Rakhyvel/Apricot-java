@@ -68,10 +68,14 @@ public class GUI implements Element{
 	public void remove() {
 		// Cannot do
 	}
+	
+	public int getRenderOrder() {
+		return 2000;
+	}
 
 	@Override
 	public Tuple getPosition() {
-		return new Tuple(0, 2000);
+		return null;
 	}
 
 	@Override

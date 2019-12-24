@@ -9,15 +9,19 @@ import com.josephs_projects.library.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 import test.beings.Being;
+import test.interactables.Firepit;
 import test.interfaces.Holdable;
 import test.interfaces.Interactable;
 
 public class Player extends Being implements Element {
 	boolean pickupDown = false;
 	boolean usedDown = false;
+	boolean homeDown = false;
+	boolean restDown = false;
 	Holdable hand = null;
 	int[][] images = new int[4][];
-	
+	HomeMarker home = new HomeMarker();
+
 	int drinkTimer = 0;
 
 	enum Facing {
@@ -35,6 +39,7 @@ public class Player extends Being implements Element {
 		}
 		waterTimer = 36000;
 		hungerTimer = 252000;
+		Main.r.addElement(home);
 	}
 
 	@Override
@@ -48,20 +53,19 @@ public class Player extends Being implements Element {
 		} else if (pickupDown) {
 			pickupDown = false;
 			pickup();
-			System.out.println("Year: " + Main.time.year + " Day: " + Main.time.day + " Hour: " + Main.time.hour);
 		}
 
 		if (Registrar.keyboard.keyDown(KeyEvent.VK_ENTER)) {
 			usedDown = true;
-			
+
 			if (Main.terrain.getPlot(getLookAt()) <= 0.5) {
 				drinkTimer++;
-				if(drinkTimer == 60) {
+				if (drinkTimer == 60) {
 					drink(600);
 					System.out.println(waterTimer);
 					drinkTimer = 0;
 				}
-			}			
+			}
 		} else if (usedDown) {
 			usedDown = false;
 			if (interact())
@@ -74,8 +78,26 @@ public class Player extends Being implements Element {
 			drinkTimer = 0;
 		}
 
-		keyMove();
+		if (Registrar.keyboard.keyDown(KeyEvent.VK_HOME)) {
+			homeDown = true;
+		} else if (homeDown) {
+			homeDown = false;
+			home.setPosition(new Tuple(position));
+		}
+		
+		if(Registrar.keyboard.keyDown(KeyEvent.VK_R)) {
+			restDown = true;
+		} else if (restDown) {
+			restDown = false;
+			Main.time.skipToDay();
+		}
+
 		temperatureTimer();
+		
+		resting = Main.time.isSkipping();
+		
+		if (!resting)
+			keyMove();
 	}
 
 	@Override
@@ -91,6 +113,10 @@ public class Player extends Being implements Element {
 	public void remove() {
 		// Sorry can't do that :)
 		// TODO: Make it so you can
+	}
+
+	public int getRenderOrder() {
+		return (int) position.getY();
 	}
 
 	@Override
@@ -230,7 +256,7 @@ public class Player extends Being implements Element {
 		Tuple randPoint = new Tuple(513, 205);
 		do {
 			int x = Registrar.rand.nextInt(Main.size);
-			int y = Main.size / 3;// Registrar.rand.nextInt(Main.size);
+			int y = Main.size / 4;// Registrar.rand.nextInt(Main.size);
 			randPoint = new Tuple(x, y);
 		} while (Main.terrain.getPlot(randPoint) < 0.5);
 		return randPoint;
