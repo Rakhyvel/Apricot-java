@@ -78,4 +78,16 @@ public class World {
 			return arg0.getRenderOrder() - arg1.getRenderOrder();
 		}
 	}
+	
+	public ArrayList<Tickable> getTickables(){
+		return tickables;
+	}
+	
+	public ArrayList<Renderable> getRenderables(){
+		return renderables;
+	}
+	
+	public ArrayList<InputListener> getInputListeners(){
+		return inputListeners;
+	}
 }
