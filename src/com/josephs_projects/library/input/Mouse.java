@@ -8,6 +8,12 @@ import java.awt.event.MouseWheelEvent;
 import com.josephs_projects.library.Registrar;
 import com.josephs_projects.library.Tuple;
 
+/**
+ * This class handles key mouse and mousewheel input events.
+ * 
+ * @author Joseph Shimel
+ *
+ */
 public class Mouse extends MouseAdapter {
     private boolean mouseLeftDown = false;
     private boolean mouseRightDown = false;
@@ -77,10 +83,16 @@ public class Mouse extends MouseAdapter {
         return mousePosition != null ? mousePosition.y : -1;
     }
 
+    /**
+     * @return Position of the mouse using AWT's Point class
+     */
     public Point getAWTPoint() {
         return MouseInfo.getPointerInfo().getLocation();
     }
 
+    /**
+     * @return Position of the mouse using Tuple object
+     */
     public Tuple getTuple(){
         return new Tuple(getX(), getY());
     }
@@ -115,9 +127,6 @@ public class Mouse extends MouseAdapter {
         return mouseRightDown;
     }
 
-    /**
-     * Used when iconifying the window, preventing loops
-     */
     public void resetMouseDownValues() {
         mouseRightDown = false;
         mouseLeftDown = false;

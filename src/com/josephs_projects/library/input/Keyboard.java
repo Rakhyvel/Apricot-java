@@ -8,13 +8,14 @@ import java.util.Set;
 
 import com.josephs_projects.library.Registrar;
 
+/**
+ * This class handles keyboard input
+ * 
+ * @author Joseph Shimel
+ *
+ */
 public class Keyboard extends KeyAdapter {
-    /* TODO Make it so that if you press a key, then press another key while still holding onto the previous key, it'll
-            remember that first key
-     */
     private Set<Integer> keysDown = new HashSet<>();
-    private boolean controlDown = false;
-    private boolean shiftDown = false;
     private Registrar registrar;
 
     public Keyboard(Canvas canvas, Registrar registrar) {
@@ -34,21 +35,13 @@ public class Keyboard extends KeyAdapter {
         registrar.input();
     }
 
+    /**
+     * Checks to see if a key is being pressed by the user.
+     * 
+     * @param key The KeyEvent keycode of the key to check for
+     * @return Whether the key is currently being pressed
+     */
     public boolean keyDown(int key){
         return keysDown.contains(key);
-    }
-
-    /**
-     * @return Whether or not the control key is being pressed
-     */
-    public boolean isControlDown() {
-        return controlDown;
-    }
-
-    /**
-     * @return Whether or not the shift key is being pressed
-     */
-    public boolean isShiftDown() {
-        return shiftDown;
     }
 }

@@ -1,9 +1,16 @@
 package com.josephs_projects.library.graphics;
 
+/**
+ * This class is similar to the SpriteSheet class, except it has code for kerning.
+ * 
+ * @author Joseph Shimel
+ *
+ */
 public class Font {
 	
 	SpriteSheet charset;
 	private int size;
+	// This array is a pretty good estimate of non-monospace, 16 bit font kerning.
 	private static int[] kern16 = {
 			0,0,4,4,4,1,7,16,7,0,0,6,5,0,6,5,
 			7,6,5,4,5,7,7,4,5,4,6,6,0,0,0,0,

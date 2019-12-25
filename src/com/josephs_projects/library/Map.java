@@ -1,24 +1,21 @@
 package com.josephs_projects.library;
 
-import com.josephs_projects.library.graphics.Image;
-
+/**
+ * This class holds some useful methods for generating noise maps, and
+ * interpolating between points.
+ * 
+ * @author Joseph Shimel
+ *
+ */
 public class Map {
-	private float[][] mountain;
-	private double[] temperature;
-	private double[] precipitation;
-	private int width;
-	private int height;
-	Image img = new Image();
-	public int[] biomes = Image.loadImage("/res/biomes.png");
 
-	public Map(int width, int height, int depth) {
-		this.width = width;
-		this.height = height;
+	public float[][] generateMap(int width, int height, int depth) {
+		float[][] mountain = generateNoiseMap(width, height, depth, 1f);
 
-		mountain = perlinNoise(depth, 1f);
-		for (int i2 = depth + 1; i2 < 9; i2++) {
+		// Make many maps, increase the detail, and add them all together
+		for (int i2 = depth; i2 < 9; i2++) {
 			int denominator = 1 << (i2 + 1);
-			float[][] tempMountain = perlinNoise(i2, 2f / denominator);
+			float[][] tempMountain = generateNoiseMap(width, height, i2, 2f / denominator);
 			for (int i = 0; i < width * height; i++) {
 				int x = i % width;
 				int y = i / width;
@@ -26,244 +23,128 @@ public class Map {
 			}
 		}
 
-		mountain = normalize(mountain);
-
-		temperature = generateTempMap();
-		precipitation = generatePrecipitation();
+		return normalizeNoiseMap(mountain, width, height);
 	}
 
-	public float[][] perlinNoise(int frequency, float amplitude) {
-		float[][] noise = new float[width][height];
-		if (frequency > 0 && frequency < 9) {
-			int wavelength = 1 << (-frequency + 9);
-			int width = (this.width / wavelength) + 1;
-			int height = (this.height / wavelength) + 1;
-			for (int i = 0; i < width * height; i++) {
-				int x = (i % width) * wavelength;
-				int y = (i / width) * wavelength;
-				if (frequency <= 2) {
-					noise[x][y] = Registrar.rand.nextFloat() + 0.1f;
-					if (x == 0 || y == 0 || x == this.width - 1 || y == this.height - 1)
-						noise[x][y] = Registrar.rand.nextFloat() / 4.0f;
-				} else {
-					noise[x][y] = ((2 * Registrar.rand.nextFloat() - 1f) * amplitude);
-				}
-			}
-			for (int i = 0; i < this.width * this.height; i++) {
-				int x = i % this.width;
-				int y = i / this.width;
-				int x1 = (int) (x / wavelength) * wavelength;
-				int y1 = (int) (y / wavelength) * wavelength;
-				if (x != x1 || y != y1) {
-					noise[x][y] = bicosineInterpolation(x1, y1, wavelength, noise, x, y);
-				}
-			}
+	/**
+	 * @param width     Width of the random map. Must be one more than a power of 2
+	 * @param height    Height of the random map. Must be one more than a power of 2
+	 * @param frequency Frequency of noise
+	 * @param amplitude Amplitude of noise
+	 * @return A random map at specified of values from +amplitude to -amplitude
+	 */
+	public float[][] generateNoiseMap(int width, int height, int frequency, float amplitude) {
+		float[][] retval = new float[width][height];
+		// Cast out bad freq ranges
+		if (frequency <= 0 || frequency >= 9)
+			return retval;
+
+		int wavelength = 1 << (-frequency + 9);
+		int cellWidth = (width / wavelength) + 1;
+		int cellHeight = (height / wavelength) + 1;
+
+		// Populate corners of cells with random values
+		for (int i = 0; i < cellWidth * cellHeight; i++) {
+			int x = (i % cellWidth) * wavelength;
+			int y = (i / cellWidth) * wavelength;
+			retval[x][y] = ((2 * Registrar.rand.nextFloat() - 1f) * amplitude);
 		}
-		return noise;
+
+		// Interpolate each cell
+		for (int i = 0; i < width * height; i++) {
+			int x = i % width;
+			int y = i / width;
+			int x1 = (int) (x / wavelength) * wavelength;
+			int y1 = (int) (y / wavelength) * wavelength;
+
+			// Don't interpolate on cell-corners
+			if (x == x1 && y == y1)
+				continue;
+
+			retval[x][y] = bicosineInterpolation(x1, y1, wavelength, retval, x, y, width, height);
+		}
+
+		return retval;
 	}
 
-	float bicosineInterpolation(int x1, int y1, int p, float[][] noise, int x2, int y2) {
-		// (x1,y1)- coords of top left corner of box
-		// p- length/heigth pf box
-		// (x3,y3)- coords of point
+	/**
+	 * Interpolates value of a point within a cell based on the cosine interpolation
+	 * of the four corners of that local cell.
+	 * 
+	 * @param x1     X coordinate of the top-left corner of the local cell
+	 * @param y1     Y coordinate of the top-left corner of the local cell
+	 * @param p      Size of local cell
+	 * @param noise  Noise map so far
+	 * @param x2     X coordinate of the point within the local cell
+	 * @param y2     Y coordinate of the point within the local cell
+	 * @param width  Width of full map
+	 * @param height Height of full map
+	 * @return The value the point within the local cell should based on the values
+	 *         of the four corners of the local cell
+	 */
+	public float bicosineInterpolation(int x1, int y1, int p, float[][] noise, int x2, int y2, int width, int height) {
+		// (x1,y1)- coords of top left corner of local cell
+		// p- length/heigth of local cell
+		// (x3,y3)- coords of point within cell to interpolate
 		if (x1 + p > width || y1 + p > height) {
 			return 1f;
 		}
+		// Generate interpolations for bottom and top of cell
 		float topInterpolation = cosineInterpolation(x1, noise[(int) x1][(int) y1], x1 + p,
 				noise[(int) (x1 + p)][(int) y1], x2);
 		float bottomInterpolation = cosineInterpolation(x1, noise[(int) x1][(int) (y1 + p)], x1 + p,
 				noise[(int) (x1 + p)][(int) (y1 + p)], x2);
+
+		// Return interpolation between bottom and top interpolation
 		return cosineInterpolation(y1, topInterpolation, y1 + p, bottomInterpolation, y2);
 	}
 
-	float cosineInterpolation(int x1, float y1, int x2, float y2, int m) {
+	/**
+	 * Based on Paul Bourke's wonderful resource on interpolation.
+	 * http://paulbourke.net/miscellaneous/interpolation/
+	 * 
+	 * @param x1 X coordinate of new point. Must be between 0-x2
+	 * @param y1 Y coordinate of new point.
+	 * @param x2 X coordinate of edge point.
+	 * @param y2 Y coordinate of edge point.
+	 * @param m  Slope
+	 * @return
+	 */
+	public float cosineInterpolation(int x1, float y1, int x2, float y2, int m) {
 		double xDiff = (x2 - x1);
 		double mu2 = (1 - Math.cos((m / xDiff - x1 / xDiff) * Math.PI)) / 2;
 		double y3 = (y1 * (1 - mu2) + y2 * mu2);
 		return (float) y3;
 	}
 
-	float transform(float r) {
-		double verticalStretch = 0.536713074275;
-		double newHeight;
-		if (r > 1) {
-			newHeight = 2 * (r - 1) * (r - 1) + 1;
-		} else {
-			newHeight = verticalStretch * Math.tan(1.5 * r - .75) + 0.5;
-		}
-		return (float) newHeight;
-	}
-
-	float bilinearInterpolation(int x1, int y1, int p, float[][] noise, int x2, int y2) {
-		// (x1,y1)- coords of top left corner of box
-		// p- length/heigth pf box
-		// (x3,y3)- coords of point
-		if (x1 + p > 1025 || y1 + p > 513) {
-			return 1.5f;
-		}
-		float topInterpolation = linearInterpolation(x1, noise[(int) x1][(int) y1], x1 + p,
-				noise[(int) (x1 + p)][(int) y1], x2);
-		float bottomInterpolation = linearInterpolation(x1, noise[(int) x1][(int) (y1 + p)], x1 + p,
-				noise[(int) (x1 + p)][(int) (y1 + p)], x2);
-		return linearInterpolation(y1, topInterpolation, y1 + p, bottomInterpolation, y2);
-	}
-
-	float linearInterpolation(int x1, float y1, int x2, float y2, int m) {
-		return (y2 - y1) / (x2 - x1) * (m - x1) + y1;
-	}
-
-	public float[][] getArray() {
-		return mountain;
-	}
-
-	public void setArray(float[][] mountain) {
-		this.mountain = mountain;
-	}
-
-	// getArray(...): returns the float value at a given coordinate
 	/**
-	 * @param x coordiate on the map
-	 * @param y coordiate on the map
-	 * @return The float value of the given position on the terrain
+	 * v = (v - min) / (max - min)
+	 * 
+	 * @param mountain Noise map to be normalized
+	 * @param width    Width of map
+	 * @param height   Height of map
+	 * @return Map after being normalized to fit between 0-1
 	 */
-	public float getPlot(int x, int y) {
-		if (x >= 0 && x < width && y >= 0 && y < height)
-			return mountain[x][y];
-		return -1;
-	}
-
-	public float getPlot(Tuple point) {
-		int x = (int) point.getX();
-		int y = (int) point.getY();
-		if (x >= 0 && x < width && y >= 0 && y < height)
-			return mountain[x][y];
-		return -1;
-	}
-
-	public float[][] normalize(float[][] mountain) {
-		float averageValue = 0;
+	public float[][] normalizeNoiseMap(float[][] mountain, int width, int height) {
+		float maxValue = mountain[0][0];
+		float minValue = mountain[0][0];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				averageValue += mountain[x][y];
-			}
-		}
-
-		averageValue /= (width * height);
-		float multiplicativeValue = 0.5f / averageValue;
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				mountain[x][y] *= multiplicativeValue;
-			}
-		}
-
-		return mountain;
-	}
-
-	public double[] generateTempMap() {
-		double[] retval = new double[width * width * 2];
-		retval = createLattitudeGradient(retval);
-		retval = findAltitudinalGradient(retval);
-		return retval;
-	}
-
-	public double[] createLattitudeGradient(double[] tempMap) {
-		// 25 degrees farenheit at poles, 110 degrees farenheit at equator
-		for (int i = 0; i < tempMap.length; i++) {
-			int y = (i / width);
-			tempMap[i] = -0.15 * Math.abs(y - height / 2) + 114;
-		}
-		return tempMap;
-	}
-
-	public double[] findAltitudinalGradient(double[] tempMap) {
-		for (int i = 0; i < tempMap.length; i++) {
-			int x = (i % width);
-			int y = (i / width);
-			float z = getPlot(x, y);
-			if (z <= 0.5)
-				continue;
-			tempMap[i] = tempMap[i] - z * 40;
-		}
-		return tempMap;
-	}
-
-	public double getTemp(Tuple point) {
-		int x = (int) point.getX();
-		int y = (int) point.getY();
-		if (x >= 0 && x < width && y >= 0 && y < height)
-			return temperature[y * width + x];
-		return -1;
-	}
-
-	public double getPrecipitation(Tuple point) {
-		int x = (int) point.getX();
-		int y = (int) point.getY();
-		if (x >= 0 && x < width && y >= 0 && y < height)
-			return precipitation[y * width + x];
-		return -1;
-	}
-
-	public double[] generatePrecipitation() {
-		double[] retval = new double[width * height];
-		for (int y = 0; y < height; y++) {
-			double precipitation = 50;
-			for (int x = width - 1; x >= 0; x--) {
-				if (mountain[x][y] < 0.5) {
-					precipitation++;
-				} else if (precipitation > 0) {
-					if (x == 0)
-						continue;
-					if (mountain[x][y] < mountain[x - 1][y]) {
-						float diff = 0.05f * (mountain[x - 1][y] - mountain[x][y]);
-						diff = (float) Math.sqrt(diff);
-						precipitation *= -diff / (diff + 1.0) + 1;
-					}
-
-					retval[x + y * width] = (99 - precipitation);
-					retval[x + y * width] *= mountain[x][y] * 1.1;
-					retval[x + y * width] = Math.max(0, Math.min(99, (retval[x + y * width])));
+				if (mountain[x][y] > maxValue) {
+					maxValue = mountain[x][y];
+				}
+				if (mountain[x][y] < minValue) {
+					minValue = mountain[x][y];
 				}
 			}
 		}
-		return retval;
-	}
 
-	public int[] getImage() {
-		int[] image = new int[width * height];
-		for (int i = 0; i < width * height; i++) {
-			int x = (i % width);
-			int y = (i / width);
-			image[i] = getColor(mountain[x][y], temperature[i], precipitation[i]);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				mountain[x][y] = (mountain[x][y] - minValue) / (maxValue - minValue);
+			}
 		}
-		return image;
-	}
 
-	/**
-	 * @param value The float value from 0f-1f
-	 * @return A color based on the depth, 0 being a deep blue, 0.5f being coast,
-	 *         and 1 being green plains.
-	 */
-	int getColor(float value, double temperature, double precip) {
-		if (value < 0.5)
-			return 255 << 24 | 105 << 8 | 148;
-		temperature = Math.max(0, Math.min(85, temperature - 25));
-
-		int x = (int) ((temperature / 85.0) * 77);
-		int y = (int) ((precip / 100.0) * 9);
-		return biomes[x + y * 77];
-	}
-
-	public int getColorIndex(int index) {
-		int x = (index % width);
-		int y = (index / width);
-		float value = mountain[x][y];
-		double temperature = this.temperature[index];
-		if (value < 0.5)
-			return 255 << 24 | 105 << 8 | 148;
-		temperature = Math.max(0, Math.min(85, temperature - 25));
-
-		x = (int) ((temperature / 85.0) * 77);
-		y = (int) ((temperature / 85.0) * 9);
-		return Math.max(0, x + y * 77);
+		return mountain;
 	}
 }

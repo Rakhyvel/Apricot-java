@@ -1,26 +1,29 @@
 package com.josephs_projects.library.graphics;
 
-import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-import com.josephs_projects.library.Registrar;
+import javax.swing.JFrame;
 
-public class Render extends Canvas {
-
-	private static final long serialVersionUID = 1L;
+/**
+ * Render is used to quickly draw graphics to the screen and is faster than
+ * using AWT's Graphics class
+ * 
+ * @author Joseph Shimel
+ *
+ */
+public class Render {
 	int width;
 	int height;
 	BufferedImage img;
 	int[] pixels;
-	
 
-	public Render(int x, int y) {
-		width = x;
-		height = y;
+	public Render(int width, int height) {
+		this.width = width;
+		this.height = height;
 		img = new BufferedImage(width + 1, height + 1, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 	}
@@ -28,13 +31,14 @@ public class Render extends Canvas {
 	/**
 	 * Calls all objects to render to pixels int array, draws pixel array to screen.
 	 */
-	public void render(Graphics g) {
+	public void render(Graphics g, JFrame frame) {
 		AffineTransform at = new AffineTransform();
-		double scale = Registrar.frame.getWidth() / (double)img.getWidth();
-		BufferedImage after = new BufferedImage(Registrar.frame.getWidth(), Registrar.frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		double scale = frame.getWidth() / (double) img.getWidth();
+		BufferedImage after = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		at.scale(scale, scale);
 		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		after = scaleOp.filter(img, after);
+
 		g.drawImage(after, 0, 0, null);
 	}
 
@@ -91,7 +95,7 @@ public class Render extends Canvas {
 			int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
 			pixels[id] = newColor + newColor2;
 		}
-	}
+	} // drawRect()
 
 	public void drawRectBorders(int x, int y, int w, int h, int color, int borders) {
 		float alpha = ((color >> 24) & 255) / 255.0f;
@@ -212,58 +216,89 @@ public class Render extends Canvas {
 			// Finally adding colors to pixel array
 			pixels[id] = newColor + newColor2;
 		}
-	}
+	} // drawImage()
 
-	public void drawString(String label, int x, int y, Font font, int color, boolean centered) {
+	/**
+	 * Draws a String to the screen
+	 * 
+	 * @param text     Text to draw to screen
+	 * @param x        X coordinate of the text to draw on screen
+	 * @param y        Y coordinate of text to draw on screen
+	 * @param font     Font to use
+	 * @param color    Color of text
+	 * @param centered Whether text is centered
+	 */
+	public void drawString(String text, int x, int y, Font font, int color, boolean centered) {
 		int carriage = 0;
 		int letter;
-		int length = font.getStringWidth(label);
+		int length = font.getStringWidth(text);
 		int[] letterImage;
-		for (int i = 0; i < label.length(); i++) {
-			letter = label.charAt(i);
-			if (letter == 7) {
-				letterImage = getScreenBlend(250 << 16 | 250 << 8, font.getLetter(letter));
-			} else {
-				letterImage = getScreenBlend(color, font.getLetter(letter));
-			}
-			if (centered) {
-				drawImage(x + carriage - length / 2 + font.getSize() / 2, y, font.getSize(), letterImage, 1, 0);
-			} else {
-				drawImage(x + carriage + font.getSize() / 2, y, font.getSize(), letterImage, 1, 0);
-			}
+		if (centered)
+			x -= length / 2;
+
+		for (int i = 0; i < text.length(); i++) {
+			letter = text.charAt(i);
+			letterImage = overlayBlend(color, font.getLetter(letter));
+			drawImage(x + carriage + font.getSize() / 2, y, font.getSize(), letterImage, 1, 0);
 			carriage += font.getKern(letter);
 		}
 	}
 
-	public static int[] getScreenBlend(int color, int[] img) {
+	/**
+	 * Converts a gray image to a colored image
+	 * 
+	 * @param color Color to overlay
+	 * @param img Gray image
+	 * @return An integer array that represents the new image
+	 */
+	public int[] overlayBlend(int color, int[] img) {
 		int r, g, b, a;
 		float screen, alpha;
 		int[] img2 = new int[img.length];
 		for (int i = 0; i < img.length; i++) {
 			alpha = ((img[i] >> 24 & 255) / 255.0f);
-			if (alpha > 0.9f) {
-				// Finding and splitting starting colors
-				screen = (img[i] & 255) / 255.0f;
-				a = ((color >> 24) & 255);
-				r = ((color >> 16) & 255);
-				g = ((color >> 8) & 255);
-				b = (color & 255);
+			if (alpha < 0.9f)
+				continue;
+			
+			// Finding and splitting starting colors
+			screen = (img[i] & 255) / 255.0f;
+			a = ((color >> 24) & 255);
+			r = ((color >> 16) & 255);
+			g = ((color >> 8) & 255);
+			b = (color & 255);
 
-				// Setting new colors
-				if (screen <= 0.5f) {
-					screen *= 2;
-					r = (int) (r * screen);
-					g = (int) (g * screen);
-					b = (int) (b * screen);
-				} else {
-					r = (int) (255 - 2 * (255 - r) * (1 - screen));
-					g = (int) (255 - 2 * (255 - g) * (1 - screen));
-					b = (int) (255 - 2 * (255 - b) * (1 - screen));
-				}
-				// Recombining colors
-				img2[i] = (a << 24) | (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
+			// Setting new colors
+			if (screen <= 0.5f) {
+				screen *= 2;
+				r = (int) (r * screen);
+				g = (int) (g * screen);
+				b = (int) (b * screen);
+			} else {
+				r = (int) (255 - 2 * (255 - r) * (1 - screen));
+				g = (int) (255 - 2 * (255 - g) * (1 - screen));
+				b = (int) (255 - 2 * (255 - b) * (1 - screen));
 			}
+			// Recombining colors
+			img2[i] = (a << 24) | (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
 		}
 		return img2;
+	} // overlayBlend()
+
+	/**
+	 * Returns the 32bit color equivalent
+	 * 
+	 * @param a Alpha channel, ranges 0-255
+	 * @param r Red channel, ranges 0-255
+	 * @param g Green channel, ranges 0-255
+	 * @param b Blue channel, ranges 0-255
+	 * @return 32bit integer color
+	 */
+	public int color(int a, int r, int g, int b) {
+		a = Math.max(0, Math.min(255, a));
+		r = Math.max(0, Math.min(255, r));
+		g = Math.max(0, Math.min(255, g));
+		b = Math.max(0, Math.min(255, b));
+		
+		return a << 24 | r << 16 | g << 8 | b;
 	}
 }

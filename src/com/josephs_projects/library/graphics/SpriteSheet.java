@@ -5,6 +5,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * This class can be used to represent sprite sheets
+ * 
+ * @author Joseph Shimel
+ *
+ */
 public class SpriteSheet {
 
 	private int[] pixels;
