@@ -1,4 +1,4 @@
-package com.josephs_projects.library;
+package com.josephs_projects.apricotLibrary;
 
 import java.awt.Canvas;
 import java.awt.Graphics;

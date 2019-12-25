@@ -1,4 +1,4 @@
-package com.josephs_projects.library;
+package com.josephs_projects.apricotLibrary;
 
 /**
  * This class holds some useful methods for generating noise maps, and

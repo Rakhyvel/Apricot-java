@@ -5,8 +5,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import com.josephs_projects.library.Registrar;
-import com.josephs_projects.library.Tuple;
+import com.josephs_projects.apricotLibrary.Registrar;
+import com.josephs_projects.apricotLibrary.Tuple;
 
 /**
  * This class handles key mouse and mousewheel input events.

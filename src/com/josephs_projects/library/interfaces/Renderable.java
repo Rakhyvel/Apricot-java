@@ -1,6 +1,6 @@
 package com.josephs_projects.library.interfaces;
 
-import com.josephs_projects.library.Tuple;
+import com.josephs_projects.apricotLibrary.Tuple;
 import com.josephs_projects.library.graphics.Render;
 
 /**

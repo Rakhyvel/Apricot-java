@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.josephs_projects.library.Registrar;
+import com.josephs_projects.apricotLibrary.Registrar;
 
 /**
  * This class handles keyboard input

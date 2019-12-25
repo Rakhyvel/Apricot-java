@@ -1,4 +1,4 @@
-package com.josephs_projects.library;
+package com.josephs_projects.apricotLibrary;
 
 /**
  * This class represents an ordered pair of coordinates. Can be used effectively

@@ -1,4 +1,4 @@
-package com.josephs_projects.library;
+package com.josephs_projects.apricotLibrary;
 
 import java.util.ArrayList;
 import java.util.Comparator;
