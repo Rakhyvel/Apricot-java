@@ -19,7 +19,7 @@ import com.josephs_projects.apricotLibrary.input.Mouse;
  * @author Joseph Shimel
  *
  */
-public class Registrar {
+public class Apricot {
 	// Reference to world that registrar is working with
 	private World world;
 
@@ -42,7 +42,7 @@ public class Registrar {
 	public static Map map = new Map();
 	public static Image image = new Image();
 
-	public Registrar(String title, int width, int height) {
+	public Apricot(String title, int width, int height) {
 		frame = new JFrame(title);
 		canvas = new Canvas();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

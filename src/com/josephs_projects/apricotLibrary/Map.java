@@ -47,7 +47,7 @@ public class Map {
 		for (int i = 0; i < cellWidth * cellHeight; i++) {
 			int x = (i % cellWidth) * wavelength;
 			int y = (i / cellWidth) * wavelength;
-			retval[x][y] = ((2 * Registrar.rand.nextFloat() - 1f) * amplitude);
+			retval[x][y] = ((2 * Apricot.rand.nextFloat() - 1f) * amplitude);
 		}
 
 		// Interpolate each cell

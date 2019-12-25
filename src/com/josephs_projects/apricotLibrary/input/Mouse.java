@@ -5,7 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import com.josephs_projects.apricotLibrary.Registrar;
+import com.josephs_projects.apricotLibrary.Apricot;
 import com.josephs_projects.apricotLibrary.Tuple;
 
 /**
@@ -19,9 +19,9 @@ public class Mouse extends MouseAdapter {
     private boolean mouseRightDown = false;
     public int mouseWheelPosition;
     private final Canvas canvas;
-    private final Registrar registrar;
+    private final Apricot registrar;
 
-    public Mouse(Canvas canvas, Registrar registrar) {
+    public Mouse(Canvas canvas, Apricot registrar) {
         this.canvas = canvas;
         this.registrar = registrar;
         canvas.addMouseListener(this);

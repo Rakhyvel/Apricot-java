@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.josephs_projects.apricotLibrary.Registrar;
+import com.josephs_projects.apricotLibrary.Apricot;
 
 /**
  * This class handles keyboard input
@@ -16,9 +16,9 @@ import com.josephs_projects.apricotLibrary.Registrar;
  */
 public class Keyboard extends KeyAdapter {
     private Set<Integer> keysDown = new HashSet<>();
-    private Registrar registrar;
+    private Apricot registrar;
 
-    public Keyboard(Canvas canvas, Registrar registrar) {
+    public Keyboard(Canvas canvas, Apricot registrar) {
         canvas.addKeyListener(this);
         this.registrar = registrar;
     }
