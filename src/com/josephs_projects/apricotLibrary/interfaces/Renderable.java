@@ -1,7 +1,7 @@
-package com.josephs_projects.library.interfaces;
+package com.josephs_projects.apricotLibrary.interfaces;
 
 import com.josephs_projects.apricotLibrary.Tuple;
-import com.josephs_projects.library.graphics.Render;
+import com.josephs_projects.apricotLibrary.graphics.Render;
 
 /**
  * Renderables are called to draw to the screen using the Render class. They

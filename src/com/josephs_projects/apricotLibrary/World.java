@@ -3,10 +3,10 @@ package com.josephs_projects.apricotLibrary;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.josephs_projects.library.graphics.Render;
-import com.josephs_projects.library.interfaces.InputListener;
-import com.josephs_projects.library.interfaces.Renderable;
-import com.josephs_projects.library.interfaces.Tickable;
+import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.interfaces.InputListener;
+import com.josephs_projects.apricotLibrary.interfaces.Renderable;
+import com.josephs_projects.apricotLibrary.interfaces.Tickable;
 
 /**
  * World classes hold tickable, renderable, and inputListener objects. They

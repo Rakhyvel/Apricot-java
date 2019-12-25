@@ -1,4 +1,4 @@
-package com.josephs_projects.library.graphics;
+package com.josephs_projects.apricotLibrary.graphics;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.josephs_projects.library.interfaces;
+package com.josephs_projects.apricotLibrary.interfaces;
 
 /**
  * Tickables are called whenever a specified amount of time has passed (Usually

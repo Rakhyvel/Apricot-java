@@ -1,4 +1,4 @@
-package com.josephs_projects.library.input;
+package com.josephs_projects.apricotLibrary.input;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

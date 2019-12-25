@@ -1,4 +1,4 @@
-package com.josephs_projects.library.interfaces;
+package com.josephs_projects.apricotLibrary.interfaces;
 
 /**
  * InputListeners are called whenever there is an input given from either the

@@ -7,10 +7,10 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
-import com.josephs_projects.library.graphics.Image;
-import com.josephs_projects.library.graphics.Render;
-import com.josephs_projects.library.input.Keyboard;
-import com.josephs_projects.library.input.Mouse;
+import com.josephs_projects.apricotLibrary.graphics.Image;
+import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.input.Keyboard;
+import com.josephs_projects.apricotLibrary.input.Mouse;
 
 /**
  * This class can be used to organize your Java project. It provides a window, a

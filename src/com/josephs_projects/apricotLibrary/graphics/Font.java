@@ -1,4 +1,4 @@
-package com.josephs_projects.library.graphics;
+package com.josephs_projects.apricotLibrary.graphics;
 
 /**
  * This class is similar to the SpriteSheet class, except it has code for kerning.
