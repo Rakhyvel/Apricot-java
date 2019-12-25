@@ -11,6 +11,4 @@ public interface Tickable {
 	void tick();
 
 	void remove();
-
-	Tickable clone();
 }

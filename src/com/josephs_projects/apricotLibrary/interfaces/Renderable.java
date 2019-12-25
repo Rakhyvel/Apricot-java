@@ -20,6 +20,4 @@ public interface Renderable {
 	Tuple getPosition();
 
 	void setPosition(Tuple position);
-	
-	Renderable clone();
 }
