@@ -20,7 +20,7 @@ public class Image {
 	 * @param path The path to the image, relative to the src folder
 	 * @return The loaded image
 	 */	
-	public int[] loadImageInterface(String path) {
+	public int[] loadImage(String path) {
 		BufferedImage image = null;
 		try {
 			InputStream iw = getClass().getResourceAsStream(path);
