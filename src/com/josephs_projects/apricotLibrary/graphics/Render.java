@@ -255,7 +255,7 @@ public class Render {
 	 * @param b Blue channel, ranges 0-255
 	 * @return 32bit integer color
 	 */
-	public int color(int a, int r, int g, int b) {
+	public int argb(int a, int r, int g, int b) {
 		a = Math.max(0, Math.min(255, a));
 		r = Math.max(0, Math.min(255, r));
 		g = Math.max(0, Math.min(255, g));
