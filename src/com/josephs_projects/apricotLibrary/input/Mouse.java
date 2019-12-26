@@ -121,7 +121,7 @@ public class Mouse extends MouseAdapter {
     }
 
     /**
-     * @return Whether the right mouse button (MouseEvent.BUTTON3) is pressed
+     * @return Whether the right mouse button (MouseEvent.BUTTON3) is pressed.
      */
     public boolean isRightDown() {
         return mouseRightDown;
