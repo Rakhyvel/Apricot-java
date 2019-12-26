@@ -116,14 +116,14 @@ public class Mouse extends MouseAdapter {
     /**
      * @return Whether the left mouse button (MouseEvent.BUTTON1) is pressed
      */
-    public boolean getMouseLeftDown() {
+    public boolean isLeftDown() {
         return mouseLeftDown;
     }
 
     /**
      * @return Whether the right mouse button (MouseEvent.BUTTON3) is pressed
      */
-    public boolean getMouseRightDown() {
+    public boolean isRightDown() {
         return mouseRightDown;
     }
 
@@ -132,7 +132,7 @@ public class Mouse extends MouseAdapter {
         mouseLeftDown = false;
     }
 
-    public int getMouseWheelPosition(){
+    public int getWheelPosition(){
         return mouseWheelPosition;
     }
 }
