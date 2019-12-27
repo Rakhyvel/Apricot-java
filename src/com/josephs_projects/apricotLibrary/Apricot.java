@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 
 import com.josephs_projects.apricotLibrary.graphics.Image;
 import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.input.Keyboard;
 import com.josephs_projects.apricotLibrary.input.Mouse;
 
@@ -113,9 +114,9 @@ public class Apricot {
 		bs.show();
 	}
 
-	public void input() {
+	public void input(InputEvent e) {
 		if (world != null)
-			world.input();
+			world.input(e);
 	}
 
 	public void stop() {

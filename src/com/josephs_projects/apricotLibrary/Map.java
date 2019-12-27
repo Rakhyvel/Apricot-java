@@ -10,10 +10,10 @@ package com.josephs_projects.apricotLibrary;
 public class Map {
 
 	public float[][] generateMap(int width, int height, int depth) {
-		float[][] mountain = generateNoiseMap(width, height, depth, 1f);
+		float[][] mountain = generateNoiseMap(width, height, depth, 0.1f);
 
 		// Make many maps, increase the detail, and add them all together
-		for (int i2 = depth; i2 < 9; i2++) {
+		for (int i2 = depth; i2 < depth + 90; i2++) {
 			int denominator = 1 << (i2 + 1);
 			float[][] tempMountain = generateNoiseMap(width, height, i2, 2f / denominator);
 			for (int i = 0; i < width * height; i++) {
@@ -128,8 +128,8 @@ public class Map {
 	public float[][] normalizeNoiseMap(float[][] mountain, int width, int height) {
 		float maxValue = mountain[0][0];
 		float minValue = mountain[0][0];
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width - 1; x++) {
+			for (int y = 0; y < height - 1; y++) {
 				if (mountain[x][y] > maxValue) {
 					maxValue = mountain[x][y];
 				}

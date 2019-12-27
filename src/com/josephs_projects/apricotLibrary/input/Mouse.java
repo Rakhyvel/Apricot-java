@@ -33,36 +33,38 @@ public class Mouse extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             mouseLeftDown = true;
+            registrar.input(InputEvent.MOUSE_LEFT_DOWN);
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             mouseRightDown = true;
+            registrar.input(InputEvent.MOUSE_RIGHT_DOWN);
         }
-        registrar.input();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             mouseLeftDown = false;
+            registrar.input(InputEvent.MOUSE_LEFT_RELEASED);
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             mouseRightDown = false;
+            registrar.input(InputEvent.MOUSE_RIGHT_RELEASED);
         }
-        registrar.input();
     }
 
     @Override
     public void mouseMoved(MouseEvent e){
-        registrar.input();
+        registrar.input(InputEvent.MOUSE_MOVED);
     }
 
     @Override
     public void mouseDragged(MouseEvent e){
-        registrar.input();
+        registrar.input(InputEvent.MOUSE_DRAGGED);
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         mouseWheelPosition = e.getWheelRotation();
-        registrar.input();
+        registrar.input(InputEvent.MOUSEWHEEL_MOVED);
     }
 
     /**

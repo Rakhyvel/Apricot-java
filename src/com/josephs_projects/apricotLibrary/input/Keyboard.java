@@ -26,13 +26,13 @@ public class Keyboard extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent e) {
         keysDown.add(Integer.valueOf((int)e.getKeyCode()));
-        registrar.input();
+        registrar.input(InputEvent.KEY_PRESSED);
     }
 
     @Override
     public void keyReleased(KeyEvent e){
         keysDown.remove(Integer.valueOf((int)e.getKeyCode()));
-        registrar.input();
+        registrar.input(InputEvent.KEY_RELEASED);
     }
 
     /**

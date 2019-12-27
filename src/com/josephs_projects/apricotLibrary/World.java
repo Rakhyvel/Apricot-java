@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.interfaces.InputListener;
 import com.josephs_projects.apricotLibrary.interfaces.Renderable;
 import com.josephs_projects.apricotLibrary.interfaces.Tickable;
@@ -37,9 +38,9 @@ public class World {
 		}
 	}
 
-	void input() {
+	void input(InputEvent e) {
 		for (int i = 0; i < inputListeners.size(); i++) {
-			inputListeners.get(i).input();
+			inputListeners.get(i).input(e);
 		}
 	}
 
