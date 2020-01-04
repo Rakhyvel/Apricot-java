@@ -1,9 +1,6 @@
 package com.josephs_projects.apricotLibrary.graphics;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import com.josephs_projects.apricotLibrary.Apricot;
 
 /**
  * This class can be used to represent sprite sheets
@@ -17,29 +14,8 @@ public class SpriteSheet {
 	private final int WIDTH;
 
 	public SpriteSheet(String path, int width) {
-		pixels = loadImageArray(path);
+		pixels = Apricot.image.loadImage(path);
 		WIDTH = width;
-	}
-
-	/**
-	 * Loads an image for the spritesheet
-	 * 
-	 * @param path
-	 *            The path to the image
-	 * @return The loaded image
-	 */
-	private int[] loadImageArray(String path) {
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(getClass().getResource(path));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (img == null) {
-			return pixels;
-		}
-		return img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
 	}
 
 	/**

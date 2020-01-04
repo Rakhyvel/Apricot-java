@@ -7,8 +7,11 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.josephs_projects.apricotLibrary.graphics.Color;
+import com.josephs_projects.apricotLibrary.graphics.Font;
 import com.josephs_projects.apricotLibrary.graphics.Image;
 import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.graphics.SpriteSheet;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.input.Keyboard;
 import com.josephs_projects.apricotLibrary.input.Mouse;
@@ -42,6 +45,9 @@ public class Apricot {
 	public static Random rand = new Random();
 	public static Map map = new Map();
 	public static Image image = new Image();
+	public static Color color = new Color();
+	public static final Font defaultFont = new Font(
+			new SpriteSheet("/com/josephs_projects/apricotLibrary/graphics/font16.png", 256), 16);
 
 	public Apricot(String title, int width, int height) {
 		frame = new JFrame(title);
@@ -82,18 +88,14 @@ public class Apricot {
 			lag += elapsed;
 
 			while (lag >= dt) {
-				tick();
+				if(world != null)
+					world.tick();
 				lag -= dt;
 				ticks++;
 			}
 
 			render();
 		}
-	}
-
-	private void tick() {
-		if (world != null)
-			world.tick();
 	}
 
 	private void render() {
@@ -105,7 +107,7 @@ public class Apricot {
 
 		Graphics g = bs.getDrawGraphics();
 
-		if (world != null)
+		if(world != null)
 			world.render(render);
 
 		render.render(g, frame);
@@ -115,8 +117,8 @@ public class Apricot {
 	}
 
 	public void input(InputEvent e) {
-		if (world != null)
-			world.input(e);
+		if(world != null)
+			world.input(e, this);
 	}
 
 	public void stop() {
@@ -129,6 +131,9 @@ public class Apricot {
 	}
 
 	public void setWorld(World world) {
+		if (world == null) {
+			throw new NullPointerException();
+		}
 		this.world = world;
 	}
 

@@ -38,21 +38,57 @@ public class World {
 		}
 	}
 
-	void input(InputEvent e) {
+	void input(InputEvent e, Apricot apricot) {
 		for (int i = 0; i < inputListeners.size(); i++) {
-			inputListeners.get(i).input(e);
+			inputListeners.get(i).input(e, apricot);
+		}
+	}
+	
+	public void add(Object o) {
+		if(o == null)
+			throw new NullPointerException();
+		
+		if(o instanceof Tickable) {
+			addTickable((Tickable)o);
+		}
+		if(o instanceof Renderable) {
+			addRenderable((Renderable) o);
+		}
+		if(o instanceof InputListener) {
+			addInputListener((InputListener) o);
+		}
+	}
+	
+	public void remove(Object o) {
+		if(o == null)
+			throw new NullPointerException();
+		
+		if(o instanceof Tickable) {
+			removeTickable((Tickable)o);
+		}
+		if(o instanceof Renderable) {
+			removeRenderable((Renderable) o);
+		}
+		if(o instanceof InputListener) {
+			removeInputListener((InputListener) o);
 		}
 	}
 
 	public void addTickable(Tickable t) {
+		if(tickables.contains(t))
+			System.out.println("WARNING: Tickable already added: " + t);
 		tickables.add(t);
 	}
 
 	public void addRenderable(Renderable r) {
+		if(renderables.contains(r))
+			System.out.println("WARNING: Renderable already added: " + r);
 		renderables.add(r);
 	}
 
 	public void addInputListener(InputListener i) {
+		if(inputListeners.contains(i))
+			System.out.println("WARNING: InputListener already added: " + i);
 		inputListeners.add(i);
 	}
 

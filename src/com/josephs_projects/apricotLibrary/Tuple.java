@@ -118,6 +118,16 @@ public class Tuple {
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
+	
+	/**
+	 * Copies the values of one tuple to this one without creating another object
+	 * 
+	 * @param t Tuple to copy x and y from
+	 */
+	public void copy(Tuple t) {
+		this.x = t.x;
+		this.y = t.y;
+	}
 
 	/**
 	 * Checks if a Tuple and another Object are equal. Other Object must not be

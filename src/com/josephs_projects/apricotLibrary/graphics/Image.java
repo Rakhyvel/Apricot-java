@@ -22,10 +22,8 @@ public class Image {
 	 */	
 	public int[] loadImage(String path) {
 		BufferedImage image = null;
-		try {
-			InputStream iw = getClass().getResourceAsStream(path);
+		try (InputStream iw = getClass().getResourceAsStream(path)){
 			image = ImageIO.read(iw);
-			iw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

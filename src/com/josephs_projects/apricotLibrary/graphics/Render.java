@@ -42,6 +42,10 @@ public class Render {
 		after = scaleOp.filter(img, after);
 
 		g.drawImage(after, 0, 0, null);
+
+		for (int i = 0; i < pixels.length; i++) {
+			pixels[i] /= 2;
+		}
 	}
 
 	/**
@@ -65,7 +69,6 @@ public class Render {
 		if (y > height)
 			return;
 
-		float alpha = ((color >> 24) & 255) / 255.0f;
 		for (int i = 0; i < w * h; i++) {
 			int x1 = i % w + x;
 			int y1 = i / w;
@@ -88,41 +91,11 @@ public class Render {
 			if (id < 0 || id >= width * height)
 				continue;
 
-			int r = ((color >> 16) & 255), g = ((color >> 8) & 255), b = (color & 255);
-			int newColor = (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
-
-			r = (pixels[id] >> 16) & 255;
-			g = (pixels[id] >> 8) & 255;
-			b = pixels[id] & 255;
-			int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
-			pixels[id] = newColor + newColor2;
+			pixels[id] = Apricot.color.alphaBlend(color, pixels[id]);
 		}
-	} // drawRect()
+	} // End of drawRect()
 
-	public void drawRectBorders(int x, int y, int w, int h, int color, int borders) {
-		float alpha = ((color >> 24) & 255) / 255.0f;
-		for (int i = 0; i < w * h; i++) {
-			int x1 = i % w;
-			int y1 = i / w;
-			int id = (y1 + y) * (width + 1) + x1 + x;
-			if (x >= 0 && x < 1025 && id > 0 && id < 1025 * 513) {
-				int r = ((color >> 16) & 255), g = ((color >> 8) & 255), b = (color & 255);
-				int newColor = (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
-				r = (pixels[id] >> 16) & 255;
-				g = (pixels[id] >> 8) & 255;
-				b = pixels[id] & 255;
-				int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
-				// bottom | right | top | left
-				if ((((borders & 1) == 1) && x1 < 2) || (((borders & 2) == 2) && y1 < 2)
-						|| (((borders & 4) == 4) && x1 > w - 3) || (((borders & 8) == 8) && y1 > h - 3)) {
-					pixels[id] = 50 << 24 | 230 << 16 | 230 << 8 | 230;
-				} else {
-					pixels[id] = newColor + newColor2;
-				}
-			}
-		}
-	}
-
+	
 	/**
 	 * Draws an image
 	 * 
@@ -133,9 +106,8 @@ public class Render {
 	 */
 	public void drawImage(int x, int y, int w, int[] image, float opacity, float rotate) {
 		// Initializing some variables
-		int h = 1, r, g, b;
+		int h = 1;
 		double cos = 0, sin = 0;
-		float invTwoFiftyFive = 1 / 255.0f;
 
 		// Finding the height of the image
 		if (w > 0) {
@@ -160,21 +132,16 @@ public class Render {
 		// Doing cos/sin only if there is rotation since those ops are slow
 		if (rotate != 0) {
 			deltaI = 0.49f;
-			cos = Math.cos(-rotate);
-			sin = Math.sin(-rotate);
+			cos = Math.cos(rotate);
+			sin = Math.sin(rotate);
 		}
 
 		// For every pixel...
 		for (float i = 0; i < image.length; i += deltaI) {
-			// Find alpha of pixel
-			float alpha = ((image[(int) i] >> 24 & 255) * invTwoFiftyFive) * opacity;
-			// Pixel is transparent, skip to next pixel
-			if (alpha <= 0)
-				continue;
 
 			// Calculate position of pixels
-			double x1 = (i % w) - halfW; // X coord of pixel on screen, centered around origin
-			double y1 = i / w - halfH; // Y coord of pixel on screen, centered around origin
+			double x1 = (i % w) - halfW; // X coord of pixel on screen, centered around (0,0) origin
+			double y1 = i / w - halfH; // Y coord of pixel on screen, centered around (0,0) origin
 			double x2 = (int) (x1 + x); // X coord of pixel on screen, centered around image center
 			double y2 = (int) (y1 + y); // Y coord of pixel on screen, centered around image center
 
@@ -203,22 +170,10 @@ public class Render {
 			if (id <= 0 || id >= width * height)
 				continue;
 
-			// Finding alpha
-			r = ((image[(int) i] >> 16) & 255);
-			g = ((image[(int) i] >> 8) & 255);
-			b = (image[(int) i] & 255);
-			int newColor = (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
-
-			// Finding alpha
-			r = ((pixels[id] >> 16) & 255);
-			g = ((pixels[id] >> 8) & 255);
-			b = (pixels[id] & 255);
-			int newColor2 = (int) (r * (1 - alpha)) << 16 | (int) (g * (1 - alpha)) << 8 | (int) (b * (1 - alpha));
-
-			// Finally adding colors to pixel array
-			pixels[id] = newColor + newColor2;
+			// Adding pixel to screen
+			pixels[id] = Apricot.color.alphaBlend(image[(int) i], pixels[id]);
 		}
-	} // drawImage()
+	} // End of drawImage()
 
 	/**
 	 * Draws a String to the screen
@@ -244,23 +199,5 @@ public class Render {
 			drawImage(x + carriage + font.getSize() / 2, y, font.getSize(), letterImage, 1, 0);
 			carriage += font.getKern(letter);
 		}
-	}
-
-	/**
-	 * Returns the 32bit color equivalent
-	 * 
-	 * @param a Alpha channel, ranges 0-255
-	 * @param r Red channel, ranges 0-255
-	 * @param g Green channel, ranges 0-255
-	 * @param b Blue channel, ranges 0-255
-	 * @return 32bit integer color
-	 */
-	public int argb(int a, int r, int g, int b) {
-		a = Math.max(0, Math.min(255, a));
-		r = Math.max(0, Math.min(255, r));
-		g = Math.max(0, Math.min(255, g));
-		b = Math.max(0, Math.min(255, b));
-		
-		return a << 24 | r << 16 | g << 8 | b;
 	}
 }
