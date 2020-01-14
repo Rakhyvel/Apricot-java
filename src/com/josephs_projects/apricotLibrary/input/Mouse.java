@@ -1,6 +1,7 @@
 package com.josephs_projects.apricotLibrary.input;
 
-import java.awt.*;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -15,81 +16,86 @@ import com.josephs_projects.apricotLibrary.Tuple;
  *
  */
 public class Mouse extends MouseAdapter {
-	private boolean mouseLeftDown = false;
-	private boolean mouseRightDown = false;
+	public boolean leftDown = false;
+	public boolean rightDown = false;
 	public int mouseWheelPosition;
-	private final Canvas canvas;
-	private final Apricot registrar;
+	private final Apricot apricot;
 
-	public Mouse(Canvas canvas, Apricot registrar) {
-		this.canvas = canvas;
-		this.registrar = registrar;
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addMouseWheelListener(this);
+	public Mouse(Apricot apricot) {
+		this.apricot = apricot;
+		apricot.canvas.addMouseListener(this);
+		apricot.canvas.addMouseMotionListener(this);
+		apricot.canvas.addMouseWheelListener(this);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			mouseLeftDown = true;
-			if (registrar != null)
-				registrar.input(InputEvent.MOUSE_LEFT_DOWN);
+			leftDown = true;
+			if (apricot != null)
+				apricot.input(InputEvent.MOUSE_LEFT_DOWN);
 		} else if (e.getButton() == MouseEvent.BUTTON3) {
-			mouseRightDown = true;
-			if (registrar != null)
-				registrar.input(InputEvent.MOUSE_RIGHT_DOWN);
+			rightDown = true;
+			if (apricot != null)
+				apricot.input(InputEvent.MOUSE_RIGHT_DOWN);
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			mouseLeftDown = false;
-			if (registrar != null)
-				registrar.input(InputEvent.MOUSE_LEFT_RELEASED);
+			leftDown = false;
+			if (apricot != null)
+				apricot.input(InputEvent.MOUSE_LEFT_RELEASED);
 		} else if (e.getButton() == MouseEvent.BUTTON3) {
-			mouseRightDown = false;
-			if (registrar != null)
-				registrar.input(InputEvent.MOUSE_RIGHT_RELEASED);
+			rightDown = false;
+			if (apricot != null)
+				apricot.input(InputEvent.MOUSE_RIGHT_RELEASED);
 		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (registrar != null)
-			registrar.input(InputEvent.MOUSE_MOVED);
+		if (apricot != null) {
+			apricot.input(InputEvent.MOUSE_MOVED);
+		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (registrar != null)
-			registrar.input(InputEvent.MOUSE_DRAGGED);
+		if (apricot != null) {
+			apricot.input(InputEvent.MOUSE_DRAGGED);
+		}
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		mouseWheelPosition = e.getWheelRotation();
-		if (registrar != null)
-			registrar.input(InputEvent.MOUSEWHEEL_MOVED);
+		if (apricot != null)
+			apricot.input(InputEvent.MOUSEWHEEL_MOVED);
 	}
 
 	/**
 	 * @return The x coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen.
 	 */
-	public int getX() {
-		Point mousePosition = canvas.getMousePosition();
-		return mousePosition != null ? mousePosition.x : -1;
+	public double getX() {
+		Point mousePos = apricot.canvas.getMousePosition();
+		if (mousePos != null) {
+			return mousePos.x / apricot.render.scale;
+		}
+		return -1;
 	}
 
 	/**
 	 * @return The y coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen
 	 */
-	public int getY() {
-		Point mousePosition = canvas.getMousePosition();
-		return mousePosition != null ? mousePosition.y : -1;
+	public double getY() {
+		Point mousePos = apricot.canvas.getMousePosition();
+		if (mousePos != null)
+			return (mousePos.y / apricot.render.scale) + apricot.render.topEdge;
+		return -1;
 	}
 
 	/**
@@ -110,38 +116,15 @@ public class Mouse extends MouseAdapter {
 	 * @return The x coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen.
 	 */
-	public int getRawX() {
-		return (int) MouseInfo.getPointerInfo().getLocation().getX();
+	public double getRawX() {
+		return MouseInfo.getPointerInfo().getLocation().getX();
 	}
 
 	/**
 	 * @return The y coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen
 	 */
-	public int getRawY() {
-		return (int) (int) MouseInfo.getPointerInfo().getLocation().getY();
-	}
-
-	/**
-	 * @return Whether the left mouse button (MouseEvent.BUTTON1) is pressed
-	 */
-	public boolean isLeftDown() {
-		return mouseLeftDown;
-	}
-
-	/**
-	 * @return Whether the right mouse button (MouseEvent.BUTTON3) is pressed
-	 */
-	public boolean isRightDown() {
-		return mouseRightDown;
-	}
-
-	public void resetMouseDownValues() {
-		mouseRightDown = false;
-		mouseLeftDown = false;
-	}
-
-	public int getWheelPosition() {
-		return mouseWheelPosition;
+	public double getRawY() {
+		return MouseInfo.getPointerInfo().getLocation().getY();
 	}
 }

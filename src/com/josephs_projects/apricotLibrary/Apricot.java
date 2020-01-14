@@ -23,63 +23,58 @@ import com.josephs_projects.apricotLibrary.input.Mouse;
  * @author Joseph Shimel
  *
  */
-public class Apricot {
-	// Reference to world that registrar is working with
+public class Apricot extends Thread {
+	// Reference to world that engine is working with
 	private World world;
 
 	// Graphics fields
-	private final JFrame frame;
-	private final Canvas canvas;
-	private final Render render;
+	public final JFrame frame;
+	public final Canvas canvas;
+	public final Render render;
 
 	// Input fields
-	private final Mouse mouse;
-	private final Keyboard keyboard;
+	public final Mouse mouse;
+	public final Keyboard keyboard;
 
 	// Gameloop fields
-	private boolean running = false;
 	private double dt = 1000 / 60.0;
 	public int ticks = 0;
+	public int fps;
 
 	// misc public-static access fields
 	public static Random rand = new Random();
-	public static Map map = new Map();
-	public static Image image = new Image();
-	public static Color color = new Color();
+	public static final NoiseMap noiseMap = new NoiseMap();
+	public static final Image image = new Image();
+	public static final Color color = new Color();
 	public static final Font defaultFont = new Font(
 			new SpriteSheet("/com/josephs_projects/apricotLibrary/graphics/font16.png", 256), 16);
 
 	public Apricot(String title, int width, int height) {
 		frame = new JFrame(title);
 		canvas = new Canvas();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		render = new Render(width);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.add(canvas);
 		canvas.setSize(width, height);
 		frame.pack();
+		render.calcDimensions(frame);
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 
-		mouse = new Mouse(canvas, this);
-		keyboard = new Keyboard(canvas, this);
-
-		render = new Render(width, height);
+		mouse = new Mouse(this);
+		keyboard = new Keyboard(this);
 	}
 
 	/**
 	 * Starts the gameloop. Note that this method will not run if the Registrar
 	 * already has a loop running.
 	 */
+	@Override
 	public void run() {
-		// Only call method if gameloop is not currently running.
-		// This is to prevent two loops running simultaneously
-		if (running)
-			return;
-		running = true;
-
 		// Game loop begins here
 		double previous = System.currentTimeMillis();
 		double lag = 0;
-		while (running) {
+		while (frame.isDisplayable()) {
 			double current = System.currentTimeMillis();
 			double elapsed = current - previous;
 
@@ -88,26 +83,25 @@ public class Apricot {
 			lag += elapsed;
 
 			while (lag >= dt) {
-				if(world != null)
+				if (world != null)
 					world.tick();
 				lag -= dt;
 				ticks++;
 			}
-
 			render();
 		}
 	}
 
-	private void render() {
+	public void render() {
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if (bs == null) {
-			canvas.createBufferStrategy(2);
+			canvas.createBufferStrategy(3);
 			return;
 		}
 
 		Graphics g = bs.getDrawGraphics();
-
-		if(world != null)
+		
+		if (world != null)
 			world.render(render);
 
 		render.render(g, frame);
@@ -117,39 +111,16 @@ public class Apricot {
 	}
 
 	public void input(InputEvent e) {
-		if(world != null)
-			world.input(e, this);
+		if (world != null)
+			world.input(e);
 	}
-
-	public void stop() {
-		running = false;
-		System.exit(0);
-	}
-
-	public World getWorld() {
-		return world;
-	}
-
+	
 	public void setWorld(World world) {
-		if (world == null) {
-			throw new NullPointerException();
-		}
 		this.world = world;
+		input(InputEvent.WORLD_CHANGE);
 	}
-
-	public Mouse getMouse() {
-		return mouse;
-	}
-
-	public Keyboard getKeyboard() {
-		return keyboard;
-	}
-
-	public JFrame getJFrame() {
-		return frame;
-	}
-
-	public Canvas getCanvas() {
-		return canvas;
+	
+	public World getWorld(World world) {
+		return world;
 	}
 }

@@ -38,34 +38,32 @@ public class Image {
 	 * @return An integer array that represents the new image
 	 */
 	public int[] overlayBlend(int color, int[] img) {
-		int r, g, b, a;
+		int r, g, b;
+		int r2 = 0, g2 = 0, b2 = 0;
 		float screen, alpha;
 		int[] img2 = new int[img.length];
+
+		r = ((color >> 16) & 255);
+		g = ((color >> 8) & 255);
+		b = (color & 255);
+		
 		for (int i = 0; i < img.length; i++) {
 			alpha = ((img[i] >> 24 & 255) / 255.0f);
-			if (alpha < 0.9f)
-				continue;
-			
-			// Finding and splitting starting colors
 			screen = (img[i] & 255) / 255.0f;
-			a = ((color >> 24) & 255);
-			r = ((color >> 16) & 255);
-			g = ((color >> 8) & 255);
-			b = (color & 255);
 
 			// Setting new colors
 			if (screen <= 0.5f) {
 				screen *= 2;
-				r = (int) (r * screen);
-				g = (int) (g * screen);
-				b = (int) (b * screen);
+				r2 = (int) (r * screen);
+				g2 = (int) (g * screen);
+				b2 = (int) (b * screen);
 			} else {
-				r = (int) (255 - 2 * (255 - r) * (1 - screen));
-				g = (int) (255 - 2 * (255 - g) * (1 - screen));
-				b = (int) (255 - 2 * (255 - b) * (1 - screen));
+				r2 = (int) (255 - 2 * (255 - r) * (1 - screen));
+				g2 = (int) (255 - 2 * (255 - g) * (1 - screen));
+				b2 = (int) (255 - 2 * (255 - b) * (1 - screen));
 			}
 			// Recombining colors
-			img2[i] = (a << 24) | (int) (r * alpha) << 16 | (int) (g * alpha) << 8 | (int) (b * alpha);
+			img2[i] = ((int)(255 * alpha) << 24) | (int) (r2 * alpha) << 16 | (int) (g2 * alpha) << 8 | (int) (b2 * alpha);
 		}
 		return img2;
 	} // overlayBlend()

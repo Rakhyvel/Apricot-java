@@ -8,8 +8,7 @@ package com.josephs_projects.apricotLibrary;
  *
  */
 public class Tuple {
-	private double x;
-	private double y;
+	public double x, y;
 
 	public Tuple() {
 		this.x = 0;
@@ -32,28 +31,12 @@ public class Tuple {
 		this.y = t.y;
 	}
 
-	public double getX() {
-		return x;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
 	/**
 	 * @param t Tuple to be added
 	 * @return A new Tuple object whose coordinates are a sum of the original and
 	 *         parameter. Neither input Tuples are changed.
 	 */
-	public Tuple addTuple(Tuple t) {
+	public Tuple add(Tuple t) {
 		return new Tuple(t.x + this.x, t.y + this.y);
 	}
 
@@ -63,7 +46,7 @@ public class Tuple {
 	 *         original from the parameter. Neither input Tuples coordinates are
 	 *         changed.
 	 */
-	public Tuple subTuple(Tuple t) {
+	public Tuple sub(Tuple t) {
 		return new Tuple(this.x - t.x, this.y - t.y);
 	}
 
@@ -71,7 +54,7 @@ public class Tuple {
 	 * @param t Tuple to find distance to
 	 * @return Cartesian distance between the Tuples
 	 */
-	public Double getDist(Tuple t) {
+	public Double dist(Tuple t) {
 		return Math.sqrt((this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y));
 	}
 
@@ -82,7 +65,7 @@ public class Tuple {
 	 *         between many Tuples can offer some time advantages. Squaring distance
 	 *         preserves inequality.
 	 */
-	public Double getDistSquared(Tuple t) {
+	public Double distSquared(Tuple t) {
 		return (this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y);
 	}
 
@@ -91,7 +74,7 @@ public class Tuple {
 	 * @return The Cab Distance between two points. This method is slightly more
 	 *         efficient than getDist(), and logically makes more sense on a grid.
 	 */
-	public Double getCabDist(Tuple t) {
+	public Double cabDist(Tuple t) {
 		return Math.abs(this.x - t.x) + Math.abs(this.y - t.y);
 	}
 
@@ -144,7 +127,7 @@ public class Tuple {
 		if (o instanceof Tuple) {
 			Tuple t = (Tuple) o;
 			// Use getDistSquared() because it is slightly faster
-			return getDistSquared(t) < 0.36;
+			return distSquared(t) < 0.36;
 		}
 
 		return false;

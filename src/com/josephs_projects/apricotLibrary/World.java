@@ -2,8 +2,10 @@ package com.josephs_projects.apricotLibrary;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 
 import com.josephs_projects.apricotLibrary.graphics.Render;
+import com.josephs_projects.apricotLibrary.graphics3d.Camera;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.interfaces.InputListener;
 import com.josephs_projects.apricotLibrary.interfaces.Renderable;
@@ -19,11 +21,20 @@ import com.josephs_projects.apricotLibrary.interfaces.Tickable;
  *
  */
 public class World {
-	private final ArrayList<Tickable> tickables = new ArrayList<>();
-	private final ArrayList<Renderable> renderables = new ArrayList<>();
-	private final ArrayList<InputListener> inputListeners = new ArrayList<>();
+	public final ArrayList<Tickable> tickables = new ArrayList<>();
+	public final ArrayList<Renderable> renderables = new ArrayList<>();
+	public final ArrayList<InputListener> inputListeners = new ArrayList<>();
+	
+	public int background = 0;
+	
+	public Camera camera = null;
 
 	private final Comparator<Renderable> comparator = new YPositionComparator();
+	
+	public World() {}
+	public World(int background) {
+		this.background = background;
+	}
 
 	void tick() {
 		for (int i = 0; i < tickables.size(); i++) {
@@ -32,15 +43,23 @@ public class World {
 	}
 
 	void render(Render r) {
-		renderables.sort(comparator);
-		for (int i = 0; i < renderables.size(); i++) {
-			renderables.get(i).render(r);
+		r.fillRect(0, r.topEdge, r.width, r.bottomEdge, background);
+		try {
+			renderables.sort(comparator);
+			for (int i = 0; i < renderables.size(); i++) {
+				renderables.get(i).render(r);
+			}
+		} catch(ConcurrentModificationException c) {
+			System.out.println("Warning: World.render(): Concurrent modification during sort method.");
+		}
+		if(camera != null) {
+			camera.render(r);
 		}
 	}
 
-	void input(InputEvent e, Apricot apricot) {
+	void input(InputEvent e) {
 		for (int i = 0; i < inputListeners.size(); i++) {
-			inputListeners.get(i).input(e, apricot);
+			inputListeners.get(i).input(e);
 		}
 	}
 	
@@ -49,13 +68,13 @@ public class World {
 			throw new NullPointerException();
 		
 		if(o instanceof Tickable) {
-			addTickable((Tickable)o);
+			tickables.add((Tickable)o);
 		}
 		if(o instanceof Renderable) {
-			addRenderable((Renderable) o);
+			renderables.add((Renderable) o);
 		}
 		if(o instanceof InputListener) {
-			addInputListener((InputListener) o);
+			inputListeners.add((InputListener) o);
 		}
 	}
 	
@@ -64,44 +83,14 @@ public class World {
 			throw new NullPointerException();
 		
 		if(o instanceof Tickable) {
-			removeTickable((Tickable)o);
+			tickables.remove((Tickable)o);
 		}
 		if(o instanceof Renderable) {
-			removeRenderable((Renderable) o);
+			renderables.remove((Renderable) o);
 		}
 		if(o instanceof InputListener) {
-			removeInputListener((InputListener) o);
+			inputListeners.remove((InputListener) o);
 		}
-	}
-
-	public void addTickable(Tickable t) {
-		if(tickables.contains(t))
-			System.out.println("WARNING: Tickable already added: " + t);
-		tickables.add(t);
-	}
-
-	public void addRenderable(Renderable r) {
-		if(renderables.contains(r))
-			System.out.println("WARNING: Renderable already added: " + r);
-		renderables.add(r);
-	}
-
-	public void addInputListener(InputListener i) {
-		if(inputListeners.contains(i))
-			System.out.println("WARNING: InputListener already added: " + i);
-		inputListeners.add(i);
-	}
-
-	public void removeTickable(Tickable t) {
-		tickables.remove(t);
-	}
-
-	public void removeRenderable(Renderable r) {
-		renderables.remove(r);
-	}
-
-	public void removeInputListener(InputListener i) {
-		inputListeners.remove(i);
 	}
 
 	private class YPositionComparator implements Comparator<Renderable> {
@@ -114,17 +103,5 @@ public class World {
 
 			return arg0.getRenderOrder() - arg1.getRenderOrder();
 		}
-	}
-	
-	public ArrayList<Tickable> getTickables(){
-		return tickables;
-	}
-	
-	public ArrayList<Renderable> getRenderables(){
-		return renderables;
-	}
-	
-	public ArrayList<InputListener> getInputListeners(){
-		return inputListeners;
 	}
 }

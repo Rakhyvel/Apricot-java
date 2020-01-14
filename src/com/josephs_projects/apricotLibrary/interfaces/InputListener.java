@@ -1,6 +1,5 @@
 package com.josephs_projects.apricotLibrary.interfaces;
 
-import com.josephs_projects.apricotLibrary.Apricot;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 
 /**
@@ -11,7 +10,7 @@ import com.josephs_projects.apricotLibrary.input.InputEvent;
  *
  */
 public interface InputListener {
-	void input(InputEvent e, Apricot apricot);
+	void input(InputEvent e);
 
 	void remove();
 }

@@ -3,7 +3,7 @@ package com.josephs_projects.apricotLibrary.input;
 /**
  * InputEvent tells InputListeners which input event has ocurred so they can react accordingly
  * 
- * @author Joseph
+ * @author Joseph Shimel
  *
  */
 public enum InputEvent {
@@ -14,5 +14,8 @@ public enum InputEvent {
 	MOUSE_LEFT_DOWN, MOUSE_RIGHT_DOWN, MOUSE_LEFT_RELEASED, MOUSE_RIGHT_RELEASED, MOUSE_MOVED, MOUSE_DRAGGED,
 	
 	// Mousewheel event
-	MOUSEWHEEL_MOVED
+	MOUSEWHEEL_MOVED,
+	
+	// Application events
+	WORLD_CHANGE
 }

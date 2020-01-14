@@ -66,6 +66,11 @@ public class Color {
 		}
 		return a << 24 | (int) ((r + m) * 255) << 16 | (int) ((g + m) * 255) << 8 | (int) ((b + m) * 255);
 	}
+	
+	public int grayScale(float value) {
+		int gray = (int)(value * 255);
+		return 255 << 24 | gray << 16 | gray << 8 | gray;
+	}
 
 	public double getValue(int r, int g, int b) {
 		double r1 = r / 255.0;
@@ -108,15 +113,15 @@ public class Color {
 		return hue;
 	}
 	
-	int scalar(int color, double alpha) {
+	public int scalar(int color, double scalar) {
 		int a = (color >> 24) & 255;
 		int r = (color >> 16) & 255;
 		int g = (color >> 8) & 255;
 		int b = (color >> 0) & 255;
 		
-		r *= alpha;
-		g *= alpha;
-		b *= alpha;
+		r = (int) Math.max(0, Math.min(255, r * scalar));
+		g = (int) Math.max(0, Math.min(255, g * scalar));
+		b = (int) Math.max(0, Math.min(255, b * scalar));
 		
 		return a << 24 | r << 16 | g << 8 | b;
 	}
@@ -173,5 +178,33 @@ public class Color {
 		int b = (color >> 0) & 255;
 		
 		return "ARGB(" + a + ", " + r + ", " + g + ", " + b + ")";
+	}
+	
+	public String toStringHSV(int color) {
+		int a = (color >> 24) & 255;
+		int r = (color >> 16) & 255;
+		int g = (color >> 8) & 255;
+		int b = (color >> 0) & 255;
+		
+		double hue = getHue(r, g, b);
+		double saturation = getSaturation(r, g, b);
+		double value = getValue(r, g, b);
+		
+		return "AHSV(" + a + ",\t" + hue + ",\t" + saturation + ",\t" + value + ")";
+	}
+	
+	public int posterize(int color, int level) {
+		int a = (color >> 24) & 255;
+		int r = (color >> 16) & 255;
+		int g = (color >> 8) & 255;
+		int b = (color >> 0) & 255;
+		
+		int hue = (int) getHue(r, g, b);
+		double saturation = getSaturation(r, g, b);
+		double value = getValue(r, g, b);
+		
+		value = (int)(value * level) / (double)level;
+		
+		return ahsv(a, hue, saturation, value);
 	}
 }
