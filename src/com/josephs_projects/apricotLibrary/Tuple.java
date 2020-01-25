@@ -54,7 +54,7 @@ public class Tuple {
 	 * @param t Tuple to find distance to
 	 * @return Cartesian distance between the Tuples
 	 */
-	public Double dist(Tuple t) {
+	public double dist(Tuple t) {
 		return Math.sqrt((this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y));
 	}
 
@@ -65,7 +65,7 @@ public class Tuple {
 	 *         between many Tuples can offer some time advantages. Squaring distance
 	 *         preserves inequality.
 	 */
-	public Double distSquared(Tuple t) {
+	public double distSquared(Tuple t) {
 		return (this.x - t.x) * (this.x - t.x) + (this.y - t.y) * (this.y - t.y);
 	}
 
@@ -74,14 +74,14 @@ public class Tuple {
 	 * @return The Cab Distance between two points. This method is slightly more
 	 *         efficient than getDist(), and logically makes more sense on a grid.
 	 */
-	public Double cabDist(Tuple t) {
+	public double cabDist(Tuple t) {
 		return Math.abs(this.x - t.x) + Math.abs(this.y - t.y);
 	}
 
 	/**
 	 * @return The magnitude of a Tuple, or its distance from the origin.
 	 */
-	public Double magnitude() {
+	public double magnitude() {
 		return Math.sqrt((x * x) + (y * y));
 	}
 

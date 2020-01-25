@@ -1,7 +1,6 @@
 package com.josephs_projects.apricotLibrary.interfaces;
 
-import com.josephs_projects.apricotLibrary.Tuple;
-import com.josephs_projects.apricotLibrary.graphics.Render;
+import java.awt.Graphics;
 
 /**
  * Renderables are called to draw to the screen using the Render class. They
@@ -11,13 +10,9 @@ import com.josephs_projects.apricotLibrary.graphics.Render;
  *
  */
 public interface Renderable {
-	void render(Render r);
+	void render(Graphics g);
 
 	void remove();
 
 	int getRenderOrder();
-
-	Tuple getPosition();
-
-	void setPosition(Tuple position);
 }

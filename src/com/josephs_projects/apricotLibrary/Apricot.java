@@ -1,20 +1,22 @@
 package com.josephs_projects.apricotLibrary;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
 import com.josephs_projects.apricotLibrary.graphics.Color;
-import com.josephs_projects.apricotLibrary.graphics.Font;
 import com.josephs_projects.apricotLibrary.graphics.Image;
-import com.josephs_projects.apricotLibrary.graphics.Render;
-import com.josephs_projects.apricotLibrary.graphics.SpriteSheet;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.input.Keyboard;
 import com.josephs_projects.apricotLibrary.input.Mouse;
+
+import sun.java2d.SunGraphicsEnvironment;
 
 /**
  * This class can be used to organize your Java project. It provides a window, a
@@ -30,7 +32,6 @@ public class Apricot extends Thread {
 	// Graphics fields
 	public final JFrame frame;
 	public final Canvas canvas;
-	public final Render render;
 
 	// Input fields
 	public final Mouse mouse;
@@ -46,27 +47,45 @@ public class Apricot extends Thread {
 	public static final NoiseMap noiseMap = new NoiseMap();
 	public static final Image image = new Image();
 	public static final Color color = new Color();
-	public static final Font defaultFont = new Font(
-			new SpriteSheet("/com/josephs_projects/apricotLibrary/graphics/font16.png", 256), 16);
-
+	
+	public static boolean maximized;
+	
 	public Apricot(String title, int width, int height) {
 		frame = new JFrame(title);
 		canvas = new Canvas();
-		render = new Render(width);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.add(canvas);
 		canvas.setSize(width, height);
+		canvas.setPreferredSize(new Dimension(width, height));
 		frame.pack();
-		render.calcDimensions(frame);
+		frame.setVisible(true);
+		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		frame.setMaximizedBounds(e.getMaximumWindowBounds());
+		frame.setLocationRelativeTo(null);
+
+		mouse = new Mouse(this);
+		keyboard = new Keyboard(this);
+	}
+	
+	public Apricot(String title, int width, int height, boolean undecorated) {
+		frame = new JFrame(title);
+		canvas = new Canvas();
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setUndecorated(undecorated);
+		frame.add(canvas);
+		canvas.setSize(width, height);
+		frame.pack();
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this);
 	}
+	
+	
 
 	/**
-	 * Starts the gameloop. Note that this method will not run if the Registrar
+	 * Starts the gameloop. Note that this method will not run if the engine
 	 * already has a loop running.
 	 */
 	@Override
@@ -102,9 +121,7 @@ public class Apricot extends Thread {
 		Graphics g = bs.getDrawGraphics();
 		
 		if (world != null)
-			world.render(render);
-
-		render.render(g, frame);
+			world.render(g);
 
 		g.dispose();
 		bs.show();
@@ -123,4 +140,41 @@ public class Apricot extends Thread {
 	public World getWorld(World world) {
 		return world;
 	}
+	
+	public void minimize() {
+		frame.setState(JFrame.ICONIFIED);
+	}
+
+	/**
+	 * Recovers JFrame from being minimized
+	 */
+	public void normalize() {
+		frame.setState(JFrame.NORMAL);
+		frame.requestFocusInWindow();
+	}
+
+	/**
+	 * If JFrame is maximum size, sets to default size as dicted by settings. Else,
+	 * sets to maximum size.
+	 */
+	public void maximize() {
+		if (maximized) {
+			frame.setSize(1106, 640);
+			frame.setLocationRelativeTo(null);
+		} else {
+			Rectangle usableBounds = SunGraphicsEnvironment.getUsableBounds(frame.getGraphicsConfiguration().getDevice());
+			frame.setMaximizedBounds(usableBounds);
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+		maximized = !maximized;
+	}
+	
+	public int width() {
+		return frame.getContentPane().getWidth();
+	}
+	
+	public int height() {
+		return frame.getContentPane().getHeight();
+	}
+
 }

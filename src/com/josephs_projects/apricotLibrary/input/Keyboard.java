@@ -17,6 +17,7 @@ public class Keyboard extends KeyAdapter {
 	private final Set<Integer> keysDown = new HashSet<>();
 	private final Apricot apricot;
 	public char lastKey;
+	
 
 	public Keyboard(Apricot apricot) {
 		apricot.canvas.addKeyListener(this);
@@ -26,10 +27,12 @@ public class Keyboard extends KeyAdapter {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		keysDown.add(Integer.valueOf((int) e.getKeyCode()));
-		if (e.getKeyChar() < 255 && e.getKeyChar() > 0) {
-			lastKey = e.getKeyChar();
-		} else {
-			lastKey = 0;
+		lastKey = e.getKeyChar();
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			lastKey = 400;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			lastKey = 401;
 		}
 		apricot.input(InputEvent.KEY_PRESSED);
 	}

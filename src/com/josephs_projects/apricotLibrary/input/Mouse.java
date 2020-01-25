@@ -20,6 +20,7 @@ public class Mouse extends MouseAdapter {
 	public boolean rightDown = false;
 	public int mouseWheelPosition;
 	private final Apricot apricot;
+	public Tuple position = new Tuple();
 
 	public Mouse(Apricot apricot) {
 		this.apricot = apricot;
@@ -57,6 +58,8 @@ public class Mouse extends MouseAdapter {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (apricot != null) {
+			position.x = getX();
+			position.y = getY();
 			apricot.input(InputEvent.MOUSE_MOVED);
 		}
 	}
@@ -64,6 +67,8 @@ public class Mouse extends MouseAdapter {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (apricot != null) {
+			position.x = getX();
+			position.y = getY();
 			apricot.input(InputEvent.MOUSE_DRAGGED);
 		}
 	}
@@ -79,10 +84,10 @@ public class Mouse extends MouseAdapter {
 	 * @return The x coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen.
 	 */
-	public double getX() {
+	double getX() {
 		Point mousePos = apricot.canvas.getMousePosition();
 		if (mousePos != null) {
-			return mousePos.x / apricot.render.scale;
+			return mousePos.x;
 		}
 		return -1;
 	}
@@ -91,10 +96,10 @@ public class Mouse extends MouseAdapter {
 	 * @return The y coordinate of the position of the mouse relative to the
 	 *         top-left corner of the screen
 	 */
-	public double getY() {
+	double getY() {
 		Point mousePos = apricot.canvas.getMousePosition();
 		if (mousePos != null)
-			return (mousePos.y / apricot.render.scale) + apricot.render.topEdge;
+			return mousePos.y;
 		return -1;
 	}
 

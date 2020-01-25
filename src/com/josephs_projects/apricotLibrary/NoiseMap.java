@@ -1,7 +1,5 @@
 package com.josephs_projects.apricotLibrary;
 
-import java.util.Random;
-
 /**
  * This class holds some useful methods for generating noise maps, and
  * interpolating between points.
@@ -19,30 +17,32 @@ public class NoiseMap {
 	 * @return A random map at specified of values from +amplitude to -amplitude
 	 */
 	public float[][] generate(int size, int seed, int frequency, float... amplitude) {	
-		Random rand = new Random();
-		rand.setSeed(seed);
+		if(seed != -1) {
+			Apricot.rand.setSeed(seed);
+		}
 		float freq = 1 << frequency;
 		float[][] retval = new float[size][size];
 		int cellSize = (int) (size / freq);
 
 		// Base case:
 		// Check to see if cells are too small to be pixelized
-		if (cellSize <= 0.1)
+		if (cellSize <= 2)
 			return retval;
 
-		if(amplitude.length <= 0) {
-			amplitude = new float[]{1f};
+		float amp = 1;
+		if(amplitude.length == 1) {
+			amp = amplitude[0];
 		}
 
 		// Populate corners of cells with random values
 		for (int i = 0; i < freq * freq; i++) {
 			int x = (int) (i % freq) * cellSize;
 			int y = (int) (i / freq) * cellSize;
-			retval[x][y] = ((2 * rand.nextFloat() - 1f) * amplitude[0]);
+			retval[x][y] = ((2 * Apricot.rand.nextFloat() - 1f) * amp);
 		}
 
 		// Interpolate each cell, and add finer detail map
-		float[][] finerDetailMap = generate(size, seed, frequency + 1, amplitude[0] * 0.5f);
+		float[][] finerDetailMap = generate(size, -1, frequency + 1, amp * 0.5f);
 		for (int i = 0; i < size * size; i++) {
 			int x = i % size; // x coord of point
 			int y = i / size; // y coord of point
@@ -55,6 +55,7 @@ public class NoiseMap {
 
 			retval[x][y] = bicosineInterpolation(x1, y1, cellSize, retval, x, y, size, size) + finerDetailMap[x][y];
 		}
+		System.gc();
 
 		return retval;
 	}
@@ -108,7 +109,7 @@ public class NoiseMap {
 	 */
 	public float cosineInterpolation(int x1, float y1, int x3, float y3, int x2) {
 		double xDiff = (x3 - x1);
-		double mu2 = (1 - Mth.cos((x2 / xDiff - x1 / xDiff) * Math.PI)) / 2;
+		double mu2 = (1 - Math.cos((x2 / xDiff - x1 / xDiff) * Math.PI)) / 2;
 		double y2 = (y1 * (1 - mu2) + y3 * mu2);
 		return (float) y2;
 	}

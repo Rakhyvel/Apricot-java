@@ -1,6 +1,15 @@
 package com.josephs_projects.apricotLibrary.graphics;
 
 public class Color {	
+	public int white = argb(255, 255, 255, 255);
+	public int yellow = argb(255, 255, 255, 0);
+	public int magenta = argb(255, 255, 0, 255);
+	public int red = argb(255, 255, 0, 0);
+	public int cyan = argb(255, 0, 255, 255);
+	public int green = argb(255, 0, 255, 0);
+	public int blue = argb(255, 0, 0, 255);
+	public int black = argb(255, 0, 0, 0);
+	public int gray = argb(255, 128, 128, 128);
 	/**
 	 * Returns the 32bit color equivalent
 	 * 
@@ -160,6 +169,12 @@ public class Color {
 		return a << 24 | r << 16 | g << 8 | b;
 	}
 	
+	/**
+	 * Retrieves the opacity of a color.
+	 * 
+	 * @param color Color to retrieve opacity from
+	 * @return Opacity of color, a value from 0.0D to 1.0D
+	 */
 	double getAlpha(int color) {
 		return (255 & (color >> 24)) / 255.0;
 	}

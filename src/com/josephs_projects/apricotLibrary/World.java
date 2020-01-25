@@ -1,11 +1,10 @@
 package com.josephs_projects.apricotLibrary;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 
-import com.josephs_projects.apricotLibrary.graphics.Render;
-import com.josephs_projects.apricotLibrary.graphics3d.Camera;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.interfaces.InputListener;
 import com.josephs_projects.apricotLibrary.interfaces.Renderable;
@@ -24,17 +23,8 @@ public class World {
 	public final ArrayList<Tickable> tickables = new ArrayList<>();
 	public final ArrayList<Renderable> renderables = new ArrayList<>();
 	public final ArrayList<InputListener> inputListeners = new ArrayList<>();
-	
-	public int background = 0;
-	
-	public Camera camera = null;
 
 	private final Comparator<Renderable> comparator = new YPositionComparator();
-	
-	public World() {}
-	public World(int background) {
-		this.background = background;
-	}
 
 	void tick() {
 		for (int i = 0; i < tickables.size(); i++) {
@@ -42,18 +32,14 @@ public class World {
 		}
 	}
 
-	void render(Render r) {
-		r.fillRect(0, r.topEdge, r.width, r.bottomEdge, background);
+	void render(Graphics g) {
 		try {
 			renderables.sort(comparator);
 			for (int i = 0; i < renderables.size(); i++) {
-				renderables.get(i).render(r);
+				renderables.get(i).render(g);
 			}
-		} catch(ConcurrentModificationException c) {
+		} catch (ConcurrentModificationException c) {
 			System.out.println("Warning: World.render(): Concurrent modification during sort method.");
-		}
-		if(camera != null) {
-			camera.render(r);
 		}
 	}
 
@@ -62,33 +48,33 @@ public class World {
 			inputListeners.get(i).input(e);
 		}
 	}
-	
+
 	public void add(Object o) {
-		if(o == null)
+		if (o == null)
 			throw new NullPointerException();
-		
-		if(o instanceof Tickable) {
-			tickables.add((Tickable)o);
+
+		if (o instanceof Tickable) {
+			tickables.add((Tickable) o);
 		}
-		if(o instanceof Renderable) {
+		if (o instanceof Renderable) {
 			renderables.add((Renderable) o);
 		}
-		if(o instanceof InputListener) {
+		if (o instanceof InputListener) {
 			inputListeners.add((InputListener) o);
 		}
 	}
-	
+
 	public void remove(Object o) {
-		if(o == null)
+		if (o == null)
 			throw new NullPointerException();
-		
-		if(o instanceof Tickable) {
-			tickables.remove((Tickable)o);
+
+		if (o instanceof Tickable) {
+			tickables.remove((Tickable) o);
 		}
-		if(o instanceof Renderable) {
+		if (o instanceof Renderable) {
 			renderables.remove((Renderable) o);
 		}
-		if(o instanceof InputListener) {
+		if (o instanceof InputListener) {
 			inputListeners.remove((InputListener) o);
 		}
 	}

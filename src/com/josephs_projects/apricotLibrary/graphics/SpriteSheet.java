@@ -1,5 +1,7 @@
 package com.josephs_projects.apricotLibrary.graphics;
 
+import java.io.IOException;
+
 import com.josephs_projects.apricotLibrary.Apricot;
 
 /**
@@ -13,8 +15,8 @@ public class SpriteSheet {
 	private int[] pixels;
 	private final int WIDTH;
 
-	public SpriteSheet(String path, int width) {
-		pixels = Apricot.image.loadImage(path);
+	public SpriteSheet(String path, int width) throws IOException {
+		pixels = Apricot.image.loadImage(path).getRGB(0, 0, width, width, pixels, 0, width);
 		WIDTH = width;
 	}
 
