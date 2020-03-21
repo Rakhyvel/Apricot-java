@@ -1,6 +1,6 @@
 package com.josephs_projects.apricotLibrary.interfaces;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  * Renderables are called to draw to the screen using the Render class. They
@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  */
 public interface Renderable {
-	void render(Graphics g);
+	void render(Graphics2D g);
 
 	void remove();
 

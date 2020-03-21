@@ -1,6 +1,6 @@
 package com.josephs_projects.apricotLibrary.graphics;
 
-public class Color {	
+public class ColorOld {	
 	public int white = argb(255, 255, 255, 255);
 	public int yellow = argb(255, 255, 255, 0);
 	public int magenta = argb(255, 255, 0, 255);

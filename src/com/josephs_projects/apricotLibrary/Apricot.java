@@ -2,7 +2,7 @@ package com.josephs_projects.apricotLibrary;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
@@ -10,7 +10,7 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
-import com.josephs_projects.apricotLibrary.graphics.Color;
+import com.josephs_projects.apricotLibrary.graphics.ColorOld;
 import com.josephs_projects.apricotLibrary.graphics.Image;
 import com.josephs_projects.apricotLibrary.input.InputEvent;
 import com.josephs_projects.apricotLibrary.input.Keyboard;
@@ -46,7 +46,7 @@ public class Apricot extends Thread {
 	public static Random rand = new Random();
 	public static final NoiseMap noiseMap = new NoiseMap();
 	public static final Image image = new Image();
-	public static final Color color = new Color();
+	public static final ColorOld color = new ColorOld();
 	
 	public static boolean maximized;
 	
@@ -74,8 +74,11 @@ public class Apricot extends Thread {
 		frame.setUndecorated(undecorated);
 		frame.add(canvas);
 		canvas.setSize(width, height);
+		canvas.setPreferredSize(new Dimension(width, height));
 		frame.pack();
 		frame.setVisible(true);
+		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		frame.setMaximizedBounds(e.getMaximumWindowBounds());
 		frame.setLocationRelativeTo(null);
 
 		mouse = new Mouse(this);
@@ -118,7 +121,7 @@ public class Apricot extends Thread {
 			return;
 		}
 
-		Graphics g = bs.getDrawGraphics();
+		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 		
 		if (world != null)
 			world.render(g);
@@ -176,5 +179,8 @@ public class Apricot extends Thread {
 	public int height() {
 		return frame.getContentPane().getHeight();
 	}
-
+	
+	public void setDeltaT(double dt) {
+		this.dt = dt;
+	}
 }

@@ -1,5 +1,6 @@
 package com.josephs_projects.apricotLibrary.graphics;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,5 +63,73 @@ public class Image {
 					| (int) (b2 * alpha);
 		}
 		return img2;
-	} // overlayBlend()
+	}
+	
+	public void overlayBlend(BufferedImage image, Color color) {
+		int r, g, b;
+		int r2 = 0, g2 = 0, b2 = 0;
+		float screen, alpha;
+
+		r = color.getRed();
+		g = color.getGreen();
+		b = color.getBlue();
+
+		for(int y = 0; y < image.getHeight(); y++) {
+			for(int x = 0; x < image.getWidth(); x++) {
+				alpha = ((image.getRGB(x, y) >> 24 & 255) / 255.0f);
+				screen = (image.getRGB(x, y) & 255) / 255.0f;
+
+				// Setting new colors
+				if (screen <= 0.5f) {
+					screen *= 2;
+					r2 = (int) (r * screen);
+					g2 = (int) (g * screen);
+					b2 = (int) (b * screen);
+				} else {
+					r2 = (int) (255 - 2 * (255 - r) * (1 - screen));
+					g2 = (int) (255 - 2 * (255 - g) * (1 - screen));
+					b2 = (int) (255 - 2 * (255 - b) * (1 - screen));
+				}
+				// Recombining colors
+				int newColor = ((int) (255 * alpha) << 24) | (int) (r2 * alpha) << 16 | (int) (g2 * alpha) << 8
+						| (int) (b2 * alpha);
+				image.setRGB(x, y, newColor);
+			}
+		}
+	}
+	
+	public BufferedImage overlayBlendOutOfPlace(BufferedImage image, Color color) {
+		BufferedImage temp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int r, g, b;
+		int r2 = 0, g2 = 0, b2 = 0;
+		float screen, alpha;
+
+		r = color.getRed();
+		g = color.getGreen();
+		b = color.getBlue();
+
+		for(int y = 0; y < image.getHeight(); y++) {
+			for(int x = 0; x < image.getWidth(); x++) {
+				alpha = ((image.getRGB(x, y) >> 24 & 255) / 255.0f);
+				screen = (image.getRGB(x, y) & 255) / 255.0f;
+
+				// Setting new colors
+				if (screen <= 0.5f) {
+					screen *= 2;
+					r2 = (int) (r * screen);
+					g2 = (int) (g * screen);
+					b2 = (int) (b * screen);
+				} else {
+					r2 = (int) (255 - 2 * (255 - r) * (1 - screen));
+					g2 = (int) (255 - 2 * (255 - g) * (1 - screen));
+					b2 = (int) (255 - 2 * (255 - b) * (1 - screen));
+				}
+				// Recombining colors
+				int newColor = ((int) (255 * alpha) << 24) | (int) (r2 * alpha) << 16 | (int) (g2 * alpha) << 8
+						| (int) (b2 * alpha);
+				temp.setRGB(x, y, newColor);
+			}
+		}
+		return temp;
+	}
 }

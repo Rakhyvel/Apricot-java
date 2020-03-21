@@ -13,24 +13,25 @@ public class NoiseMap {
 	 * @param width     Width of the random map. Must be one more than a power of 2
 	 * @param height    Height of the random map. Must be one more than a power of 2
 	 * @param frequency Frequency of noise
-	 * @param amplitude Amplitude of noise. This is to be set internally. Will have no real affect if used by user
+	 * @param amplitude Amplitude of noise. This is to be set internally. Will have
+	 *                  no real affect if used by user
 	 * @return A random map at specified of values from +amplitude to -amplitude
 	 */
-	public float[][] generate(int size, int seed, int frequency, float... amplitude) {	
-		if(seed != -1) {
+	public float[][] generate(int size, int seed, double frequency, float... amplitude) {
+		if (seed != -1) {
 			Apricot.rand.setSeed(seed);
 		}
-		float freq = 1 << frequency;
+		float freq = (float) Math.pow(2, frequency);
 		float[][] retval = new float[size][size];
 		int cellSize = (int) (size / freq);
 
 		// Base case:
 		// Check to see if cells are too small to be pixelized
-		if (cellSize <= 2)
+		if (cellSize <= 8)
 			return retval;
 
 		float amp = 1;
-		if(amplitude.length == 1) {
+		if (amplitude.length == 1) {
 			amp = amplitude[0];
 		}
 
@@ -38,24 +39,23 @@ public class NoiseMap {
 		for (int i = 0; i < freq * freq; i++) {
 			int x = (int) (i % freq) * cellSize;
 			int y = (int) (i / freq) * cellSize;
-			retval[x][y] = ((2 * Apricot.rand.nextFloat() - 1f) * amp);
+			retval[x][y] = (float) ((2 * Math.random() - 1) * amp);
 		}
 
 		// Interpolate each cell, and add finer detail map
-		float[][] finerDetailMap = generate(size, -1, frequency + 1, amp * 0.5f);
+		float[][] finerDetailMap = generate(size, seed, frequency + 1, amp * 0.5f);
 		for (int i = 0; i < size * size; i++) {
 			int x = i % size; // x coord of point
 			int y = i / size; // y coord of point
 			int x1 = (int) ((x / cellSize) * cellSize); // x coord of point's cell
 			int y1 = (int) ((y / cellSize) * cellSize); // y coord of point's cell
-			
+
 			// Don't interpolate on cell-corners
 			if ((x == x1) && (y == y1))
 				continue;
 
 			retval[x][y] = bicosineInterpolation(x1, y1, cellSize, retval, x, y, size, size) + finerDetailMap[x][y];
 		}
-		System.gc();
 
 		return retval;
 	}
@@ -87,9 +87,9 @@ public class NoiseMap {
 		}
 
 		// Generate interpolations for bottom and top of cell
-		float topInterpolation = cosineInterpolation(x1, noise[x1][y1], x1 + p, noise[x3][y1], x2); 
+		float topInterpolation = cosineInterpolation(x1, noise[x1][y1], x1 + p, noise[x3][y1], x2);
 		// top-left -> top-right
-		float bottomInterpolation = cosineInterpolation(x1, noise[x1][y3], x1 + p, noise[x3][y3], x2); 
+		float bottomInterpolation = cosineInterpolation(x1, noise[x1][y3], x1 + p, noise[x3][y3], x2);
 		// bottom-left -> bottom-right
 
 		// Return interpolation between bottom and top interpolation
@@ -107,11 +107,11 @@ public class NoiseMap {
 	 * @param m  X coordinate of point to be interpolated
 	 * @return The Y coordinate of the point
 	 */
-	public float cosineInterpolation(int x1, float y1, int x3, float y3, int x2) {
-		double xDiff = (x3 - x1);
-		double mu2 = (1 - Math.cos((x2 / xDiff - x1 / xDiff) * Math.PI)) / 2;
-		double y2 = (y1 * (1 - mu2) + y3 * mu2);
-		return (float) y2;
+	public float cosineInterpolation(int x1, float y1, int x2, float y2, int x) {
+		double xDiff = (x2 - x1);
+		double mu2 = (1 - Math.cos((x - x1) * Math.PI / xDiff)) / 2;
+		double retval = (y1 * (1 - mu2) + y2 * mu2);
+		return (float) retval;
 	}
 
 	/**
@@ -125,8 +125,10 @@ public class NoiseMap {
 	public float[][] normalize(float[][] mountain) {
 		int width = mountain.length;
 		int height = mountain[0].length;
-		float maxValue = (float)Double.NEGATIVE_INFINITY;
-		float minValue = (float)Double.POSITIVE_INFINITY;
+		float maxValue = (float) Double.NEGATIVE_INFINITY;
+		float minValue = (float) Double.POSITIVE_INFINITY;
+		float average = 0;
+		int number = 0;
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -138,6 +140,16 @@ public class NoiseMap {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				mountain[x][y] = (mountain[x][y] - minValue) / (maxValue - minValue);
+				average += mountain[x][y];
+				number++;
+			}
+		}
+
+		average = 0.5f - (average / number);
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				mountain[x][y] = mountain[x][y] += average;
 			}
 		}
 

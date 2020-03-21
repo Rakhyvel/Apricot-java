@@ -1,5 +1,7 @@
 package com.josephs_projects.apricotLibrary;
 
+import java.io.Serializable;
+
 /**
  * This class represents an ordered pair of coordinates. Can be used effectively
  * for 2D positions, velocities, or dimensions.
@@ -7,7 +9,11 @@ package com.josephs_projects.apricotLibrary;
  * @author Joseph Shimel
  *
  */
-public class Tuple {
+public class Tuple implements Serializable {
+	/**
+	 * UHHHHHH
+	 */
+	private static final long serialVersionUID = -8618822965339782712L;
 	public double x, y;
 
 	public Tuple() {
@@ -137,6 +143,20 @@ public class Tuple {
 	 * @return Performs vector normalization, returns new Tuple. Original Tuples coordinates are not changed.
 	 */
 	public Tuple normalize() {
-		return new Tuple(x / magnitude(), y / magnitude());
+		double magnitude = magnitude();
+		if(magnitude == 0) {
+			return new Tuple(0,0);
+		}
+		return new Tuple(x / magnitude, y / magnitude);
+	}
+	
+	public double dot(Tuple t) {
+		return this.x * t.x + this.y * t.y;
+	}
+	
+	public Tuple mod(double x, double y) {
+		if(this.x < 0)
+			this.x += x;
+		return new Tuple(this.x % x, this.y % y);
 	}
 }

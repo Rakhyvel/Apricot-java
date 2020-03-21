@@ -1,6 +1,6 @@
 package com.josephs_projects.apricotLibrary;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -32,7 +32,7 @@ public class World {
 		}
 	}
 
-	void render(Graphics g) {
+	void render(Graphics2D g) {
 		try {
 			renderables.sort(comparator);
 			for (int i = 0; i < renderables.size(); i++) {
@@ -89,5 +89,9 @@ public class World {
 
 			return arg0.getRenderOrder() - arg1.getRenderOrder();
 		}
+	}
+	
+	public boolean renderablesContains(Object o) {
+		return renderables.contains(o);
 	}
 }
