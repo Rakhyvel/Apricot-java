@@ -7,9 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Lexicon {
-	public static String randName(String path, int length, int portionSize) {
-		List<String> records = readFile(path, portionSize);
-		HashMap<String, Double> morphemes = getHashes(records, portionSize);
+	List<String> records;
+	HashMap<String, Double> morphemes;
+	int portionSize;
+	
+	public Lexicon(String path, int portionSize) {
+		records = readFile(path, portionSize);
+		morphemes = getHashes(records, portionSize);
+		this.portionSize = portionSize;
+	}
+	
+	public String randName(int length) {
 		String portion;
 		String name;
 		do {

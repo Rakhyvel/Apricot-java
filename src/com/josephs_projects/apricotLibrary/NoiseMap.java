@@ -80,10 +80,10 @@ public class NoiseMap {
 		int x3 = x1 + p;
 		int y3 = y1 + p;
 		if (x3 >= width - 1) {
-			x3 = 0;
+			x3 = width - 1;
 		}
 		if (y3 >= height - 1) {
-			y3 = 0;
+			y3 = height - 1;
 		}
 
 		// Generate interpolations for bottom and top of cell
