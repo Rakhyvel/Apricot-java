@@ -25,7 +25,7 @@ import sun.java2d.SunGraphicsEnvironment;
  * @author Joseph Shimel
  *
  */
-public class Apricot extends Thread {
+public class Apricot extends Thread {	
 	// Reference to world that engine is working with
 	private World world;
 
@@ -41,6 +41,8 @@ public class Apricot extends Thread {
 	private double dt = 1000 / 60.0;
 	public int ticks = 0;
 	public int fps;
+	public boolean running;
+	public boolean isSimulation;
 
 	// misc public-static access fields
 	public static Random rand = new Random();
@@ -50,7 +52,11 @@ public class Apricot extends Thread {
 	
 	public static boolean maximized;
 	
-	public Apricot(String title, int width, int height) {
+	public enum Modifier {
+		INVISIBLE
+	}
+	
+	public Apricot(String title, int width, int height, Modifier... modifiers) {
 		frame = new JFrame(title);
 		canvas = new Canvas();
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -58,13 +64,18 @@ public class Apricot extends Thread {
 		canvas.setSize(width, height);
 		canvas.setPreferredSize(new Dimension(width, height));
 		frame.pack();
-		frame.setVisible(true);
+		if(modifiers.length > 0 && modifiers[0] == Modifier.INVISIBLE) {
+			frame.setVisible(false);
+		} else {
+			frame.setVisible(true);
+		}
 		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		frame.setMaximizedBounds(e.getMaximumWindowBounds());
 		frame.setLocationRelativeTo(null);
 
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this);
+		running = true;
 	}
 	
 	public Apricot(String title, int width, int height, boolean undecorated) {
@@ -83,6 +94,7 @@ public class Apricot extends Thread {
 
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this);
+		running = true;
 	}
 	
 	
@@ -93,10 +105,14 @@ public class Apricot extends Thread {
 	 */
 	@Override
 	public void run() {
+		if(isSimulation) {
+			simulate();
+			return;
+		}
 		// Game loop begins here
 		double previous = System.currentTimeMillis();
 		double lag = 0;
-		while (frame.isDisplayable()) {
+		while (running && frame.isDisplayable()) {
 			double current = System.currentTimeMillis();
 			double elapsed = current - previous;
 
@@ -113,11 +129,19 @@ public class Apricot extends Thread {
 			render();
 		}
 	}
+	
+	public void simulate() {
+		frame.dispose();
+		while(running) {
+			world.tick();
+			ticks++;
+		}
+	}
 
 	public void render() {
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if (bs == null) {
-			canvas.createBufferStrategy(3);
+			canvas.createBufferStrategy(2);
 			return;
 		}
 
@@ -182,5 +206,9 @@ public class Apricot extends Thread {
 	
 	public void setDeltaT(double dt) {
 		this.dt = dt;
+	}
+	
+	public void setIcon(java.awt.Image icon) {
+		frame.setIconImage(icon);
 	}
 }
