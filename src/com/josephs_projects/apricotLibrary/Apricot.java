@@ -1,6 +1,7 @@
 package com.josephs_projects.apricotLibrary;
 
 import java.awt.Canvas;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -50,6 +51,8 @@ public class Apricot extends Thread {
 	
 	public static boolean maximized;
 	
+	public Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+	
 	public Apricot(String title, int width, int height) {
 		frame = new JFrame(title);
 		canvas = new Canvas();
@@ -96,6 +99,8 @@ public class Apricot extends Thread {
 		// Game loop begins here
 		double previous = System.currentTimeMillis();
 		double lag = 0;
+		int frames = 0;
+		double elapsedFPS = 0;
 		while (frame.isDisplayable()) {
 			double current = System.currentTimeMillis();
 			double elapsed = current - previous;
@@ -103,14 +108,24 @@ public class Apricot extends Thread {
 			previous = current;
 
 			lag += elapsed;
+			elapsedFPS += elapsed;
 
 			while (lag >= dt) {
 				if (world != null)
 					world.tick();
 				lag -= dt;
 				ticks++;
+				if(cursor.getType() != frame.getCursor().getType()) {
+					frame.setCursor(cursor);
+				}
 			}
+			frames++;
 			render();
+			if(elapsedFPS > 1000) {
+				fps = frames;
+				frames = 0;
+				elapsedFPS = 0;
+			}
 		}
 	}
 

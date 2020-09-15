@@ -17,11 +17,12 @@ public class Keyboard extends KeyAdapter {
 	private final Set<Integer> keysDown = new HashSet<>();
 	private final Apricot apricot;
 	public char lastKey;
-	
+	public boolean shiftDown, ctrlDown;
 
 	public Keyboard(Apricot apricot) {
 		apricot.canvas.addKeyListener(this);
 		this.apricot = apricot;
+		this.apricot.canvas.setFocusTraversalKeysEnabled(false);
 	}
 
 	@Override
@@ -29,11 +30,25 @@ public class Keyboard extends KeyAdapter {
 		keysDown.add(Integer.valueOf((int) e.getKeyCode()));
 		lastKey = e.getKeyChar();
 		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			lastKey = 400;
+			lastKey = KeyEvent.VK_LEFT + 255;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			lastKey = 401;
+			lastKey = KeyEvent.VK_RIGHT + 255;
 		}
+		if(e.getKeyCode() == KeyEvent.VK_UP) {
+			lastKey = KeyEvent.VK_UP + 255;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+			lastKey = KeyEvent.VK_DOWN + 255;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+			lastKey = KeyEvent.VK_PAGE_DOWN + 255;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+			lastKey = KeyEvent.VK_PAGE_UP + 255;
+		}
+		ctrlDown = e.isControlDown();
+		shiftDown = e.isShiftDown();
 		apricot.input(InputEvent.KEY_PRESSED);
 	}
 

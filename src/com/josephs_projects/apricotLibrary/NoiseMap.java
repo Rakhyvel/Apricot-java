@@ -8,26 +8,26 @@ package com.josephs_projects.apricotLibrary;
  *
  */
 public class NoiseMap {
-
 	/**
 	 * @param width     Width of the random map. Must be one more than a power of 2
 	 * @param height    Height of the random map. Must be one more than a power of 2
 	 * @param frequency Frequency of noise
 	 * @param amplitude Amplitude of noise. This is to be set internally. Will have
 	 *                  no real affect if used by user
-	 * @return A random map at specified of values from +amplitude to -amplitude
+	 * @return A square map of specified size with random values from +amplitude to
+	 *         -amplitude embedded in the given frequency
 	 */
-	public float[][] generate(int size, int seed, double frequency, float... amplitude) {
+	public static float[][] generate(int size, int seed, double frequency, float... amplitude) {
 		if (seed != -1) {
 			Apricot.rand.setSeed(seed);
 		}
-		float freq = (float) Math.pow(2, frequency);
+		float freq = (float) Math.pow(3, frequency);
 		float[][] retval = new float[size][size];
 		int cellSize = (int) (size / freq);
 
 		// Base case:
 		// Check to see if cells are too small to be pixelized
-		if (cellSize <= 8)
+		if (cellSize <= 1)
 			return retval;
 
 		float amp = 1;
@@ -39,11 +39,11 @@ public class NoiseMap {
 		for (int i = 0; i < freq * freq; i++) {
 			int x = (int) (i % freq) * cellSize;
 			int y = (int) (i / freq) * cellSize;
-			retval[x][y] = (float) ((2 * Math.random() - 1) * amp);
+			retval[x][y] = (float) ((2 * Apricot.rand.nextDouble() - 1) * amp);
 		}
 
 		// Interpolate each cell, and add finer detail map
-		float[][] finerDetailMap = generate(size, seed, frequency + 1, amp * 0.5f);
+		float[][] finerDetailMap = generate(size, seed++, frequency + 1, amp * 0.5f);
 		for (int i = 0; i < size * size; i++) {
 			int x = i % size; // x coord of point
 			int y = i / size; // y coord of point
@@ -56,7 +56,6 @@ public class NoiseMap {
 
 			retval[x][y] = bicosineInterpolation(x1, y1, cellSize, retval, x, y, size, size) + finerDetailMap[x][y];
 		}
-
 		return retval;
 	}
 
@@ -75,7 +74,8 @@ public class NoiseMap {
 	 * @return The value the point within the local cell should based on the values
 	 *         of the four corners of the local cell
 	 */
-	public float bicosineInterpolation(int x1, int y1, int p, float[][] noise, int x2, int y2, int width, int height) {
+	public static float bicosineInterpolation(int x1, int y1, int p, float[][] noise, int x2, int y2, int width,
+			int height) {
 		// Check to see if edge case
 		int x3 = x1 + p;
 		int y3 = y1 + p;
@@ -100,6 +100,10 @@ public class NoiseMap {
 	 * Based on Paul Bourke's wonderful resource on interpolation.
 	 * http://paulbourke.net/miscellaneous/interpolation/
 	 * 
+	 * Think of a graph with two known points on the graph, and point with a known x
+	 * value, but unknown y value. This uses the cosine function to determine the y
+	 * value of that middle point.
+	 * 
 	 * @param x1 X coordinate of initial point
 	 * @param y1 Y coordinate of initial point
 	 * @param x2 X coordinate of final point.
@@ -107,9 +111,10 @@ public class NoiseMap {
 	 * @param m  X coordinate of point to be interpolated
 	 * @return The Y coordinate of the point
 	 */
-	public float cosineInterpolation(int x1, float y1, int x2, float y2, int x) {
+
+	public static float cosineInterpolation(int x1, float y1, int x2, float y2, int x) {
 		double xDiff = (x2 - x1);
-		double mu2 = (1 - Math.cos((x - x1) * Math.PI / xDiff)) / 2;
+		double mu2 = (1 - fastCos((x - x1) * Math.PI / xDiff)) / 2;
 		double retval = (y1 * (1 - mu2) + y2 * mu2);
 		return (float) retval;
 	}
@@ -122,7 +127,7 @@ public class NoiseMap {
 	 * @param height   Height of map
 	 * @return Map after being normalized to fit between 0-1
 	 */
-	public float[][] normalize(float[][] mountain) {
+	public static float[][] normalize(float[][] mountain) {
 		int width = mountain.length;
 		int height = mountain[0].length;
 		float maxValue = (float) Double.NEGATIVE_INFINITY;
@@ -154,5 +159,26 @@ public class NoiseMap {
 		}
 
 		return mountain;
+	}
+
+	/*
+	 * Uses the taylor series up to the 10th degree, which is pretty good for the
+	 * interval [-pi, pi]. Results outside that interval are not gauranteed to be
+	 * very good.
+	 */
+	public static double fastCos(double x) {
+		double x2 = x * x;
+		double x4 = x2 * x2;
+		double x6 = x4 * x2;
+		double x8 = x6 * x2;
+		double x10 = x8 * x2;
+		// Inverse factorials
+		double fact2 = 0.5;
+		double fact4 = 0.04166666666;
+		double fact6 = 0.00138888888;
+		double fact8 = 0.00002480158;
+		double fact10 = 2.75573192E-7;
+
+		return 1 - x2 * fact2 + x4 * fact4 - x6 * fact6 + x8 * fact8 - x10 * fact10;
 	}
 }

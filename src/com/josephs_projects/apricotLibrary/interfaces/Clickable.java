@@ -8,6 +8,7 @@ public class Clickable implements InputListener {
 	public Tuple position;
 	public int width, height;
 	private Apricot apricot;
+	public boolean shown = true;
 	
 	public boolean isHovered = false;
 	public boolean triggerEvent = false;
@@ -22,6 +23,9 @@ public class Clickable implements InputListener {
 	
 	@Override
 	public void input(InputEvent e) {
+		if(!shown) {
+			return;
+		}
 		if(e == InputEvent.MOUSE_MOVED || e == InputEvent.MOUSE_LEFT_DOWN) {
 			checkIsHovered();
 		}
