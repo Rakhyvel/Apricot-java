@@ -10,7 +10,6 @@ public class ColorScheme {
 	public final Color disabledTextColor;
 	public final Color errorColor;
 	public final Color fillColor;
-	public Color whatever;
 
 	public ColorScheme(Color backgroundColor, Color borderColor, Color highlightColor, Color textColor,
 			Color disabledTextColor, Color errorColor, Color fillColor) {
