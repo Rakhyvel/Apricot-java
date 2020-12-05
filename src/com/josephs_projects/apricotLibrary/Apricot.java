@@ -60,7 +60,7 @@ public class Apricot extends Thread {
 		frame.add(canvas);
 		canvas.setSize(width, height);
 		canvas.setPreferredSize(new Dimension(width, height));
-		frame.pack();
+		frame.pack();		
 		frame.setVisible(true);
 		GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		frame.setMaximizedBounds(e.getMaximumWindowBounds());
@@ -132,7 +132,7 @@ public class Apricot extends Thread {
 	public void render() {
 		BufferStrategy bs = canvas.getBufferStrategy();
 		if (bs == null) {
-			canvas.createBufferStrategy(3);
+			canvas.createBufferStrategy(5);
 			return;
 		}
 
