@@ -6,6 +6,11 @@ import com.josephs_projects.apricotLibrary.World;
 import com.josephs_projects.apricotLibrary.interfaces.InputListener;
 import com.josephs_projects.apricotLibrary.interfaces.Renderable;
 
+/**
+ * Base class for all GUIObjects. Has position, padding, margin, displayability,
+ * and can be placed into a wrapper.
+ *
+ */
 public abstract class GUIObject implements InputListener, Renderable {
 	public Tuple position;
 	public int padding = 7;
@@ -16,16 +21,26 @@ public abstract class GUIObject implements InputListener, Renderable {
 	public Apricot apricot;
 	public World world;
 
+	/**
+	 * Creates a new GUIObject at a certain position. GUIObjects need a reference to
+	 * the Apricot object, and the World object they're added in.
+	 */
 	public GUIObject(Tuple position, Apricot apricot, World world) {
 		this.position = position;
 		this.apricot = apricot;
 		this.world = world;
 	}
 
+	/**
+	 * Changes the position <b>by reference</b>
+	 */
 	public void updatePosition(Tuple position) {
 		this.position = position;
 	}
 
+	/**
+	 * Changes whether the object is shown. Objects that are not shown 
+	 */
 	public void setShown(boolean shown) {
 		this.shown = shown;
 	}
@@ -38,4 +53,3 @@ public abstract class GUIObject implements InputListener, Renderable {
 
 	public abstract int width();
 }
-

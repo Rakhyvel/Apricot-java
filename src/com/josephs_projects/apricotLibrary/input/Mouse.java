@@ -21,6 +21,7 @@ public class Mouse extends MouseAdapter {
 	public int mouseWheelPosition;
 	private final Apricot apricot;
 	public Tuple position = new Tuple();
+	public Tuple absolutePos = new Tuple();
 
 	public Mouse(Apricot apricot) {
 		this.apricot = apricot;
@@ -60,6 +61,7 @@ public class Mouse extends MouseAdapter {
 		if (apricot != null) {
 			position.x = getX();
 			position.y = getY();
+			getAbsPos();
 			apricot.input(InputEvent.MOUSE_MOVED);
 		}
 	}
@@ -69,6 +71,7 @@ public class Mouse extends MouseAdapter {
 		if (apricot != null) {
 			position.x = getX();
 			position.y = getY();
+			getAbsPos();
 			apricot.input(InputEvent.MOUSE_DRAGGED);
 		}
 	}
@@ -101,6 +104,12 @@ public class Mouse extends MouseAdapter {
 		if (mousePos != null)
 			return mousePos.y;
 		return -1;
+	}
+
+	private void getAbsPos() {
+		Point p = apricot.frame.getLocation();
+		absolutePos.x = p.getX() + getX();
+		absolutePos.y = p.getY() + getY();
 	}
 
 	/**
