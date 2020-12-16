@@ -13,7 +13,7 @@ public class GUIWrapper extends GUIObject {
 	public List<GUIObject> objects = new ArrayList<>();
 	ColorScheme scheme;
 
-	public GUIWrapper(Tuple position, Apricot apricot, World world, ColorScheme scheme) {
+	public GUIWrapper(Tuple position, ColorScheme scheme, Apricot apricot, World world) {
 		super(position, apricot, world);
 		world.add(this);
 		this.scheme = scheme;

@@ -107,9 +107,9 @@ public class Mouse extends MouseAdapter {
 	}
 
 	private void getAbsPos() {
-		Point p = apricot.frame.getLocation();
-		absolutePos.x = p.getX() + getX();
-		absolutePos.y = p.getY() + getY();
+		Point p = MouseInfo.getPointerInfo().getLocation();
+		absolutePos.x = p.getX();
+		absolutePos.y = p.getY();
 	}
 
 	/**
