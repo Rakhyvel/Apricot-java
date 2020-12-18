@@ -17,7 +17,7 @@ public class Label extends GUIObject {
 	public Alignment align;
 	private int width = 0;
 	private int height = 0;
-	public int fontSize = 16;
+	public int fontSize = 18;
 	boolean active = true;
 	public boolean dropShadow = false;
 	BufferedImage coin;
@@ -53,7 +53,7 @@ public class Label extends GUIObject {
 		if (!shown)
 			return;
 
-		g.setFont(new Font("Verdana", Font.PLAIN, fontSize));
+		g.setFont(new Font("Arial", Font.PLAIN, fontSize));
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		width = g.getFontMetrics(g.getFont()).stringWidth(text);

@@ -1,5 +1,6 @@
 package com.josephs_projects.apricotLibrary.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +14,11 @@ public class GUIWrapper extends GUIObject {
 	public List<GUIObject> objects = new ArrayList<>();
 	ColorScheme scheme;
 
-	public GUIWrapper(Tuple position, ColorScheme scheme, Apricot apricot, World world) {
+	public GUIWrapper(Tuple position, int renderOrder, ColorScheme scheme, Apricot apricot, World world) {
 		super(position, apricot, world);
 		world.add(this);
 		this.scheme = scheme;
+		setRenderOrder(renderOrder);
 	}
 
 	public void addGUIObject(GUIObject object) {
@@ -37,20 +39,16 @@ public class GUIWrapper extends GUIObject {
 		}
 	}
 
-	public void setRenderOrder(int order) {
-		this.renderOrder = order + 1;
-		for(GUIObject obj : objects) {
-			obj.setRenderOrder(order);
-		}
-	}
-
 	@Override
 	public void render(Graphics2D g) {
-		if(!shown) {
+		if (!shown) {
 			return;
 		}
-		g.setColor(scheme.borderColor);
-		g.drawRect((int)position.x, (int)position.y, width(), height());
+		if (border > 0) {
+			g.setColor(scheme.borderColor);
+			g.setStroke(new BasicStroke(border));
+			g.drawRect((int) position.x, (int) position.y, width(), height());
+		}
 	}
 
 	@Override
@@ -72,30 +70,30 @@ public class GUIWrapper extends GUIObject {
 	}
 
 	@Override
+	public void setRenderOrder(int order) {
+		this.renderOrder = order;
+		for (GUIObject o : objects) {
+			o.setRenderOrder(order);
+		}
+	}
+
+	@Override
 	public int height() {
-		if(!shown) {
+		if (!shown) {
 			return 0;
 		}
-		int height = padding;
-		int rowHeight = 0; // Used for determining the width of the column
+		int height = 0;
 		for (GUIObject o : objects) {
-			// Check for vertical overflow
-			if(!o.shown)
-				continue;
-			if (position.y + height + o.height() > apricot.height()) {
-				height = padding;
-			}
-			height += o.height();
-			rowHeight = Math.max(rowHeight, o.height());
+			height = (int) Math.max(o.position.y - position.y + o.height(), height);
 		}
-		return height;
+		return height + padding;
 	}
 
 	@Override
 	public int width() {
 		int width = 0;
 		for (GUIObject o : objects) {
-			width = Math.max(width, o.width());
+			width = (int) Math.max(o.position.x - position.x + o.width(), width);
 		}
 		return width + padding;
 	}
@@ -107,17 +105,17 @@ public class GUIWrapper extends GUIObject {
 		int colWidth = 0; // Used for determining the width of the column
 		for (GUIObject o : objects) {
 			// Check for vertical overflow
-			if(!o.shown)
+			if (!o.shown)
 				continue;
-			o.position = new Tuple(position.x + width, position.y + height);
-			if (position.y + height + o.height() > apricot.height()) {
+			o.updatePosition(new Tuple(position.x + width + o.margin, position.y + height + o.margin));
+			if (position.y + height + o.height() + o.margin*2 + padding*2 > apricot.height()) {
 				height = padding;
 				width += colWidth;
 				colWidth = 0;
+				o.updatePosition(new Tuple(position.x + width + o.margin, position.y + height + o.margin));
 			}
-			o.updatePosition(new Tuple(position.x + width, position.y + height));
-			height += o.height();
-			colWidth = Math.max(colWidth, o.width());
+			height += o.height() + o.margin;
+			colWidth = Math.max(colWidth, o.width() + o.margin * 2);
 		}
 	}
 }

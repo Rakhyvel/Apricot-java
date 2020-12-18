@@ -43,7 +43,7 @@ public class ProgressBar extends GUIObject {
 		
 		g.setColor(scheme.borderColor);
 		g.fillRect((int) position.x, (int) position.y, width, height);
-		g.setColor(scheme.highlightColor);
+		g.setColor(scheme.fillColor);
 		g.fillRect((int) position.x + 2, (int) position.y + 2, (int)(width * progress) - 4, height - 4);
 	}
 

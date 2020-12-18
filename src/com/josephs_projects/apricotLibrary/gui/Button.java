@@ -34,7 +34,6 @@ public class Button extends GUIObject {
 		label = new Label(text, scheme, apricot, world);
 		label.align = Label.Alignment.CENTER;
 		label.fontSize = 17;
-		setShown(true);
 	}
 
 	public Button(String text, int width, int height, int textSize, int margin, int padding, Label.Alignment align,
