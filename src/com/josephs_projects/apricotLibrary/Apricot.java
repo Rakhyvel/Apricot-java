@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
 import java.util.Random;
+import java.util.Stack;
 
 import javax.swing.JFrame;
 
@@ -28,7 +29,7 @@ import sun.java2d.SunGraphicsEnvironment;
  */
 public class Apricot extends Thread {
 	/* Reference to world that engine is working with */
-	private World world;
+	private Stack<World> worldStack;
 
 	// Graphics fields
 	/* JFrame used by application */
@@ -84,6 +85,7 @@ public class Apricot extends Thread {
 
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this);
+		worldStack = new Stack<>();
 	}
 	
 	/**
@@ -105,6 +107,7 @@ public class Apricot extends Thread {
 
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this);
+		worldStack = new Stack<>();
 	}
 	
 	
@@ -130,8 +133,8 @@ public class Apricot extends Thread {
 			elapsedFPS += elapsed;
 
 			while (lag >= dt) {
-				if (world != null)
-					world.tick();
+				if (!worldStack.isEmpty())
+					worldStack.peek().tick();
 				lag -= dt;
 				ticks++;
 				if(cursor.getType() != frame.getCursor().getType()) {
@@ -160,8 +163,8 @@ public class Apricot extends Thread {
 
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 		
-		if (world != null)
-			world.render(g);
+		if (!worldStack.isEmpty())
+			worldStack.peek().render(g);
 
 		g.dispose();
 		bs.show();
@@ -171,15 +174,15 @@ public class Apricot extends Thread {
 	 * Checks for any input of the user, informs InputListeners added to current World
 	 */
 	public void input(InputEvent e) {
-		if (world != null)
-			world.input(e);
+		if (!worldStack.isEmpty())
+			worldStack.peek().input(e);
 	}
 	
 	/**
 	 * Changes the current world
 	 */
 	public void setWorld(World world) {
-		this.world = world;
+		worldStack.push(world);
 		input(InputEvent.WORLD_CHANGE);
 	}
 	
@@ -187,7 +190,11 @@ public class Apricot extends Thread {
 	 * Returns the current world
 	 */
 	public World getWorld(World world) {
-		return world;
+		return worldStack.peek();
+	}
+	
+	public void popWorld() {
+		worldStack.pop();
 	}
 	
 	/**

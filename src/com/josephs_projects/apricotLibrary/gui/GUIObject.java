@@ -13,8 +13,8 @@ import com.josephs_projects.apricotLibrary.interfaces.Renderable;
  */
 public abstract class GUIObject implements InputListener, Renderable {
 	public Tuple position;
-	public int padding = 4;
-	public int margin = 4;
+	public int padding = 7;
+	public int margin = 2;
 	public int border = 0;
 	public boolean shown = false;
 	protected GUIWrapper wrapper;
