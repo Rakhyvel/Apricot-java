@@ -14,7 +14,6 @@ public class Button extends GUIObject {
 	int width;
 	int height;
 	ColorScheme scheme;
-	public String text;
 	public Label label;
 	public boolean isHovered;
 	boolean isClicked;
@@ -28,7 +27,6 @@ public class Button extends GUIObject {
 		this.width = width;
 		this.height = height;
 		this.scheme = scheme;
-		this.text = text;
 		world.add(this);
 		this.listener = listener;
 		label = new Label(text, scheme, apricot, world);
@@ -70,6 +68,10 @@ public class Button extends GUIObject {
 		}
 	}
 
+	/**
+	 * When the button is pressed, it will send the updatable the text that is
+	 * contained within the label.
+	 */
 	@Override
 	public void input(InputEvent e) {
 		if (!shown || !active) {
@@ -89,7 +91,7 @@ public class Button extends GUIObject {
 		if (e == InputEvent.MOUSE_LEFT_RELEASED) {
 			// Call caller and let them know button is clicked.
 			if (isClicked) {
-				listener.update(text);
+				listener.update(label.text);
 			}
 			isClicked = false;
 		}
