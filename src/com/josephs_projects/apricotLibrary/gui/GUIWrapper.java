@@ -118,4 +118,8 @@ public class GUIWrapper extends GUIObject {
 			colWidth = Math.max(colWidth, o.width() + o.margin * 2);
 		}
 	}
+	
+	public void update() {
+		updatePosition(position);
+	}
 }

@@ -18,7 +18,7 @@ public class Label extends GUIObject {
 	private int width = 0;
 	private int height = 0;
 	public int fontSize = 18;
-	boolean active = true;
+	public boolean active = true;
 	public boolean dropShadow = false;
 	BufferedImage coin;
 	BufferedImage ore;
