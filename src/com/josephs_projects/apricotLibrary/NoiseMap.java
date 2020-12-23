@@ -21,7 +21,7 @@ public class NoiseMap {
 		if (seed != -1) {
 			Apricot.rand.setSeed(seed);
 		}
-		float freq = (float) Math.pow(3, frequency);
+		float freq = (float) Math.pow(2.5, frequency);
 		float[][] retval = new float[size][size];
 		int cellSize = (int) (size / freq);
 
