@@ -47,6 +47,16 @@ public class Tuple implements Serializable {
 	}
 
 	/**
+	 * @param t Tuple to be added
+	 * @return A new Tuple object whose coordinates are a sum of the original and
+	 *         parameter. Neither input Tuples are changed.
+	 */
+	public void inc(Tuple t) {
+		x += t.x;
+		y += t.y;
+	}
+
+	/**
 	 * @param t Tuple to subtract from original
 	 * @return A new Tuple object whose coordiantes are the difference of the
 	 *         original from the parameter. Neither input Tuples coordinates are
