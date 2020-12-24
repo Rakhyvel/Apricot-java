@@ -47,9 +47,7 @@ public class Tuple implements Serializable {
 	}
 
 	/**
-	 * @param t Tuple to be added
-	 * @return A new Tuple object whose coordinates are a sum of the original and
-	 *         parameter. Neither input Tuples are changed.
+	 * @param t Tuple to increment this by
 	 */
 	public void inc(Tuple t) {
 		x += t.x;
@@ -64,6 +62,14 @@ public class Tuple implements Serializable {
 	 */
 	public Tuple sub(Tuple t) {
 		return new Tuple(this.x - t.x, this.y - t.y);
+	}
+
+	/**
+	 * @param t Tuple to decrement this by
+	 */
+	public void dec(Tuple t) {
+		x -= t.x;
+		y -= t.y;
 	}
 
 	/**
